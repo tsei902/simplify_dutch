@@ -5,16 +5,16 @@
 from torch import cuda
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
 # , T5ForConditionalGeneration, TrainingArguments
-from datasets import load_dataset, DatasetDict
+from datasets import load_dataset, DatasetDict, concatenate_datasets
 import numpy as np
 import evaluate
 
 
-def get_data(): 
+def get_data_csv(): 
     # where does the data come from? 
     # aggregated datasets require utf-8 encoding before loading them here, done with notepad++
     
-    file_dict = "./resources/datasets/ASSET_20 lines_DUTCH.csv"
+    file_dict = "./resources/datasets/asset/ASSET_20 lines_DUTCH.csv"
     dataset = load_dataset("csv", data_files=file_dict, delimiter= ';') 
     # dataset = dataset.select_columns('herkomst', 'eenvoudig1')
     column_names = 'eenvoudig0', 'eenvoudig2', 'eenvoudig3', 'eenvoudig4'
@@ -35,6 +35,42 @@ def get_data():
     print(dataset)
     return dataset
 
+
+def get_data_txt(): 
+    # where does the data come from? 
+    # aggregated datasets require utf-8 encoding before loading them here, done with notepad++
+    
+    file_dict = "./resources/datasets/asset_regular/"
+    
+    dataset_original = load_dataset("text", data_dir=file_dict, data_files={"train": "asset.valid.orig.txt"})
+    dataset_original = dataset_original.rename_column("text", "original")
+    print(dataset_original)
+    dataset_simple = load_dataset("text", data_dir=file_dict, data_files={"train":"asset.valid.simp2.txt"})
+    dataset_simple = dataset_simple.rename_column("text", "simple")
+    print(dataset_simple)
+    dataset = concatenate_datasets([dataset_original['train'], dataset_simple['train']], axis=1)
+    # dataset = ds.load_dataset(test_size=0.2,split="train+test+validate")
+    
+    # rename colums to something else than text
+    
+        # dataset = dataset.select_columns('herkomst', 'eenvoudig1')
+        # column_names = 'eenvoudig0', 'eenvoudig2', 'eenvoudig3', 'eenvoudig4'
+        # dataset = dataset.remove_columns(column_names) 
+        # dataset = dataset.remove_columns('eenvoudig3', 'eenvoudig4')
+   
+    # SPLIT: 90% train, 10% test + validation
+    train_testvalid = dataset.train_test_split(test_size=0.3)
+
+    # Split the 20% test + valid in half test, half valid
+    test_valid = train_testvalid['test'].train_test_split(test_size=0.3)
+    # gather everyone if you want to have a single DatasetDict
+    #print(test_valid)
+    dataset = DatasetDict({
+        'train': train_testvalid['train'],
+        'validation': test_valid['train'],
+        'test': test_valid['test']})   # split rule: https://discuss.huggingface.co/t/how-to-split-main-dataset-into-train-dev-test-as-datasetdict/1090
+    print(dataset)
+    return dataset
 
 class T5SimplificationModel():
     
@@ -64,10 +100,10 @@ def preprocess_function(examples):
     max_input_length = 256
     max_target_length = 256
 
-    model_inputs = tokenizer(examples['herkomst'], max_length=max_input_length,  truncation=True) #  , padding="max_length") # ,  
+    model_inputs = tokenizer(examples['original'], max_length=max_input_length,  truncation=True) #  , padding="max_length") # ,  
     # Setup the tokenizer for targets
     #with tokenizer.as_target_tokenizer():
-    labels = tokenizer(examples['eenvoudig1'], max_length=max_target_length, truncation=True)  # , padding="max_length")
+    labels = tokenizer(examples['simple'], max_length=max_target_length, truncation=True)  # , padding="max_length")
     # is padding really needed?
     # Setup the tokenizer for targets
     #with tokenizer.as_target_tokenizer():
@@ -124,9 +160,11 @@ if __name__ == '__main__':
     tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, gradient_checkpointing=True, use_cache=False)
     # input_ids, attention_mask, labels = tokenize(dataset?)
-    dataset= get_data()
+    # dataset= get_data_csv()
+    dataset= get_data_txt()
     # print(dataset['herkomst'])
-    tokenized_datasets = dataset.map(preprocess_function, batched=True, remove_columns=['herkomst', 'eenvoudig1']) # concatenation only for datasets, we have datasetdict
+    
+    tokenized_datasets = dataset.map(preprocess_function, batched=True) # concatenation only for datasets, we have datasetdict # remove_columns=['herkomst', 'eenvoudig1']
     print(tokenized_datasets)
     
     data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
