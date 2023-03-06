@@ -8,9 +8,13 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSe
 from datasets import load_dataset, DatasetDict, concatenate_datasets
 import numpy as np
 import evaluate
+import time
+
+WIKILARGE_DATASET = 'wikilarge'
+ASSET_DATASET = 'asset_regular'
 
 
-def get_data_csv(): 
+def get_data_csv(dataset): 
     # where does the data come from? 
     # aggregated datasets require utf-8 encoding before loading them here, done with notepad++
     
@@ -36,27 +40,30 @@ def get_data_csv():
     return dataset
 
 
-def get_data_txt(): 
+def get_data_txt(dataset): 
     # where does the data come from? 
     # aggregated datasets require utf-8 encoding before loading them here, done with notepad++
-    
-    file_dict = "./resources/datasets/asset_regular/"
-    
-    dataset_original = load_dataset("text", data_dir=file_dict, data_files={"train": "asset.valid.orig.txt"})
-    dataset_original = dataset_original.rename_column("text", "original")
-    print(dataset_original)
-    dataset_simple = load_dataset("text", data_dir=file_dict, data_files={"train":"asset.valid.simp2.txt"})
-    dataset_simple = dataset_simple.rename_column("text", "simple")
-    print(dataset_simple)
-    dataset = concatenate_datasets([dataset_original['train'], dataset_simple['train']], axis=1)
-    # dataset = ds.load_dataset(test_size=0.2,split="train+test+validate")
-    
-    # rename colums to something else than text
-    
-        # dataset = dataset.select_columns('herkomst', 'eenvoudig1')
-        # column_names = 'eenvoudig0', 'eenvoudig2', 'eenvoudig3', 'eenvoudig4'
-        # dataset = dataset.remove_columns(column_names) 
-        # dataset = dataset.remove_columns('eenvoudig3', 'eenvoudig4')
+    if dataset == 'asset_regular': 
+        file_dict = "./resources/datasets/asset_regular/"
+        
+        dataset_original = load_dataset("text", data_dir=file_dict, data_files={"train": "asset.valid.orig.txt"})
+        dataset_original = dataset_original.rename_column("text", "original")
+        print(dataset_original)
+        dataset_simple = load_dataset("text", data_dir=file_dict, data_files={"train":"asset.valid.simp.2.txt"})
+        dataset_simple = dataset_simple.rename_column("text", "simple")
+        print(dataset_simple)
+        dataset = concatenate_datasets([dataset_original['train'], dataset_simple['train']], axis=1)
+    if dataset == 'wikilarge': 
+        file_dict = "./resources/datasets/wikilarge/"
+        
+        dataset_original = load_dataset("text", data_dir=file_dict, data_files={"train": "wikilarge.train.complex9999_dutch.txt"})
+        dataset_original = dataset_original.rename_column("text", "original")
+        print(dataset_original)
+        dataset_simple = load_dataset("text", data_dir=file_dict, data_files={"train":"wikilarge.train.simple9999_dutch.txt"})
+        dataset_simple = dataset_simple.rename_column("text", "simple")
+        print(dataset_simple)
+        dataset = concatenate_datasets([dataset_original['train'], dataset_simple['train']], axis=1)
+        
    
     # SPLIT: 90% train, 10% test + validation
     train_testvalid = dataset.train_test_split(test_size=0.3)
@@ -144,8 +151,33 @@ training_args = Seq2SeqTrainingArguments(
         fp16=False, # True, # shorter bits, more efficient # tensorsneed to be a multiple of 8 # only savings with high batch size
         output_dir="./output/"
     )
-
-
+def testing():
+    # sentence 1
+    print("sentence 1")
+    test_sent1= preprocess_function(dataset['train'][1])  ##issue too short! müsste viel länger sein, weil der Paragraph auch viel länger ist!
+    print(test_sent1) 
+    print("input_sentence", tokenizer.decode(test_sent1["input_ids"]))
+    print("labels", tokenizer.decode(test_sent1["labels"]))
+    # sentence 2
+    print("sentence 2")
+    test_sent2 = preprocess_function(dataset['train'][2])
+    print(test_sent2)
+    print(tokenizer.decode(test_sent2["input_ids"]))
+    print(tokenizer.decode(test_sent2["labels"]))
+    # sentence 3
+    print("sentence 3")
+    test_sent3 = preprocess_function(dataset['train'][3])
+    print(test_sent3)
+    print(tokenizer.decode(test_sent3["input_ids"]))
+    print(tokenizer.decode(test_sent3["labels"]))
+    # sentence 4
+    print("sentence 4")
+    test_sent4 = preprocess_function(dataset['train'][4])
+    print(test_sent4)
+    print(tokenizer.decode(test_sent4["input_ids"]))
+    print(tokenizer.decode(test_sent4["labels"]))
+    
+    
 # def compute_metrics(eval_preds):
 #     metric = evaluate.load("accuracy", "loss", "BLEU") # perplexity
 #     logits, labels = eval_preds
@@ -161,12 +193,16 @@ if __name__ == '__main__':
     model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, gradient_checkpointing=True, use_cache=False)
     # input_ids, attention_mask, labels = tokenize(dataset?)
     # dataset= get_data_csv()
-    dataset= get_data_txt()
+    dataset= get_data_txt(ASSET_DATASET)
     # print(dataset['herkomst'])
     
     tokenized_datasets = dataset.map(preprocess_function, batched=True) # concatenation only for datasets, we have datasetdict # remove_columns=['herkomst', 'eenvoudig1']
     print(tokenized_datasets)
     
+    time.sleep(10)
+    
+    tests= testing()
+    print(tests)
     data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
     # model_name = model_checkpoint.split("/")[-1]
     trainer = Seq2SeqTrainer(model=model,args=training_args,train_dataset=tokenized_datasets["train"],
@@ -176,6 +212,6 @@ if __name__ == '__main__':
         # compute_metrics=compute_metrics 
         )
     # set_seed(training_args.seed)
-    trainer.train()
-    trainer.evaluate()
-    trainer.save_model('./saved_model')
+    # trainer.train()
+    # trainer.evaluate()
+    # trainer.save_model('./saved_model')
