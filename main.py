@@ -17,7 +17,6 @@ ASSET_DATASET = 'asset_regular'
 def get_data_csv(dataset): 
     # where does the data come from? 
     # aggregated datasets require utf-8 encoding before loading them here, done with notepad++
-    
     file_dict = "./resources/datasets/asset/ASSET_20 lines_DUTCH.csv"
     dataset = load_dataset("csv", data_files=file_dict, delimiter= ';') 
     # dataset = dataset.select_columns('herkomst', 'eenvoudig1')
@@ -40,7 +39,7 @@ def get_data_csv(dataset):
     return dataset
 
 
-def get_data_txt(dataset): 
+def get_data_txt(dataset, rows): 
     # where does the data come from? 
     # aggregated datasets require utf-8 encoding before loading them here, done with notepad++
     if dataset == 'asset_regular': 
@@ -53,9 +52,10 @@ def get_data_txt(dataset):
         dataset_simple = dataset_simple.rename_column("text", "simple")
         print(dataset_simple)
         dataset = concatenate_datasets([dataset_original['train'], dataset_simple['train']], axis=1)
+        dataset= dataset.select(range(rows))
+        print(dataset)
     if dataset == 'wikilarge': 
         file_dict = "./resources/datasets/wikilarge/"
-        
         dataset_original = load_dataset("text", data_dir=file_dict, data_files={"train": "wikilarge.train.complex9999_dutch.txt"})
         dataset_original = dataset_original.rename_column("text", "original")
         print(dataset_original)
@@ -63,6 +63,8 @@ def get_data_txt(dataset):
         dataset_simple = dataset_simple.rename_column("text", "simple")
         print(dataset_simple)
         dataset = concatenate_datasets([dataset_original['train'], dataset_simple['train']], axis=1)
+        dataset= dataset.select(range(rows))
+        print(dataset)
         
    
     # SPLIT: 90% train, 10% test + validation
@@ -139,9 +141,12 @@ training_args = Seq2SeqTrainingArguments(
         # gradient_checkpointing=True,
         # weight_decay= False
         adafactor = True,
+        
+        warmup_steps=5,
+        custom_loss=False,
         # evaluation and logging
         evaluation_strategy = "epoch",
-        save_strategy = "epoch",
+        save_strategy = "no",
         save_total_limit=3,
         logging_strategy="epoch",
         # logging_steps = 1, 
@@ -155,27 +160,27 @@ def testing():
     # sentence 1
     print("sentence 1")
     test_sent1= preprocess_function(dataset['train'][1])  ##issue too short! müsste viel länger sein, weil der Paragraph auch viel länger ist!
-    print(test_sent1) 
-    print("input_sentence", tokenizer.decode(test_sent1["input_ids"]))
-    print("labels", tokenizer.decode(test_sent1["labels"]))
+    # print(test_sent1) 
+    print("input_sentence: ", tokenizer.decode(test_sent1["input_ids"]))
+    print("labels: ", tokenizer.decode(test_sent1["labels"]))
     # sentence 2
     print("sentence 2")
     test_sent2 = preprocess_function(dataset['train'][2])
-    print(test_sent2)
-    print(tokenizer.decode(test_sent2["input_ids"]))
-    print(tokenizer.decode(test_sent2["labels"]))
+    # print(test_sent2)
+    print("input_sentence: ", tokenizer.decode(test_sent2["input_ids"]))
+    print("labels: ", tokenizer.decode(test_sent2["labels"]))
     # sentence 3
     print("sentence 3")
     test_sent3 = preprocess_function(dataset['train'][3])
-    print(test_sent3)
-    print(tokenizer.decode(test_sent3["input_ids"]))
-    print(tokenizer.decode(test_sent3["labels"]))
+    # print(test_sent3)
+    print("input_sentence: ", tokenizer.decode(test_sent3["input_ids"]))
+    print("labels: ", tokenizer.decode(test_sent3["labels"]))
     # sentence 4
     print("sentence 4")
     test_sent4 = preprocess_function(dataset['train'][4])
-    print(test_sent4)
-    print(tokenizer.decode(test_sent4["input_ids"]))
-    print(tokenizer.decode(test_sent4["labels"]))
+    # print(test_sent4)
+    print("input_sentence: ", tokenizer.decode(test_sent4["input_ids"]))
+    print("labels: ", tokenizer.decode(test_sent4["labels"]))
     
     
 # def compute_metrics(eval_preds):
@@ -183,6 +188,11 @@ def testing():
 #     logits, labels = eval_preds
 #     predictions = np.argmax(logits, axis=-1)
 #     return metric.compute(predictions=predictions, references=labels)
+
+def compute_metrics(eval_pred):
+    logits, labels = eval_pred
+    predictions = np.argmax(logits, axis=-1)
+    return metric.compute(predictions=predictions, references=labels)
 
 #gradient accumulation steps inbuilt!
     
@@ -193,25 +203,24 @@ if __name__ == '__main__':
     model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, gradient_checkpointing=True, use_cache=False)
     # input_ids, attention_mask, labels = tokenize(dataset?)
     # dataset= get_data_csv()
-    dataset= get_data_txt(ASSET_DATASET)
+    dataset= get_data_txt(ASSET_DATASET, 50)
     # print(dataset['herkomst'])
     
     tokenized_datasets = dataset.map(preprocess_function, batched=True) # concatenation only for datasets, we have datasetdict # remove_columns=['herkomst', 'eenvoudig1']
     print(tokenized_datasets)
     
-    time.sleep(10)
+    time.sleep(7)
     
     tests= testing()
-    print(tests)
     data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
     # model_name = model_checkpoint.split("/")[-1]
     trainer = Seq2SeqTrainer(model=model,args=training_args,train_dataset=tokenized_datasets["train"],
         eval_dataset=tokenized_datasets["validation"], # should be validation!!
         data_collator=data_collator,
         tokenizer=tokenizer,
-        # compute_metrics=compute_metrics 
+        compute_metrics=compute_metrics 
         )
-    # set_seed(training_args.seed)
-    # trainer.train()
-    # trainer.evaluate()
+    set_seed(training_args.seed)
+    trainer.train()
+    trainer.evaluate()
     # trainer.save_model('./saved_model')
