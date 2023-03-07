@@ -1,8 +1,9 @@
+wandb
+transformers 
 torch 
 numpy
 evaluate
 cuda-python 
-transformers 
 datasets 
 pynvml 
 sentencepiece
@@ -14,8 +15,8 @@ bitsandbytes
 # sacremoses sacrebleu
 
 #optuna ray
-easse@git+https://github.com/feralvam/easse.git@8df369f025a7c927425482e802fb546fd5d06d84
-easse
+# easse@git+https://github.com/feralvam/easse.git@8df369f025a7c927425482e802fb546fd5d06d84
+# easse
 
 # easse@git+git://github.com/feralvam/easse.git@580bba7e1378fc8289c663f864e0487188fe8067
 

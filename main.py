@@ -2,6 +2,7 @@
 # model = model.to(device)
 # model.resize_token_embeddings(len(tokenizer))
 # model = AutoModelForSeq2SeqLM.from_pretrained("./content/drive/My Drive/Transformers/t5-base-dutch") # , from_pt=False)
+import wandb
 from torch import cuda
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
 # , T5ForConditionalGeneration, TrainingArguments
@@ -9,10 +10,12 @@ from datasets import load_dataset, DatasetDict, concatenate_datasets
 import numpy as np
 import evaluate
 import time
+import shutil
 
 WIKILARGE_DATASET = 'wikilarge'
 ASSET_DATASET = 'asset_regular'
-
+WANDB_LOG_MODEL=True
+WANDB_WATCH=all
 
 def get_data_csv(dataset): 
     # where does the data come from? 
@@ -132,23 +135,26 @@ def preprocess_function(examples):
 # model_name = model_checkpoint.split("/")[-1]
 training_args = Seq2SeqTrainingArguments(
        #  f"-{model_name}",
+        report_to = 'wandb', 
         learning_rate=0.001,
-        per_device_train_batch_size=4,
-        per_device_eval_batch_size=4,
+        per_device_train_batch_size=8,
+        per_device_eval_batch_size=8,
         predict_with_generate=True,
-        num_train_epochs=6,
+        num_train_epochs=3,
         gradient_accumulation_steps=4,
         # gradient_checkpointing=True,
         # weight_decay= False
         adafactor = True,
+        seed = 4, 
         warmup_steps=5,
         # evaluation and logging
-        evaluation_strategy = "epoch",
+        evaluation_strategy = "epoch", # needs to remain epoch otherwise no tracking of training loss!
         save_strategy = "epoch",
-        save_total_limit=3,
+        save_total_limit=1,
         logging_strategy="epoch",
         # logging_steps = 1, 
         load_best_model_at_end=True,
+        metric_for_best_model = "eval_loss",
         # use_cache=False,
         push_to_hub=False,
         fp16=False, # True, # shorter bits, more efficient # tensorsneed to be a multiple of 8 # only savings with high batch size
@@ -193,15 +199,50 @@ def testing():
 #     return metric.compute(predictions=predictions, references=labels)
 
 #gradient accumulation steps inbuilt!
+
+
+# from ACCESS Code Martin: 
+# def get_prediction_on_turkcorpus(simplifier, phase):
+#     source_filepath = get_data_filepath('turkcorpus', phase, 'complex')
+#     pred_filepath = get_temp_filepath()
+#     with mute():
+#         simplifier(source_filepath, pred_filepath)
+#     return pred_filepath
+
+
+# def evaluate_simplifier(simplifier, phase):
+#     pred_filepath = get_prediction_on_turkcorpus(simplifier, phase)
+#     pred_filepath = lowercase_file(pred_filepath)
+#     pred_filepath = to_lrb_rrb_file(pred_filepath)
+#     return evaluate_system_output(f'turkcorpus_{phase}_legacy',
+#                                   sys_sents_path=pred_filepath,
+#                                   metrics=['bleu', 'sari_legacy', 'fkgl'],
+#                                   quality_estimation=True)
+
+
+# from evaluate import load
+# sari = load("sari")
+# from evaluate import load
+# sari = load("sari")
+# sources=["About 95 species are currently accepted."]
+# predictions=["About 95 you now get in."]
+# references=[["About 95 species are currently known.","About 95 species are now accepted.","95 species are now accepted."]]
+# sari_score = sari.compute(sources=sources, predictions=predictions, references=references)
+# https://huggingface.co/spaces/evaluate-metric/sari
     
 if __name__ == '__main__':
-    print("Hello World!")
+    wandb.login()
+    # Log metrics with wandb
+    
+    wandb.init(project="dutch_simplification")
+    #wandb.log({'accuracy': train_acc, 'loss': train_loss})
     model_checkpoint = "yhavinga/t5-base-dutch" #"yhavinga/t5-v1.1-base-dutch-cased" #"flax-community/t5-base-dutch"#
     tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
     model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, gradient_checkpointing=True, use_cache=False)
+    wandb.watch(model, log="all")
     # input_ids, attention_mask, labels = tokenize(dataset?)
     # dataset= get_data_csv()
-    dataset= get_data_txt(ASSET_DATASET, 50)
+    dataset= get_data_txt(WIKILARGE_DATASET, 10)
     # print(dataset['herkomst'])
     
     tokenized_datasets = dataset.map(preprocess_function, batched=True) # concatenation only for datasets, we have datasetdict # remove_columns=['herkomst', 'eenvoudig1']
@@ -220,5 +261,23 @@ if __name__ == '__main__':
         )
     set_seed(training_args.seed)
     trainer.train()
+    trainer.save_model('./saved_model')# Loading best model from ./output/checkpoint-10 
     trainer.evaluate()
-    # trainer.save_model('./saved_model')
+    
+    model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
+    # print(model)
+    print('./saved_model/training_args')
+    # let model print learning rate as a cross check
+    # shutil.rmtree('./output')
+    #  wandb.finish()
+
+
+    # GENERATION
+    # load test data
+    # load model
+    # load tokenizer
+    # load weights
+    # dataset= get_data_txt(ASSET_DATASET, 10)
+    # tokenized_datasets = dataset.map(preprocess_function, batched=True) # concatenation only for datasets, we have datasetdict # remove_columns=['herkomst', 'eenvoudig1']
+    # print(tokenized_datasets)
+    

@@ -1,0 +1,215 @@
+2023-03-07 16:57:34,131 INFO    StreamThr :16456 [internal.py:wandb_internal():87] W&B internal server running at pid: 16456, started at: 2023-03-07 16:57:34.131389
+2023-03-07 16:57:34,131 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: status
+2023-03-07 16:57:34,131 INFO    WriterThread:16456 [datastore.py:open_for_write():85] open: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\run-1ae86rcb.wandb
+2023-03-07 16:57:34,131 DEBUG   SenderThread:16456 [sender.py:send():336] send: header
+2023-03-07 16:57:34,178 DEBUG   SenderThread:16456 [sender.py:send():336] send: run
+2023-03-07 16:57:34,595 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: check_version
+2023-03-07 16:57:34,599 INFO    SenderThread:16456 [dir_watcher.py:__init__():216] watching files in: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files
+2023-03-07 16:57:34,600 INFO    SenderThread:16456 [sender.py:_start_run_threads():1067] run started: 1ae86rcb with start time 1678204654.131389
+2023-03-07 16:57:34,600 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: summary_record
+2023-03-07 16:57:34,600 INFO    SenderThread:16456 [sender.py:_save_file():1321] saving file wandb-summary.json with policy end
+2023-03-07 16:57:34,601 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: check_version
+2023-03-07 16:57:34,706 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: run_start
+2023-03-07 16:57:34,722 DEBUG   HandlerThread:16456 [system_info.py:__init__():31] System info init
+2023-03-07 16:57:34,722 DEBUG   HandlerThread:16456 [system_info.py:__init__():46] System info init done
+2023-03-07 16:57:34,722 INFO    HandlerThread:16456 [system_monitor.py:start():151] Starting system monitor
+2023-03-07 16:57:34,722 INFO    SystemMonitor:16456 [system_monitor.py:_start():116] Starting system asset monitoring threads
+2023-03-07 16:57:34,722 INFO    HandlerThread:16456 [system_monitor.py:probe():172] Collecting system info
+2023-03-07 16:57:34,722 DEBUG   HandlerThread:16456 [system_info.py:probe():195] Probing system
+2023-03-07 16:57:34,738 INFO    SystemMonitor:16456 [interfaces.py:start():168] Started cpu
+2023-03-07 16:57:34,738 INFO    SystemMonitor:16456 [interfaces.py:start():168] Started disk
+2023-03-07 16:57:34,738 INFO    SystemMonitor:16456 [interfaces.py:start():168] Started memory
+2023-03-07 16:57:34,753 INFO    SystemMonitor:16456 [interfaces.py:start():168] Started network
+2023-03-07 16:57:34,753 DEBUG   HandlerThread:16456 [system_info.py:_probe_git():180] Probing git
+2023-03-07 16:57:34,844 DEBUG   HandlerThread:16456 [system_info.py:_probe_git():188] Probing git done
+2023-03-07 16:57:34,844 DEBUG   HandlerThread:16456 [system_info.py:probe():241] Probing system done
+2023-03-07 16:57:34,844 DEBUG   HandlerThread:16456 [system_monitor.py:probe():181] {'os': 'Windows-10-10.0.22621-SP0', 'python': '3.10.8', 'heartbeatAt': '2023-03-07T15:57:34.722354', 'startedAt': '2023-03-07T15:57:34.116734', 'docker': None, 'cuda': None, 'args': (), 'state': 'running', 'program': 'c:\\Users\\Theresa\\OneDrive - KU Leuven\\Documents\\GitHub\\simplify_dutch\\main.py', 'codePath': 'main.py', 'git': {'remote': 'https://github.com/tsei902/simplify_dutch.git', 'commit': '6a9fc5ace1ff449a0708cc360a2ac4d68cae8061'}, 'email': '93079818+tsei902@users.noreply.github.com', 'root': 'C:/Users/Theresa/OneDrive - KU Leuven/Documents/GitHub/simplify_dutch', 'host': 'DESKTOP-FBMDQ52', 'username': 'Theresa', 'executable': 'C:\\Users\\Theresa\\AppData\\Local\\Programs\\Python\\Python310\\python.exe', 'cpu_count': 4, 'cpu_count_logical': 8, 'cpu_freq': {'current': 1910.0, 'min': 0.0, 'max': 2112.0}, 'cpu_freq_per_core': [{'current': 1910.0, 'min': 0.0, 'max': 2112.0}], 'disk': {'total': 475.45407485961914, 'used': 180.47583770751953}, 'memory': {'total': 15.881092071533203}}
+2023-03-07 16:57:34,844 INFO    HandlerThread:16456 [system_monitor.py:probe():182] Finished collecting system info
+2023-03-07 16:57:34,844 INFO    HandlerThread:16456 [system_monitor.py:probe():185] Publishing system info
+2023-03-07 16:57:34,844 DEBUG   HandlerThread:16456 [system_info.py:_save_pip():51] Saving list of pip packages installed into the current environment
+2023-03-07 16:57:34,844 DEBUG   HandlerThread:16456 [system_info.py:_save_pip():67] Saving pip packages done
+2023-03-07 16:57:34,860 INFO    HandlerThread:16456 [system_monitor.py:probe():187] Finished publishing system info
+2023-03-07 16:57:34,868 DEBUG   SenderThread:16456 [sender.py:send():336] send: files
+2023-03-07 16:57:34,868 INFO    SenderThread:16456 [sender.py:_save_file():1321] saving file wandb-metadata.json with policy now
+2023-03-07 16:57:34,881 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: stop_status
+2023-03-07 16:57:34,881 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: stop_status
+2023-03-07 16:57:35,046 DEBUG   SenderThread:16456 [sender.py:send():336] send: telemetry
+2023-03-07 16:57:35,453 INFO    wandb-upload_0:16456 [upload_job.py:push():138] Uploaded file C:\Users\Theresa\AppData\Local\Temp\tmpuacipu8zwandb\5w1zeodj-wandb-metadata.json
+2023-03-07 16:57:35,623 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\requirements.txt
+2023-03-07 16:57:35,625 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:35,626 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\wandb-metadata.json
+2023-03-07 16:57:35,627 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_created():275] file/dir created: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\wandb-summary.json
+2023-03-07 16:57:37,644 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:39,660 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:40,048 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: status_report
+2023-03-07 16:57:40,663 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:41,676 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:45,086 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: status_report
+2023-03-07 16:57:46,141 DEBUG   SenderThread:16456 [sender.py:send():336] send: config
+2023-03-07 16:57:46,142 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:46,142 DEBUG   SenderThread:16456 [sender.py:send():336] send: telemetry
+2023-03-07 16:57:46,142 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:46,142 WARNING SenderThread:16456 [sender.py:send_metric():1272] Seen metric with glob (shouldn't happen)
+2023-03-07 16:57:46,142 DEBUG   SenderThread:16456 [sender.py:send():336] send: telemetry
+2023-03-07 16:57:47,738 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:48,754 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:49,906 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: keepalive
+2023-03-07 16:57:49,907 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: keepalive
+2023-03-07 16:57:50,171 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: status_report
+2023-03-07 16:57:52,876 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: partial_history
+2023-03-07 16:57:52,881 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:52,881 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:52,882 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:52,884 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:52,885 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:52,886 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:52,886 DEBUG   SenderThread:16456 [sender.py:send():336] send: history
+2023-03-07 16:57:52,887 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: summary_record
+2023-03-07 16:57:52,890 INFO    SenderThread:16456 [sender.py:_save_file():1321] saving file wandb-summary.json with policy end
+2023-03-07 16:57:53,780 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:53,780 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\wandb-summary.json
+2023-03-07 16:57:54,788 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:55,090 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: keepalive
+2023-03-07 16:57:55,359 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: status_report
+2023-03-07 16:57:55,367 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: partial_history
+2023-03-07 16:57:55,370 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:55,370 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:55,371 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:55,371 DEBUG   SenderThread:16456 [sender.py:send():336] send: metric
+2023-03-07 16:57:55,371 DEBUG   SenderThread:16456 [sender.py:send():336] send: history
+2023-03-07 16:57:55,372 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: summary_record
+2023-03-07 16:57:55,375 INFO    SenderThread:16456 [sender.py:_save_file():1321] saving file wandb-summary.json with policy end
+2023-03-07 16:57:55,803 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:55,803 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\wandb-summary.json
+2023-03-07 16:57:57,799 DEBUG   SenderThread:16456 [sender.py:send():336] send: exit
+2023-03-07 16:57:57,799 INFO    SenderThread:16456 [sender.py:send_exit():559] handling exit code: 0
+2023-03-07 16:57:57,800 INFO    SenderThread:16456 [sender.py:send_exit():561] handling runtime: 23
+2023-03-07 16:57:57,801 INFO    SenderThread:16456 [sender.py:_save_file():1321] saving file wandb-summary.json with policy end
+2023-03-07 16:57:57,802 INFO    SenderThread:16456 [sender.py:send_exit():567] send defer
+2023-03-07 16:57:57,802 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:57:57,802 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 0
+2023-03-07 16:57:57,803 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:57:57,803 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 0
+2023-03-07 16:57:57,803 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 1
+2023-03-07 16:57:57,803 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:57:57,804 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 1
+2023-03-07 16:57:57,804 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:57:57,804 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 1
+2023-03-07 16:57:57,805 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 2
+2023-03-07 16:57:57,805 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:57:57,805 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 2
+2023-03-07 16:57:57,805 INFO    HandlerThread:16456 [system_monitor.py:finish():161] Stopping system monitor
+2023-03-07 16:57:57,806 DEBUG   SystemMonitor:16456 [system_monitor.py:_start():130] Starting system metrics aggregation loop
+2023-03-07 16:57:57,806 DEBUG   SystemMonitor:16456 [system_monitor.py:_start():137] Finished system metrics aggregation loop
+2023-03-07 16:57:57,807 DEBUG   SystemMonitor:16456 [system_monitor.py:_start():141] Publishing last batch of metrics
+2023-03-07 16:57:57,808 INFO    HandlerThread:16456 [interfaces.py:finish():175] Joined cpu
+2023-03-07 16:57:57,808 INFO    HandlerThread:16456 [interfaces.py:finish():175] Joined disk
+2023-03-07 16:57:57,808 INFO    HandlerThread:16456 [interfaces.py:finish():175] Joined memory
+2023-03-07 16:57:57,809 INFO    HandlerThread:16456 [interfaces.py:finish():175] Joined network
+2023-03-07 16:57:57,810 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:57:57,810 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 2
+2023-03-07 16:57:57,811 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 3
+2023-03-07 16:57:57,811 DEBUG   SenderThread:16456 [sender.py:send():336] send: stats
+2023-03-07 16:57:57,811 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:57:57,812 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 3
+2023-03-07 16:57:57,814 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:57:57,814 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 3
+2023-03-07 16:57:57,814 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 4
+2023-03-07 16:57:57,815 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:57:57,815 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 4
+2023-03-07 16:57:57,816 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:57,816 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:57:57,816 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\wandb-summary.json
+2023-03-07 16:57:57,817 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 4
+2023-03-07 16:57:57,817 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 5
+2023-03-07 16:57:57,818 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:57:57,818 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 5
+2023-03-07 16:57:57,819 DEBUG   SenderThread:16456 [sender.py:send():336] send: summary
+2023-03-07 16:57:57,822 INFO    SenderThread:16456 [sender.py:_save_file():1321] saving file wandb-summary.json with policy end
+2023-03-07 16:57:57,823 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:57:57,823 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 5
+2023-03-07 16:57:57,823 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 6
+2023-03-07 16:57:57,824 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:57:57,824 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 6
+2023-03-07 16:57:57,825 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:57:57,825 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 6
+2023-03-07 16:57:57,835 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: status_report
+2023-03-07 16:57:58,107 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 7
+2023-03-07 16:57:58,107 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:57:58,107 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 7
+2023-03-07 16:57:58,108 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:57:58,108 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 7
+2023-03-07 16:57:58,823 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:57:58,823 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\config.yaml
+2023-03-07 16:57:58,823 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\wandb-summary.json
+2023-03-07 16:57:58,840 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: poll_exit
+2023-03-07 16:57:59,830 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:58:00,505 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 8
+2023-03-07 16:58:00,505 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: poll_exit
+2023-03-07 16:58:00,506 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:58:00,506 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 8
+2023-03-07 16:58:00,506 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:58:00,506 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 8
+2023-03-07 16:58:00,521 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 9
+2023-03-07 16:58:00,521 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:58:00,521 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 9
+2023-03-07 16:58:00,521 DEBUG   SenderThread:16456 [sender.py:send():336] send: artifact
+2023-03-07 16:58:00,837 INFO    Thread-17 :16456 [dir_watcher.py:_on_file_modified():292] file/dir modified: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:58:01,418 INFO    SenderThread:16456 [sender.py:send_artifact():1417] sent artifact job-https___github.com_tsei902_simplify_dutch.git_main.py - {'id': 'QXJ0aWZhY3Q6MzkwODM4MzEx', 'digest': '39c9ae0439bd213a910304a3c112b3a0', 'state': 'COMMITTED', 'aliases': [{'artifactCollectionName': 'job-https___github.com_tsei902_simplify_dutch.git_main.py', 'alias': 'latest'}, {'artifactCollectionName': 'job-https___github.com_tsei902_simplify_dutch.git_main.py', 'alias': 'v3'}], 'artifactSequence': {'id': 'QXJ0aWZhY3RDb2xsZWN0aW9uOjU2MTMzMDM2', 'latestArtifact': {'id': 'QXJ0aWZhY3Q6MzkwODM4MzEx', 'versionIndex': 3}}, 'version': 'v3'}
+2023-03-07 16:58:01,418 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:58:01,418 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 9
+2023-03-07 16:58:01,418 INFO    SenderThread:16456 [dir_watcher.py:finish():362] shutting down directory watcher
+2023-03-07 16:58:01,851 INFO    SenderThread:16456 [dir_watcher.py:finish():392] scan: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files
+2023-03-07 16:58:01,851 INFO    SenderThread:16456 [dir_watcher.py:finish():406] scan save: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\config.yaml config.yaml
+2023-03-07 16:58:01,852 INFO    SenderThread:16456 [dir_watcher.py:finish():406] scan save: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log output.log
+2023-03-07 16:58:01,856 INFO    SenderThread:16456 [dir_watcher.py:finish():406] scan save: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\requirements.txt requirements.txt
+2023-03-07 16:58:01,857 INFO    SenderThread:16456 [dir_watcher.py:finish():406] scan save: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\wandb-metadata.json wandb-metadata.json
+2023-03-07 16:58:01,857 INFO    SenderThread:16456 [dir_watcher.py:finish():406] scan save: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\wandb-summary.json wandb-summary.json
+2023-03-07 16:58:01,862 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 10
+2023-03-07 16:58:01,862 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:58:01,862 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 10
+2023-03-07 16:58:01,870 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:58:01,870 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 10
+2023-03-07 16:58:01,871 INFO    SenderThread:16456 [file_pusher.py:finish():162] shutting down file pusher
+2023-03-07 16:58:02,336 INFO    wandb-upload_0:16456 [upload_job.py:push():138] Uploaded file C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\config.yaml
+2023-03-07 16:58:02,386 INFO    wandb-upload_3:16456 [upload_job.py:push():138] Uploaded file C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\wandb-summary.json
+2023-03-07 16:58:02,403 INFO    wandb-upload_2:16456 [upload_job.py:push():138] Uploaded file C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\requirements.txt
+2023-03-07 16:58:02,403 INFO    wandb-upload_1:16456 [upload_job.py:push():138] Uploaded file C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\files\output.log
+2023-03-07 16:58:02,620 INFO    Thread-16 (_thread_body):16456 [sender.py:transition_state():587] send defer: 11
+2023-03-07 16:58:02,621 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:58:02,622 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 11
+2023-03-07 16:58:02,622 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:58:02,622 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 11
+2023-03-07 16:58:02,622 INFO    SenderThread:16456 [file_pusher.py:join():167] waiting for file pusher
+2023-03-07 16:58:02,622 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 12
+2023-03-07 16:58:02,622 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:58:02,622 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 12
+2023-03-07 16:58:02,622 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:58:02,622 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 12
+2023-03-07 16:58:02,790 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 13
+2023-03-07 16:58:02,790 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:58:02,790 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 13
+2023-03-07 16:58:02,790 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:58:02,790 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 13
+2023-03-07 16:58:02,790 INFO    SenderThread:16456 [sender.py:transition_state():587] send defer: 14
+2023-03-07 16:58:02,790 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: defer
+2023-03-07 16:58:02,790 INFO    HandlerThread:16456 [handler.py:handle_request_defer():170] handle defer: 14
+2023-03-07 16:58:02,790 DEBUG   SenderThread:16456 [sender.py:send():336] send: final
+2023-03-07 16:58:02,790 DEBUG   SenderThread:16456 [sender.py:send():336] send: footer
+2023-03-07 16:58:02,790 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: defer
+2023-03-07 16:58:02,790 INFO    SenderThread:16456 [sender.py:send_request_defer():583] handle sender defer: 14
+2023-03-07 16:58:02,803 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: poll_exit
+2023-03-07 16:58:02,804 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: server_info
+2023-03-07 16:58:02,806 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: get_summary
+2023-03-07 16:58:02,806 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: poll_exit
+2023-03-07 16:58:02,806 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: sampled_history
+2023-03-07 16:58:02,806 DEBUG   SenderThread:16456 [sender.py:send_request():363] send_request: server_info
+2023-03-07 16:58:03,007 INFO    MainThread:16456 [wandb_run.py:_footer_history_summary_info():3442] rendering history
+2023-03-07 16:58:03,007 INFO    MainThread:16456 [wandb_run.py:_footer_history_summary_info():3474] rendering summary
+2023-03-07 16:58:03,070 INFO    MainThread:16456 [wandb_run.py:_footer_sync_info():3398] logging synced files
+2023-03-07 16:58:03,070 DEBUG   HandlerThread:16456 [handler.py:handle_request():144] handle_request: shutdown
+2023-03-07 16:58:03,070 INFO    HandlerThread:16456 [handler.py:finish():841] shutting down handler
+2023-03-07 16:58:03,819 INFO    WriterThread:16456 [datastore.py:close():299] close: C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\wandb\run-20230307_165734-1ae86rcb\run-1ae86rcb.wandb
+2023-03-07 16:58:04,018 INFO    SenderThread:16456 [sender.py:finish():1493] shutting down sender
+2023-03-07 16:58:04,019 INFO    SenderThread:16456 [file_pusher.py:finish():162] shutting down file pusher
+2023-03-07 16:58:04,019 INFO    SenderThread:16456 [file_pusher.py:join():167] waiting for file pusher

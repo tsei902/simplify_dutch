@@ -1,0 +1,193 @@
+
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Using custom data configuration default-bdb956b97b5c010b
+Found cached dataset text (C:/Users/Theresa/.cache/huggingface/datasets/text/default-bdb956b97b5c010b/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c)
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 495.84it/s]
+Using custom data configuration default-c45b328b6e81bd65
+Found cached dataset text (C:/Users/Theresa/.cache/huggingface/datasets/text/default-c45b328b6e81bd65/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c)
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 333.33it/s]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 124.36ba/s]
+  0%|                                                                                                                                                                                                        | 0/1 [00:00<?, ?ba/s]
+DatasetDict({
+    train: Dataset({
+        features: ['original'],
+        num_rows: 2000
+    })
+})
+DatasetDict({
+    train: Dataset({
+        features: ['simple'],
+        num_rows: 2000
+    })
+})
+Dataset({
+    features: ['original', 'simple'],
+    num_rows: 10
+})
+DatasetDict({
+    train: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 7
+    })
+    validation: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 2
+    })
+    test: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 1
+    })
+})
+DatasetDict({
+    train: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 7
+    })
+    validation: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 2
+    })
+    test: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 1
+    })
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 247.00ba/s]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 200.04ba/s]
+The following columns in the training set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running training *****
+  Num examples = 7
+  Num Epochs = 3
+  Instantaneous batch size per device = 8
+  Total train batch size (w. parallel, distributed & accumulation) = 32
+  Gradient Accumulation steps = 4
+  Total optimization steps = 3
+Automatic Weights & Biases logging enabled, to disable set os.environ["WANDB_DISABLED"] = "true"
+  0%|                                                                                                                                                                                                        | 0/3 [00:00<?, ?it/s]You're using a T5TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+sentence 1
+input_sentence:  Veel van de kerken werken samen voor stadsbrede projecten onder de vlag van "Kerken Samen in Stevenage".</s>
+labels:  Churches Together in Stevenage zijn de kerken van de stad die als een groep werken.</s>
+sentence 2
+input_sentence:  Jamesons autobiografie, How to Make Love Like a Porn Star: A Cautionary Tale, werd op 17 augustus 2004 gepubliceerd.</s>
+labels:  Jameson's "How to Make Love Like a Porn Star" werd uitgebracht in augustus 2004.</s>
+sentence 3
+input_sentence:  Singles-competitie (2002 - 2003) Na jaren in de tagteam-divisie nam Hardy het op tegen The Undertaker in een ladderwedstrijd voor het Undisputed Championship.</s>
+labels:  Hardy zat eerder in een tagteam en vocht tegen The Undertaker in een ladderwedstrijd om de kampioensriem.</s>
+sentence 4
+input_sentence:  Geschiedenis De gevangenis van Landsberg, die zich in de westelijke buitenwijken van de stad bevindt, werd in 1910 voltooid.</s>
+labels:  De Landsberg-gevangenis werd voltooid in 1910. Het ligt aan de westelijke rand van de stad.</s>
+ 33%|████████████████████████████████████████████████████████████████                                                                                                                                | 1/3 [00:06<00:13,  6.97s/it]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+{'loss': 0.822, 'learning_rate': 0.0002, 'epoch': 1.0}
+{'eval_loss': 2.8775618076324463, 'eval_runtime': 0.1977, 'eval_samples_per_second': 10.115, 'eval_steps_per_second': 5.058, 'epoch': 1.0}
+ 33%|████████████████████████████████████████████████████████████████                                                                                                                                | 1/3 [00:07<00:13,  6.97s/it]Saving model checkpoint to ./output/checkpoint-1
+Configuration saved in ./output/checkpoint-1\config.json
+Model weights saved in ./output/checkpoint-1\pytorch_model.bin
+tokenizer config file saved in ./output/checkpoint-1\tokenizer_config.json
+Special tokens file saved in ./output/checkpoint-1\special_tokens_map.json
+Deleting older checkpoint [output\checkpoint-2] due to args.save_total_limit
+{'loss': 0.8379, 'learning_rate': 0.0004, 'epoch': 2.0}
+{'eval_loss': 2.7234270572662354, 'eval_runtime': 0.2425, 'eval_samples_per_second': 8.248, 'eval_steps_per_second': 4.124, 'epoch': 2.0}
+ 67%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                                                | 2/3 [00:17<00:09,  9.20s/it]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+ 67%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████                                                                | 2/3 [00:17<00:09,  9.20s/it]Saving model checkpoint to ./output/checkpoint-2
+Configuration saved in ./output/checkpoint-2\config.json
+Model weights saved in ./output/checkpoint-2\pytorch_model.bin
+tokenizer config file saved in ./output/checkpoint-2\tokenizer_config.json
+Special tokens file saved in ./output/checkpoint-2\special_tokens_map.json
+Deleting older checkpoint [output\checkpoint-3] due to args.save_total_limit
+{'loss': 0.6437, 'learning_rate': 0.0006, 'epoch': 3.0}
+{'eval_loss': 2.789229393005371, 'eval_runtime': 0.2075, 'eval_samples_per_second': 9.638, 'eval_steps_per_second': 4.819, 'epoch': 3.0}
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:29<00:00, 10.20s/it]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:29<00:00, 10.20s/it]Saving model checkpoint to ./output/checkpoint-3
+Configuration saved in ./output/checkpoint-3\config.json
+Model weights saved in ./output/checkpoint-3\pytorch_model.bin
+tokenizer config file saved in ./output/checkpoint-3\tokenizer_config.json
+Special tokens file saved in ./output/checkpoint-3\special_tokens_map.json
+Deleting older checkpoint [output\checkpoint-1] due to args.save_total_limit
+Training completed. Do not forget to share your model on huggingface.co/models =)
+Loading best model from ./output/checkpoint-2 (score: 2.7234270572662354).
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:32<00:00, 10.68s/it]
+Saving model checkpoint to ./saved_model
+Configuration saved in ./saved_model\config.json
+{'train_runtime': 32.06, 'train_samples_per_second': 0.655, 'train_steps_per_second': 0.094, 'train_loss': 0.767849882443746, 'epoch': 3.0}
+Model weights saved in ./saved_model\pytorch_model.bin
+tokenizer config file saved in ./saved_model\tokenizer_config.json
+Special tokens file saved in ./saved_model\special_tokens_map.json
+The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 64.01it/s]
+loading configuration file ./saved_model\config.json
+Model config T5Config {
+  "_name_or_path": "./saved_model",
+  "architectures": [
+    "T5ForConditionalGeneration"
+  ],
+  "d_ff": 3072,
+  "d_kv": 64,
+  "d_model": 768,
+  "decoder_start_token_id": 0,
+  "dense_act_fn": "relu",
+  "dropout_rate": 0.1,
+  "eos_token_id": 1,
+  "feed_forward_proj": "relu",
+  "initializer_factor": 1.0,
+  "is_encoder_decoder": true,
+  "is_gated_act": false,
+  "layer_norm_epsilon": 1e-06,
+  "model_type": "t5",
+  "n_positions": 512,
+  "num_decoder_layers": 12,
+  "num_heads": 12,
+  "num_layers": 12,
+  "output_past": true,
+  "pad_token_id": 0,
+  "relative_attention_max_distance": 128,
+  "relative_attention_num_buckets": 32,
+  "task_specific_params": {
+    "summarization": {
+      "early_stopping": true,
+      "length_penalty": 2.0,
+      "max_length": 200,
+      "min_length": 30,
+      "no_repeat_ngram_size": 3,
+      "num_beams": 4,
+      "prefix": "summarize: "
+    },
+    "translation_en_to_de": {
+      "early_stopping": true,
+      "max_length": 300,
+      "num_beams": 4,
+      "prefix": "translate English to German: "
+    },
+    "translation_en_to_fr": {
+      "early_stopping": true,
+      "max_length": 300,
+      "num_beams": 4,
+      "prefix": "translate English to French: "
+    },
+    "translation_en_to_ro": {
+      "early_stopping": true,
+      "max_length": 300,
+      "num_beams": 4,
+      "prefix": "translate English to Romanian: "
+    }
+  },
+  "torch_dtype": "float32",
+  "transformers_version": "4.23.1",
+  "use_cache": false,
+  "vocab_size": 32103
+}
+loading weights file ./saved_model\pytorch_model.bin
+All model checkpoint weights were used when initializing T5ForConditionalGeneration.
+All the weights of T5ForConditionalGeneration were initialized from the model checkpoint at ./saved_model.
+If your task is similar to the task the model of the checkpoint was trained on, you can already use T5ForConditionalGeneration for predictions without further training.
+./saved_model/training_args

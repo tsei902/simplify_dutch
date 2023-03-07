@@ -1,0 +1,237 @@
+
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Using custom data configuration default-bdb956b97b5c010b
+Found cached dataset text (C:/Users/Theresa/.cache/huggingface/datasets/text/default-bdb956b97b5c010b/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c)
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 250.00it/s]
+DatasetDict({
+    train: Dataset({
+        features: ['original'],
+        num_rows: 2000
+    })
+})
+DatasetDict({
+    train: Dataset({
+        features: ['simple'],
+        num_rows: 2000
+    })
+})
+Dataset({
+    features: ['original', 'simple'],
+    num_rows: 50
+})
+DatasetDict({
+    train: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 35
+    })
+    validation: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 10
+    })
+    test: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 5
+    })
+})
+DatasetDict({
+    train: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 35
+    })
+    validation: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 10
+    })
+    test: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 5
+    })
+})
+Using custom data configuration default-c45b328b6e81bd65
+Found cached dataset text (C:/Users/Theresa/.cache/huggingface/datasets/text/default-c45b328b6e81bd65/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c)
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 137.16it/s]
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 66.66ba/s]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 142.82ba/s]
+100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 166.84ba/s]
+The following columns in the training set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: simple, original. If simple, original are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running training *****
+  Num examples = 35
+  Num Epochs = 3
+  Instantaneous batch size per device = 8
+  Total train batch size (w. parallel, distributed & accumulation) = 32
+  Gradient Accumulation steps = 4
+  Total optimization steps = 3
+Automatic Weights & Biases logging enabled, to disable set os.environ["WANDB_DISABLED"] = "true"
+  0%|                                                                                                                        | 0/3 [00:00<?, ?it/s]You're using a T5TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+sentence 1
+input_sentence:  Het is vooral beroemd vanwege de teelt van kiwi's.</s>
+labels:  Het staat bekend om het kweken van kiwi's.</s>
+sentence 2
+input_sentence:  Breaking Dawn is de vierde en laatste roman in de Twilight-serie van Stephenie Meyer.</s>
+labels:  Breaking Dawn is de laatste roman in de Twilight-reeks.</s>
+sentence 3
+input_sentence:  Adrastea werd ontdekt door David C. Jewitt en G. Edward Danielson in Voyager 2-sondefoto's gemaakt op 8 juli 1979, en ontving de aanwijzing.</s>
+labels:  Adrastea werd ontdekt door de Voyager 2-foto's gemaakt op 8 juli 1979 en kreeg de titel.</s>
+sentence 4
+input_sentence:  In ruil daarvoor stond Roemenië drie zuidelijke districten van Bessarabië af aan Rusland en verwierf het Dobroedzja.</s>
+labels:  Roemenië liet de districten Bessarabië aan Rusland los en verkreeg Dobroedzja.</s>
+
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [01:51<00:00, 37.84s/it]
+Training completed. Do not forget to share your model on huggingface.co/models =)
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [01:51<00:00, 37.07s/it]
+Saving model checkpoint to ./saved_model
+Configuration saved in ./saved_model\config.json
+{'train_runtime': 111.205, 'train_samples_per_second': 0.944, 'train_steps_per_second': 0.027, 'train_loss': 3.4091192881266275, 'epoch': 2.8}
+Model weights saved in ./saved_model\pytorch_model.bin
+tokenizer config file saved in ./saved_model\tokenizer_config.json
+Special tokens file saved in ./saved_model\special_tokens_map.json
+The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: simple, original. If simple, original are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 10
+  Batch size = 8
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  4.57it/s]Traceback (most recent call last):
+  File "c:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py", line 262, in <module>
+    trainer.evaluate()
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\transformers\trainer_seq2seq.py", line 78, in evaluate
+    return super().evaluate(eval_dataset, ignore_keys=ignore_keys, metric_key_prefix=metric_key_prefix)
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\transformers\trainer.py", line 2774, in evaluate
+    output = eval_loop(
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\transformers\trainer.py", line 3059, in evaluation_loop
+    metrics = self.compute_metrics(EvalPrediction(predictions=all_preds, label_ids=all_labels))
+  File "c:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py", line 209, in compute_metrics
+    return accuracy_metric.compute(predictions=predictions, references=labels)
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\metric.py", line 442, in compute
+    self.add_batch(**inputs)
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\metric.py", line 494, in add_batch
+    batch = self.info.features.encode_batch(batch)
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\features\features.py", line 1778, in encode_batch
+    encoded_batch[key] = [encode_nested_example(self[key], obj) for obj in column]
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\features\features.py", line 1778, in <listcomp>
+    encoded_batch[key] = [encode_nested_example(self[key], obj) for obj in column]
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\features\features.py", line 1222, in encode_nested_example
+    return schema.encode_example(obj) if obj is not None else None
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\features\features.py", line 480, in encode_example
+    return int(value)
+TypeError: only size-1 arrays can be converted to Python scalars
+[31m╭─────────────────────────────── [39m[1mTraceback (most recent call last)[31m[22m ────────────────────────────────╮
+[31m│[39m [33mc:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py[39m:[94m262[39m in [92m<module>[39m    [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   259 │   set_seed(training_args.seed)                                                           [31m│
+[31m│[39m   260 │   trainer.train()                                                                        [31m│
+[31m│[39m   261 │   trainer.save_model([33m'./saved_model'[39m)# Loading best model from ./output/checkpoint-10    [31m│
+[31m│[39m [31m❱ [39m262 │   trainer.evaluate()                                                                     [31m│
+[31m│[39m   263 │                                                                                          [31m│
+[31m│[39m   264 │   model =  AutoModelForSeq2SeqLM.from_pretrained([33m'./saved_model'[39m)                        [31m│
+[31m│[39m   265 │   # print(model)                                                                         [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\transformers\trainer_[39m [31m│
+[31m│[39m [33mseq2seq.py[39m:[94m78[39m in [92mevaluate[39m                                                                        [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m    75 │   │   )                                                                                  [31m│
+[31m│[39m    76 │   │   [96mself[39m._gen_kwargs = gen_kwargs                                                      [31m│
+[31m│[39m    77 │   │                                                                                      [31m│
+[31m│[39m [31m❱ [39m 78 │   │   [94mreturn[39m [96msuper[39m().evaluate(eval_dataset, ignore_keys=ignore_keys, metric_key_prefix   [31m│
+[31m│[39m    79 │                                                                                          [31m│
+[31m│[39m    80 │   [94mdef[39m [92mpredict[39m(                                                                           [31m│
+[31m│[39m    81 │   │   [96mself[39m,                                                                              [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\transformers\trainer.[39m [31m│
+[31m│[39m [33mpy[39m:[94m2774[39m in [92mevaluate[39m                                                                              [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   2771 │   │   start_time = time.time()                                                          [31m│
+[31m│[39m   2772 │   │                                                                                     [31m│
+[31m│[39m   2773 │   │   eval_loop = [96mself[39m.prediction_loop [94mif[39m [96mself[39m.args.use_legacy_prediction_loop [94melse[39m [96mse[39m  [31m│
+[31m│[39m [31m❱ [39m2774 │   │   output = eval_loop(                                                               [31m│
+[31m│[39m   2775 │   │   │   eval_dataloader,                                                              [31m│
+[31m│[39m   2776 │   │   │   description=[33m"Evaluation"[39m,                                                     [31m│
+[31m│[39m   2777 │   │   │   # No point gathering the predictions if there are no metrics, otherwise we d  [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\transformers\trainer.[39m [31m│
+[31m│[39m [33mpy[39m:[94m3059[39m in [92mevaluation_loop[39m                                                                       [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   3056 │   │   │   │   │   EvalPrediction(predictions=all_preds, label_ids=all_labels, inputs=a  [31m│
+[31m│[39m   3057 │   │   │   │   )                                                                         [31m│
+[31m│[39m   3058 │   │   │   [94melse[39m:                                                                         [31m│
+[31m│[39m [31m❱ [39m3059 │   │   │   │   metrics = [96mself[39m.compute_metrics(EvalPrediction(predictions=all_preds, lab  [31m│
+[31m│[39m   3060 │   │   [94melse[39m:                                                                             [31m│
+[31m│[39m   3061 │   │   │   metrics = {}                                                                  [31m│
+[31m│[39m   3062                                                                                           [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mc:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py[39m:[94m209[39m in             [31m│
+[31m│[39m [92mcompute_metrics[39m                                                                                  [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   206 │   predictions, labels = eval_pred                                                        [31m│
+[31m│[39m   207 │   predictions = np.argmax(predictions, axis=[94m1[39m)                                           [31m│
+[31m│[39m   208 │   # metrics from the datasets library have a `compute` method                            [31m│
+[31m│[39m [31m❱ [39m209 │   [94mreturn[39m accuracy_metric.compute(predictions=predictions, references=labels)             [31m│
+[31m│[39m   210                                                                                            [31m│
+[31m│[39m   211 #gradient accumulation steps inbuilt!                                                      [31m│
+[31m│[39m   212                                                                                            [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\metric.py[39m:[94m44[39m [31m│
+[31m│[39m [94m2[39m in [92mcompute[39m                                                                                     [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   439 │   │   compute_kwargs = {k: kwargs[k] [94mfor[39m k [95min[39m kwargs [94mif[39m k [95mnot[39m [95min[39m [96mself[39m.features}          [31m│
+[31m│[39m   440 │   │                                                                                      [31m│
+[31m│[39m   441 │   │   [94mif[39m [96many[39m(v [95mis[39m [95mnot[39m [94mNone[39m [94mfor[39m v [95min[39m inputs.values()):                                    [31m│
+[31m│[39m [31m❱ [39m442 │   │   │   [96mself[39m.add_batch(**inputs)                                                       [31m│
+[31m│[39m   443 │   │   [96mself[39m._finalize()                                                                   [31m│
+[31m│[39m   444 │   │                                                                                      [31m│
+[31m│[39m   445 │   │   [96mself[39m.cache_file_name = [94mNone[39m                                                        [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\metric.py[39m:[94m49[39m [31m│
+[31m│[39m [94m4[39m in [92madd_batch[39m                                                                                   [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   491 │   │   │   [94mraise[39m [96mValueError[39m([33mf"Bad inputs for metric: {[39mbad_inputs[33m}. All required inputs [39m   [31m│
+[31m│[39m   492 │   │   batch = {[33m"predictions"[39m: predictions, [33m"references"[39m: references, **kwargs}           [31m│
+[31m│[39m   493 │   │   batch = {intput_name: batch[intput_name] [94mfor[39m intput_name [95min[39m [96mself[39m.features}         [31m│
+[31m│[39m [31m❱ [39m494 │   │   batch = [96mself[39m.info.features.encode_batch(batch)                                     [31m│
+[31m│[39m   495 │   │   [94mif[39m [96mself[39m.writer [95mis[39m [94mNone[39m:                                                            [31m│
+[31m│[39m   496 │   │   │   [96mself[39m._init_writer()                                                            [31m│
+[31m│[39m   497 │   │   [94mtry[39m:                                                                               [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\features\fea[39m [31m│
+[31m│[39m [33mtures.py[39m:[94m1778[39m in [92mencode_batch[39m                                                                    [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   1775 │   │   │   [94mraise[39m [96mValueError[39m([33mf"Column mismatch between batch {[96mset[39m(batch)[33m} and features {[39m  [31m│
+[31m│[39m   1776 │   │   [94mfor[39m key, column [95min[39m batch.items():                                                 [31m│
+[31m│[39m   1777 │   │   │   column = cast_to_python_objects(column)                                       [31m│
+[31m│[39m [31m❱ [39m1778 │   │   │   encoded_batch[key] = [encode_nested_example([96mself[39m[key], obj) [94mfor[39m obj [95min[39m colum  [31m│
+[31m│[39m   1779 │   │   [94mreturn[39m encoded_batch                                                              [31m│
+[31m│[39m   1780 │                                                                                         [31m│
+[31m│[39m   1781 │   [94mdef[39m [92mdecode_example[39m([96mself[39m, example: [96mdict[39m, token_per_repo_id: Optional[Dict[[96mstr[39m, Union[  [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\features\fea[39m [31m│
+[31m│[39m [33mtures.py[39m:[94m1778[39m in [92m<listcomp>[39m                                                                      [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   1775 │   │   │   [94mraise[39m [96mValueError[39m([33mf"Column mismatch between batch {[96mset[39m(batch)[33m} and features {[39m  [31m│
+[31m│[39m   1776 │   │   [94mfor[39m key, column [95min[39m batch.items():                                                 [31m│
+[31m│[39m   1777 │   │   │   column = cast_to_python_objects(column)                                       [31m│
+[31m│[39m [31m❱ [39m1778 │   │   │   encoded_batch[key] = [encode_nested_example([96mself[39m[key], obj) [94mfor[39m obj [95min[39m colum  [31m│
+[31m│[39m   1779 │   │   [94mreturn[39m encoded_batch                                                              [31m│
+[31m│[39m   1780 │                                                                                         [31m│
+[31m│[39m   1781 │   [94mdef[39m [92mdecode_example[39m([96mself[39m, example: [96mdict[39m, token_per_repo_id: Optional[Dict[[96mstr[39m, Union[  [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\features\fea[39m [31m│
+[31m│[39m [33mtures.py[39m:[94m1222[39m in [92mencode_nested_example[39m                                                           [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   1219 │   # Object with special encoding:                                                       [31m│
+[31m│[39m   1220 │   # ClassLabel will convert from string to int, TranslationVariableLanguages does some  [31m│
+[31m│[39m   1221 │   [94melif[39m [96misinstance[39m(schema, (Audio, Image, ClassLabel, TranslationVariableLanguages, Val  [31m│
+[31m│[39m [31m❱ [39m1222 │   │   [94mreturn[39m schema.encode_example(obj) [94mif[39m obj [95mis[39m [95mnot[39m [94mNone[39m [94melse[39m [94mNone[39m                    [31m│
+[31m│[39m   1223 │   # Other object should be directly convertible to a native Arrow type (like Translati  [31m│
+[31m│[39m   1224 │   [94mreturn[39m obj                                                                            [31m│
+[31m│[39m   1225                                                                                           [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\features\fea[39m [31m│
+[31m│[39m [33mtures.py[39m:[94m480[39m in [92mencode_example[39m                                                                   [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m    477 │   │   [94mif[39m pa.types.is_boolean([96mself[39m.pa_type):                                             [31m│
+[31m│[39m    478 │   │   │   [94mreturn[39m [96mbool[39m(value)                                                            [31m│
+[31m│[39m    479 │   │   [94melif[39m pa.types.is_integer([96mself[39m.pa_type):                                           [31m│
+[31m│[39m [31m❱ [39m 480 │   │   │   [94mreturn[39m [96mint[39m(value)                                                             [31m│
+[31m│[39m    481 │   │   [94melif[39m pa.types.is_floating([96mself[39m.pa_type):                                          [31m│
+[31m│[39m    482 │   │   │   [94mreturn[39m [96mfloat[39m(value)                                                           [31m│
+[31m│[39m    483 │   │   [94melif[39m pa.types.is_string([96mself[39m.pa_type):                                            [31m│
+[31m╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+[1mTypeError: [22monly size-[1m1[22m arrays can be converted to Python scalars

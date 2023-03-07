@@ -1,0 +1,42 @@
+{
+    "os": "Windows-10-10.0.22621-SP0",
+    "python": "3.10.8",
+    "heartbeatAt": "2023-03-07T15:46:32.057549",
+    "startedAt": "2023-03-07T15:46:30.655405",
+    "docker": null,
+    "cuda": null,
+    "args": [],
+    "state": "running",
+    "program": "c:\\Users\\Theresa\\OneDrive - KU Leuven\\Documents\\GitHub\\simplify_dutch\\main.py",
+    "codePath": "main.py",
+    "git": {
+        "remote": "https://github.com/tsei902/simplify_dutch.git",
+        "commit": "6a9fc5ace1ff449a0708cc360a2ac4d68cae8061"
+    },
+    "email": "93079818+tsei902@users.noreply.github.com",
+    "root": "C:/Users/Theresa/OneDrive - KU Leuven/Documents/GitHub/simplify_dutch",
+    "host": "DESKTOP-FBMDQ52",
+    "username": "Theresa",
+    "executable": "C:\\Users\\Theresa\\AppData\\Local\\Programs\\Python\\Python310\\python.exe",
+    "cpu_count": 4,
+    "cpu_count_logical": 8,
+    "cpu_freq": {
+        "current": 1910.0,
+        "min": 0.0,
+        "max": 2112.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 1910.0,
+            "min": 0.0,
+            "max": 2112.0
+        }
+    ],
+    "disk": {
+        "total": 475.45407485961914,
+        "used": 180.4730110168457
+    },
+    "memory": {
+        "total": 15.881092071533203
+    }
+}
