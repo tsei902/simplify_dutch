@@ -141,12 +141,10 @@ training_args = Seq2SeqTrainingArguments(
         # gradient_checkpointing=True,
         # weight_decay= False
         adafactor = True,
-        
         warmup_steps=5,
-        custom_loss=False,
         # evaluation and logging
         evaluation_strategy = "epoch",
-        save_strategy = "no",
+        save_strategy = "epoch",
         save_total_limit=3,
         logging_strategy="epoch",
         # logging_steps = 1, 
@@ -189,10 +187,10 @@ def testing():
 #     predictions = np.argmax(logits, axis=-1)
 #     return metric.compute(predictions=predictions, references=labels)
 
-def compute_metrics(eval_pred):
-    logits, labels = eval_pred
-    predictions = np.argmax(logits, axis=-1)
-    return metric.compute(predictions=predictions, references=labels)
+# def compute_metrics(eval_pred):
+#     logits, labels = eval_pred
+#     predictions = np.argmax(logits, axis=-1)
+#     return metric.compute(predictions=predictions, references=labels)
 
 #gradient accumulation steps inbuilt!
     
@@ -218,7 +216,7 @@ if __name__ == '__main__':
         eval_dataset=tokenized_datasets["validation"], # should be validation!!
         data_collator=data_collator,
         tokenizer=tokenizer,
-        compute_metrics=compute_metrics 
+        # compute_metrics=compute_metrics 
         )
     set_seed(training_args.seed)
     trainer.train()
