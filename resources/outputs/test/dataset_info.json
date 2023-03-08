@@ -2,31 +2,7 @@
   "citation": "",
   "description": "",
   "features": {
-    "orig.dutch": {
-      "dtype": "string",
-      "_type": "Value"
-    },
-    "simp.0.dutch": {
-      "dtype": "string",
-      "_type": "Value"
-    },
-    "simp.1.dutch": {
-      "dtype": "string",
-      "_type": "Value"
-    },
-    "simp.2.dutch": {
-      "dtype": "string",
-      "_type": "Value"
-    },
-    "simp.3.dutch": {
-      "dtype": "string",
-      "_type": "Value"
-    },
-    "simp.4.dutch": {
-      "dtype": "string",
-      "_type": "Value"
-    },
-    "simp.5.dutch": {
+    "__index_level_0__": {
       "dtype": "string",
       "_type": "Value"
     }
