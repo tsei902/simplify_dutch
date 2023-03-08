@@ -11,49 +11,50 @@ import numpy as np
 import evaluate
 import time
 import shutil
+import pandas as pd
+import glob, os
 
 WIKILARGE_DATASET = 'wikilarge'
-ASSET_DATASET = 'asset_regular'
+ASSET_DATASET = "asset"
 WANDB_LOG_MODEL=True
 WANDB_WATCH=all
 
-def get_data_csv(dataset): 
-    # where does the data come from? 
-    # aggregated datasets require utf-8 encoding before loading them here, done with notepad++
-    file_dict = "./resources/datasets/asset/ASSET_20 lines_DUTCH.csv"
-    dataset = load_dataset("csv", data_files=file_dict, delimiter= ';') 
-    # dataset = dataset.select_columns('herkomst', 'eenvoudig1')
-    column_names = 'eenvoudig0', 'eenvoudig2', 'eenvoudig3', 'eenvoudig4'
-    dataset = dataset.remove_columns(column_names) 
-    # dataset = dataset.remove_columns('eenvoudig3', 'eenvoudig4')
+# def get_data_csv(dataset): 
+#     # where does the data come from? 
+#     # aggregated datasets require utf-8 encoding before loading them here, done with notepad++
+#     file_dict = "./resources/datasets/asset/ASSET_20 lines_DUTCH.csv"
+#     dataset = load_dataset("csv", data_files=file_dict, delimiter= ';') 
+#     # dataset = dataset.select_columns('herkomst', 'eenvoudig1')
+#     column_names = 'eenvoudig0', 'eenvoudig2', 'eenvoudig3', 'eenvoudig4'
+#     dataset = dataset.remove_columns(column_names) 
+#     # dataset = dataset.remove_columns('eenvoudig3', 'eenvoudig4')
    
-    # SPLIT: 90% train, 10% test + validation
-    train_testvalid = dataset['train'].train_test_split(test_size=0.3)
+#     # SPLIT: 90% train, 10% test + validation
+#     train_testvalid = dataset['train'].train_test_split(test_size=0.3)
 
-    # Split the 20% test + valid in half test, half valid
-    test_valid = train_testvalid['test'].train_test_split(test_size=0.3)
-    # gather everyone if you want to have a single DatasetDict
-    #print(test_valid)
-    dataset = DatasetDict({
-        'train': train_testvalid['train'],
-        'validation': test_valid['train'],
-        'test': test_valid['test']})
-    print(dataset)
-    return dataset
+#     # Split the 20% test + valid in half test, half valid
+#     test_valid = train_testvalid['test'].train_test_split(test_size=0.3)
+#     # gather everyone if you want to have a single DatasetDict
+#     #print(test_valid)
+#     dataset = DatasetDict({
+#         'train': train_testvalid['train'],
+#         'validation': test_valid['train'],
+#         'test': test_valid['test']})
+#     print(dataset)
+#     return dataset
 
 
 def get_data_txt(dataset, rows): 
     # where does the data come from? 
     # aggregated datasets require utf-8 encoding before loading them here, done with notepad++
-    if dataset == 'asset_regular': 
-        file_dict = "./resources/datasets/asset_regular/"
-        
+    if dataset == 'asset': 
+        file_dict = "./resources/datasets/asset/train"
         dataset_original = load_dataset("text", data_dir=file_dict, data_files={"train": "asset.valid.orig.txt"})
         dataset_original = dataset_original.rename_column("text", "original")
-        print(dataset_original)
+        # print(dataset_original)
         dataset_simple = load_dataset("text", data_dir=file_dict, data_files={"train":"asset.valid.simp.2.txt"})
         dataset_simple = dataset_simple.rename_column("text", "simple")
-        print(dataset_simple)
+        # print(dataset_simple)
         dataset = concatenate_datasets([dataset_original['train'], dataset_simple['train']], axis=1)
         dataset= dataset.select(range(rows))
         print(dataset)
@@ -61,18 +62,16 @@ def get_data_txt(dataset, rows):
         file_dict = "./resources/datasets/wikilarge/"
         dataset_original = load_dataset("text", data_dir=file_dict, data_files={"train": "wikilarge.train.complex9999_dutch.txt"})
         dataset_original = dataset_original.rename_column("text", "original")
-        print(dataset_original)
+        # print(dataset_original)
         dataset_simple = load_dataset("text", data_dir=file_dict, data_files={"train":"wikilarge.train.simple9999_dutch.txt"})
         dataset_simple = dataset_simple.rename_column("text", "simple")
-        print(dataset_simple)
+        # print(dataset_simple)
         dataset = concatenate_datasets([dataset_original['train'], dataset_simple['train']], axis=1)
         dataset= dataset.select(range(rows))
         print(dataset)
-        
    
     # SPLIT: 90% train, 10% test + validation
     train_testvalid = dataset.train_test_split(test_size=0.3)
-
     # Split the 20% test + valid in half test, half valid
     test_valid = train_testvalid['test'].train_test_split(test_size=0.3)
     # gather everyone if you want to have a single DatasetDict
@@ -84,6 +83,50 @@ def get_data_txt(dataset, rows):
     print(dataset)
     return dataset
 
+def get_test_data_txt(dataset, rows): 
+    # where does the data come from? 
+    # aggregated datasets require utf-8 encoding before loading them here, done with notepad++
+    # if dataset == 'asset': 
+    #     file_dict = "./resources/datasets/asset/test"
+        # df = pd.DataFrame()
+        # for fname in glob.glob('*.txt'):
+        #     frame = pd.read_csv(fname) # header fname
+        #     print(fname)
+        #     df = pd.concat([df,frame], axis=1)
+        
+    main_dataframe = pd.DataFrame()       
+    folder_path = "./resources/datasets/asset/test"
+    for f in os.listdir(folder_path):
+        if ('.txt' in f):
+            data = pd.read_csv(f)
+            df = pd.DataFrame(data)
+            main_dataframe = pd.concat([main_dataframe,df],axis=1)
+    print(main_dataframe)
+            
+    #test_dataset= test_dataset.select(range(rows))
+    # print(test_dataset)
+    # return test_dataset
+
+    return main_dataframe       
+        
+       
+
+
+# # importing packages
+# import pandas as pd
+# import glob
+  
+# folder_path = 'Path_of_file/csv_files'
+# file_list = glob.glob(folder_path + "/*.csv")
+# main_dataframe = pd.DataFrame(pd.read_csv(file_list[0]))
+# for i in range(1,len(file_list)):
+#     data = pd.read_csv(file_list[i])
+#     df = pd.DataFrame(data)
+#     main_dataframe = pd.concat([main_dataframe,df],axis=1)
+# print(main_dataframe)
+        
+        
+        
 class T5SimplificationModel():
     
     def __init__(self, **kwarg):
@@ -111,7 +154,6 @@ def preprocess_function(examples):
     # https://medium.com/nlplanet/a-full-guide-to-finetuning-t5-for-text2text-and-building-a-demo-with-streamlit-c72009631887
     max_input_length = 256
     max_target_length = 256
-
     model_inputs = tokenizer(examples['original'], max_length=max_input_length,  truncation=True) #  , padding="max_length") # ,  
     # Setup the tokenizer for targets
     #with tokenizer.as_target_tokenizer():
@@ -160,7 +202,7 @@ training_args = Seq2SeqTrainingArguments(
         fp16=False, # True, # shorter bits, more efficient # tensorsneed to be a multiple of 8 # only savings with high batch size
         output_dir="./output/"
     )
-def testing():
+def encoding_test():
     # sentence 1
     print("sentence 1")
     test_sent1= preprocess_function(dataset['train'][1])  ##issue too short! müsste viel länger sein, weil der Paragraph auch viel länger ist!
@@ -231,48 +273,35 @@ def testing():
 # https://huggingface.co/spaces/evaluate-metric/sari
     
 if __name__ == '__main__':
-    wandb.login()
-    # Log metrics with wandb
-    
-    wandb.init(project="dutch_simplification")
-    #wandb.log({'accuracy': train_acc, 'loss': train_loss})
-    model_checkpoint = "yhavinga/t5-base-dutch" #"yhavinga/t5-v1.1-base-dutch-cased" #"flax-community/t5-base-dutch"#
-    tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, gradient_checkpointing=True, use_cache=False)
-    wandb.watch(model, log="all")
-    # input_ids, attention_mask, labels = tokenize(dataset?)
-    # dataset= get_data_csv()
-    dataset= get_data_txt(WIKILARGE_DATASET, 10)
-    # print(dataset['herkomst'])
-    
-    tokenized_datasets = dataset.map(preprocess_function, batched=True) # concatenation only for datasets, we have datasetdict # remove_columns=['herkomst', 'eenvoudig1']
-    print(tokenized_datasets)
-    
-    time.sleep(7)
-    
-    tests= testing()
-    data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
-    # model_name = model_checkpoint.split("/")[-1]
-    trainer = Seq2SeqTrainer(model=model,args=training_args,train_dataset=tokenized_datasets["train"],
-        eval_dataset=tokenized_datasets["validation"], # should be validation!!
-        data_collator=data_collator,
-        tokenizer=tokenizer,
-        # compute_metrics=compute_metrics 
-        )
-    set_seed(training_args.seed)
-    trainer.train()
-    trainer.save_model('./saved_model')# Loading best model from ./output/checkpoint-10 
-    trainer.evaluate()
-    
-    model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
-    # print(model)
-    print('./saved_model/training_args')
-    # let model print learning rate as a cross check
-    # shutil.rmtree('./output')
-    #  wandb.finish()
-
+    # wandb.login()  
+    # wandb.init(project="dutch_simplification")   #wandb.log({'accuracy': train_acc, 'loss': train_loss})
+    # model_checkpoint = "yhavinga/t5-base-dutch" #"yhavinga/t5-v1.1-base-dutch-cased" #"flax-community/t5-base-dutch"#
+    # tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+    # model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, gradient_checkpointing=True, use_cache=False)
+    # wandb.watch(model, log="all")
+    # dataset= get_data_txt(WIKILARGE_DATASET, 10)    
+    # tokenized_datasets = dataset.map(preprocess_function, batched=True)
+    # print(tokenized_datasets)
+    # time.sleep(7)
+    # tests= encoding_test()
+    # data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
+    # trainer = Seq2SeqTrainer(model=model,args=training_args,train_dataset=tokenized_datasets["train"],
+    #     eval_dataset=tokenized_datasets["validation"], # should be validation!!
+    #     data_collator=data_collator,
+    #     tokenizer=tokenizer,
+    #     # compute_metrics=compute_metrics
+    #     )
+    # set_seed(training_args.seed)
+    # trainer.train()
+    # trainer.save_model('./saved_model')
+    # trainer.evaluate()
+    # model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
+    # # print(model)
+    # print('./saved_model/training_args')
 
     # GENERATION
+    test_dataset = get_test_data_txt(ASSET_DATASET, 10)
+    print(test_dataset)
     # load test data
     # load model
     # load tokenizer

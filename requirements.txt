@@ -9,6 +9,10 @@ pynvml
 sentencepiece
 accelerate 
 bitsandbytes
+pandas
+numpy
+glob2
+shutil
 #  torchtext 
 # evaluate
 # huggingface_hub nltk rouge-score
