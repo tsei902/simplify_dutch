@@ -85,63 +85,63 @@ def get_data_txt(dataset, rows):
     return dataset
 
 def get_test_data_txt(dataset, rows):    
+    # UNfinished, needs improvement
+    # # Permanently changes the pandas settings
+    # # pd.set_option('display.max_rows', None)
+    # # pd.set_option('display.max_columns', None)
+    # # pd.set_option('display.width', None)
+    # # pd.set_option('display.max_colwidth', -1)    
+    # # main_dataframe = pd.DataFrame()       
+    # folder_path = "./resources/datasets/asset/test/"
+    # for f in os.listdir(folder_path):
+    #     df = pd.read_csv("./resources/datasets/asset/test/asset.test.orig.dutch.txt", encoding = 'utf-8')
+    # print(df)
+
+    # # print(test_dataset)
+    # # return test_dataset
+    # # test_dataset = DatasetDict({
+    # #                 'test': Dataset.from_pandas(df)
+    # #             })
+    # # test_dataset.save_to_disk('./resources/outputs/')
+    # # test_dataset= test_dataset['test'].select(range(rows))
+    # # return test_dataset    
+    
+    
+    
+    
+    # READ METHOD
     # Permanently changes the pandas settings
     pd.set_option('display.max_rows', None)
     pd.set_option('display.max_columns', None)
     pd.set_option('display.width', None)
-    # pd.set_option('display.max_colwidth', -1)    
-    # main_dataframe = pd.DataFrame()       
+    pd.set_option('display.max_colwidth', -1)    
+    main_dataframe = pd.DataFrame()       
     folder_path = "./resources/datasets/asset/test/"
-    df = pd.read_csv('asset.test.orig.dutch.txt', encoding = 'utf8')
-    print(df)
-
+    for f in os.listdir(folder_path):
+        if ('.txt' in f):
+            file_path = folder_path+f
+            data = open(file_path).read()
+            print('opened')
+            data = data.split('\n')
+            # data = pd.read_csv(data)
+            df = pd.DataFrame(data)
+            print(df)
+            header= f.replace("asset.test.","").replace("?","")
+            header= header.replace(".txt","").replace("?","")
+            print(header)
+            df.columns = [header]
+            main_dataframe = pd.concat([main_dataframe,df],axis=1)
+    print(main_dataframe.head(20))
+    # os.makedirs('./resources/outputs', exist_ok=True)  
+    main_dataframe.to_csv('./resources/outputs/out.csv', encoding='utf-8')  
     # print(test_dataset)
     # return test_dataset
     test_dataset = DatasetDict({
-                    'test': Dataset.from_pandas(df)
+                    'test': Dataset.from_pandas(main_dataframe)
                 })
     test_dataset.save_to_disk('./resources/outputs/')
     test_dataset= test_dataset['test'].select(range(rows))
-    return test_dataset    
-    
-    
-    
-    
-    
-    
-    #READ METHOD
-    # # Permanently changes the pandas settings
-    # pd.set_option('display.max_rows', None)
-    # pd.set_option('display.max_columns', None)
-    # pd.set_option('display.width', None)
-    # pd.set_option('display.max_colwidth', -1)    
-    # main_dataframe = pd.DataFrame()       
-    # folder_path = "./resources/datasets/asset/test/"
-    # for f in os.listdir(folder_path):
-    #     if ('.txt' in f):
-    #         file_path = folder_path+f
-    #         data = open(file_path).read()
-    #         print('opened')
-    #         data = data.split('\n')
-    #         # data = pd.read_csv(data)
-    #         df = pd.DataFrame(data)
-    #         print(df)
-    #         header= f.replace("asset.test.","").replace("?","")
-    #         header= header.replace(".txt","").replace("?","")
-    #         print(header)
-    #         df.columns = [header]
-    #         main_dataframe = pd.concat([main_dataframe,df],axis=1)
-    # print(main_dataframe.head(20))
-    # # os.makedirs('./resources/outputs', exist_ok=True)  
-    # main_dataframe.to_csv('./resources/outputs/out.csv', encoding='utf-8')  
-    # # print(test_dataset)
-    # # return test_dataset
-    # test_dataset = DatasetDict({
-    #                 'test': Dataset.from_pandas(main_dataframe)
-    #             })
-    # test_dataset.save_to_disk('./resources/outputs/')
-    # test_dataset= test_dataset['test'].select(range(rows))
-    # return test_dataset     
+    return test_dataset     
     
     
     # TRYOUT DATALOADER FROM HF
