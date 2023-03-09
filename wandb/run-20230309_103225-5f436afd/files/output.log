@@ -1,0 +1,135 @@
+
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Traceback (most recent call last):
+  File "c:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py", line 263, in <module>
+    dataset= get_data_txt(WIKILARGE_DATASET, 10)
+  File "c:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py", line 66, in get_data_txt
+    dataset_original = load_dataset("text", data_dir=file_dict, data_files={"train": "wikilarge.train.complex9999_dutch.txt"})
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\load.py", line 1718, in load_dataset
+    builder_instance = load_dataset_builder(
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\load.py", line 1488, in load_dataset_builder
+    dataset_module = dataset_module_factory(
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\load.py", line 1134, in dataset_module_factory
+    ).get_module()
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\load.py", line 707, in get_module
+    data_files = DataFilesDict.from_local_or_remote(
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\data_files.py", line 796, in from_local_or_remote
+    DataFilesList.from_local_or_remote(
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\data_files.py", line 764, in from_local_or_remote
+    data_files = resolve_patterns_locally_or_by_urls(base_path, patterns, allowed_extensions)
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\data_files.py", line 362, in resolve_patterns_locally_or_by_urls
+    for path in _resolve_single_pattern_locally(base_path, pattern, allowed_extensions):
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\data_files.py", line 306, in _resolve_single_pattern_locally
+    raise FileNotFoundError(error_msg)
+FileNotFoundError: Unable to find 'C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\resources\datasets\wikilarge\wikilarge.train.complex9999_dutch.txt' at C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\resources\datasets\wikilarge
+[31m╭─────────────────────────────── [39m[1mTraceback (most recent call last)[31m[22m ────────────────────────────────╮
+[31m│[39m [33mc:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py[39m:[94m263[39m in [92m<module>[39m    [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   260 │   tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)                            [31m│
+[31m│[39m   261 │   model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, gradient_checkpointi   [31m│
+[31m│[39m   262 │   wandb.watch(model, log=[33m"all"[39m)                                                          [31m│
+[31m│[39m [31m❱ [39m263 │   dataset= get_data_txt(WIKILARGE_DATASET, [94m10[39m)                                           [31m│
+[31m│[39m   264 │   [96mprint[39m(dataset[[33m'train'[39m][[94m3[39m])                                                             [31m│
+[31m│[39m   265 │   tokenized_datasets = dataset.map(preprocess_function, batched=[94mTrue[39m)                    [31m│
+[31m│[39m   266 │   [96mprint[39m(tokenized_datasets)                                                              [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mc:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py[39m:[94m66[39m in [92mget_data_txt[39m [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m    63 │   │   [96mprint[39m(dataset)                                                                     [31m│
+[31m│[39m    64 │   [94mif[39m dataset == [33m'wikilarge'[39m:                                                             [31m│
+[31m│[39m    65 │   │   file_dict = [33m"./resources/datasets/wikilarge/"[39m                                      [31m│
+[31m│[39m [31m❱ [39m 66 │   │   dataset_original = load_dataset([33m"text"[39m, data_dir=file_dict, data_files={[33m"train"[39m:   [31m│
+[31m│[39m    67 │   │   dataset_original = dataset_original.rename_column([33m"text"[39m, [33m"original"[39m)              [31m│
+[31m│[39m    68 │   │   # print(dataset_original)                                                          [31m│
+[31m│[39m    69 │   │   dataset_simple = load_dataset([33m"text"[39m, data_dir=file_dict, data_files={[33m"train"[39m:[33m"w[39m   [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\load.py[39m:[94m1718[39m [31m│
+[31m│[39m in [92mload_dataset[39m                                                                                  [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   1715 │   ignore_verifications = ignore_verifications [95mor[39m save_infos                             [31m│
+[31m│[39m   1716 │                                                                                         [31m│
+[31m│[39m   1717 │   # Create a dataset builder                                                            [31m│
+[31m│[39m [31m❱ [39m1718 │   builder_instance = load_dataset_builder(                                              [31m│
+[31m│[39m   1719 │   │   path=path,                                                                        [31m│
+[31m│[39m   1720 │   │   name=name,                                                                        [31m│
+[31m│[39m   1721 │   │   data_dir=data_dir,                                                                [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\load.py[39m:[94m1488[39m [31m│
+[31m│[39m in [92mload_dataset_builder[39m                                                                          [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   1485 │   [94mif[39m use_auth_token [95mis[39m [95mnot[39m [94mNone[39m:                                                        [31m│
+[31m│[39m   1486 │   │   download_config = download_config.copy() [94mif[39m download_config [94melse[39m DownloadConfig(  [31m│
+[31m│[39m   1487 │   │   download_config.use_auth_token = use_auth_token                                   [31m│
+[31m│[39m [31m❱ [39m1488 │   dataset_module = dataset_module_factory(                                              [31m│
+[31m│[39m   1489 │   │   path,                                                                             [31m│
+[31m│[39m   1490 │   │   revision=revision,                                                                [31m│
+[31m│[39m   1491 │   │   download_config=download_config,                                                  [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\load.py[39m:[94m1134[39m [31m│
+[31m│[39m in [92mdataset_module_factory[39m                                                                        [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   1131 │   │   │   data_files=data_files,                                                        [31m│
+[31m│[39m   1132 │   │   │   download_config=download_config,                                              [31m│
+[31m│[39m   1133 │   │   │   download_mode=download_mode,                                                  [31m│
+[31m│[39m [31m❱ [39m1134 │   │   ).get_module()                                                                    [31m│
+[31m│[39m   1135 │   # Try locally                                                                         [31m│
+[31m│[39m   1136 │   [94melif[39m path.endswith(filename):                                                         [31m│
+[31m│[39m   1137 │   │   [94mif[39m os.path.isfile(path):                                                          [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\load.py[39m:[94m707[39m  [31m│
+[31m│[39m in [92mget_module[39m                                                                                    [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m    704 │   │   patterns = (                                                                      [31m│
+[31m│[39m    705 │   │   │   sanitize_patterns([96mself[39m.data_files) [94mif[39m [96mself[39m.data_files [95mis[39m [95mnot[39m [94mNone[39m [94melse[39m get_d  [31m│
+[31m│[39m    706 │   │   )                                                                                 [31m│
+[31m│[39m [31m❱ [39m 707 │   │   data_files = DataFilesDict.from_local_or_remote(                                  [31m│
+[31m│[39m    708 │   │   │   patterns,                                                                     [31m│
+[31m│[39m    709 │   │   │   use_auth_token=[96mself[39m.download_config.use_auth_token,                           [31m│
+[31m│[39m    710 │   │   │   base_path=base_path,                                                          [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\data_files.p[39m [31m│
+[31m│[39m [33my[39m:[94m796[39m in [92mfrom_local_or_remote[39m                                                                    [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   793 │   │   out = [96mcls[39m()                                                                        [31m│
+[31m│[39m   794 │   │   [94mfor[39m key, patterns_for_key [95min[39m patterns.items():                                     [31m│
+[31m│[39m   795 │   │   │   out[key] = (                                                                   [31m│
+[31m│[39m [31m❱ [39m796 │   │   │   │   DataFilesList.from_local_or_remote(                                        [31m│
+[31m│[39m   797 │   │   │   │   │   patterns_for_key,                                                      [31m│
+[31m│[39m   798 │   │   │   │   │   base_path=base_path,                                                   [31m│
+[31m│[39m   799 │   │   │   │   │   allowed_extensions=allowed_extensions,                                 [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\data_files.p[39m [31m│
+[31m│[39m [33my[39m:[94m764[39m in [92mfrom_local_or_remote[39m                                                                    [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   761 │   │   use_auth_token: Optional[Union[[96mbool[39m, [96mstr[39m]] = [94mNone[39m,                                 [31m│
+[31m│[39m   762 │   ) -> [33m"DataFilesList"[39m:                                                                  [31m│
+[31m│[39m   763 │   │   base_path = base_path [94mif[39m base_path [95mis[39m [95mnot[39m [94mNone[39m [94melse[39m [96mstr[39m(Path().resolve())          [31m│
+[31m│[39m [31m❱ [39m764 │   │   data_files = resolve_patterns_locally_or_by_urls(base_path, patterns, allowed_ex   [31m│
+[31m│[39m   765 │   │   origin_metadata = _get_origin_metadata_locally_or_by_urls(data_files, use_auth_t   [31m│
+[31m│[39m   766 │   │   [94mreturn[39m [96mcls[39m(data_files, origin_metadata)                                            [31m│
+[31m│[39m   767                                                                                            [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\data_files.p[39m [31m│
+[31m│[39m [33my[39m:[94m362[39m in [92mresolve_patterns_locally_or_by_urls[39m                                                     [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   359 │   │   [94mif[39m is_remote_url(pattern):                                                         [31m│
+[31m│[39m   360 │   │   │   data_files.append(Url(pattern))                                                [31m│
+[31m│[39m   361 │   │   [94melse[39m:                                                                              [31m│
+[31m│[39m [31m❱ [39m362 │   │   │   [94mfor[39m path [95min[39m _resolve_single_pattern_locally(base_path, pattern, allowed_exte   [31m│
+[31m│[39m   363 │   │   │   │   data_files.append(path)                                                    [31m│
+[31m│[39m   364 │                                                                                          [31m│
+[31m│[39m   365 │   [94mif[39m [95mnot[39m data_files:                                                                     [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\data_files.p[39m [31m│
+[31m│[39m [33my[39m:[94m306[39m in [92m_resolve_single_pattern_locally[39m                                                         [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   303 │   │   error_msg = [33mf"Unable to find '{[39mpattern[33m}' at {[39mPath(base_path).resolve()[33m}"[39m           [31m│
+[31m│[39m   304 │   │   [94mif[39m allowed_extensions [95mis[39m [95mnot[39m [94mNone[39m:                                                 [31m│
+[31m│[39m   305 │   │   │   error_msg += [33mf" with any supported extension {[96mlist[39m(allowed_extensions)[33m}"[39m       [31m│
+[31m│[39m [31m❱ [39m306 │   │   [94mraise[39m [96mFileNotFoundError[39m(error_msg)                                                 [31m│
+[31m│[39m   307 │   [94mreturn[39m [96msorted[39m(out)                                                                     [31m│
+[31m│[39m   308                                                                                            [31m│
+[31m│[39m   309                                                                                            [31m│
+[31m╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+[1mFileNotFoundError: [22mUnable to find [32m'C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\resources\datasets\wikilarge\wikilarge.train.complex9999_dutch.txt'[39m at
+C:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\resources\datasets\wikilarge

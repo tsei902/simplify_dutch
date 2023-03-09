@@ -97,77 +97,17 @@ def get_test_data_txt(dataset, rows):
     folder_path = "./resources/datasets/asset/test/"
     for f in os.listdir(folder_path):
         if ('.txt' in f):
-            # df = pd.read_csv('./resources/datasets/asset/test/asset.test.simp.1.dutch.txt', encoding = 'utf8',sep="\t")  #,  error_bad_lines = False)
-            df = pd.read_csv(f"{folder_path}{f}", encoding = 'utf8',sep="\t", index_col=0)  #,  error_bad_lines = False)
-            # df.reset_index(drop=True, inplace=True)
-            
             header= f.replace("asset.test.","").replace("?","")
             header= header.replace(".txt","").replace("?","")
-            print(header)
-            print(df)
-            df.columns = [header]
-            df.to_csv('./resources/outputs/out_df.csv', encoding='utf8') 
+            # header= header.replace("''","").replace("?","")
+            df = pd.read_csv(f"{folder_path}{f}", encoding = 'utf8',sep="\t",header= 0, names=[header]) # ,  index_col=0, )  #,  error_bad_lines = False)
+            df.to_csv('./resources/outputs/test/out_df.csv', encoding='utf8') 
             main_dataframe = pd.concat([main_dataframe,df],axis=1)
-    print(main_dataframe.head(20))
-    # os.makedirs('./resources/outputs', exist_ok=True)  
-    main_dataframe.to_csv('./resources/outputs/out.csv', encoding='utf8')  
-    # print(test_dataset)
-    # return test_dataset
+    main_dataframe.to_csv('./resources/outputs/test/out_main_dataframe.csv', encoding='utf8')  
+    # ALTERNATIVE: store in list and then add
     test_dataset = DatasetDict({'test': Dataset.from_pandas(main_dataframe)})
-    test_dataset.save_to_disk('./resources/outputs/')
     test_dataset= test_dataset['test'].select(range(rows))
-    return test_dataset        
-    
-    
-    # READ METHOD
-    # Permanently changes the pandas settings
-    # pd.set_option('display.max_rows', None)
-    # pd.set_option('display.max_columns', None)
-    # pd.set_option('display.width', None)
-    # pd.set_option('display.max_colwidth', -1)    
-    # main_dataframe = pd.DataFrame()       
-    # folder_path = "./resources/datasets/asset/test/"
-    # for f in os.listdir(folder_path):
-    #     if ('.txt' in f):
-    #         file_path = folder_path+f
-    #         data = open(file_path).read()
-    #         print('opened')
-    #         data = data.split('\n')
-    #         # data = pd.read_csv(data)
-    #         df = pd.DataFrame(data)
-    #         # print(df)
-    #         header= f.replace("asset.test.","").replace("?","")
-    #         header= header.replace(".txt","").replace("?","")
-    #         print(header)
-    #         df.columns = [header]
-    #         main_dataframe = pd.concat([main_dataframe,df],axis=1)
-    # print(main_dataframe.head(20))
-    # # os.makedirs('./resources/outputs', exist_ok=True)  
-    # main_dataframe.to_csv('./resources/outputs/out.csv', encoding='utf8')  
-    # # print(test_dataset)
-    # # return test_dataset
-    # test_dataset = DatasetDict({
-    #                 'test': Dataset.from_pandas(main_dataframe)
-    #             })
-    # test_dataset.save_to_disk('./resources/outputs/')
-    # test_dataset= test_dataset['test'].select(range(rows))
-    # return test_dataset     
-    
-    #    
-    #     # TRYOUT DATALOADER FROM HF
-    #     main_dataset = Dataset()
-    #     folder_path = "./resources/datasets/asset/test/"
-    #     for f in os.listdir(folder_path):
-    #        if ('.txt' in f):  
-    #             file_path = folder_path+f
-    #             dataset{f} = load_dataset("text", data_dir=folder_path, data_files={"test":f})
-    #             header= f.replace("asset.test.","").replace("?","")
-    #             header= header.replace(".txt","").replace("?","")
-    #             print(header)
-    #             dataset = dataset.rename_column("text", header)
-    #     main_dataset = concatenate_datasets([main_dataset, dataset])
-    #     print(main_dataset)
-        
+    return test_dataset               
         
 class T5SimplificationModel():
     
@@ -175,7 +115,6 @@ class T5SimplificationModel():
         # """ Simplification Pytorch lightning module """
         # super(T5SimplificationModel, self).__init__()
         # self.save_hyperparameters()
-        
         model_checkpoint =   "yhavinga/t5-base-dutch" #"yhavinga/t5-v1.1-base-dutch-cased" #"flax-community/t5-base-dutch"#
     
         self.tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
@@ -190,7 +129,6 @@ class T5SimplificationModel():
         
 def get_device():
     return 'cuda' if cuda.is_available() else 'cpu'
-
 
 def preprocess_function(examples):
     # https://medium.com/nlplanet/a-full-guide-to-finetuning-t5-for-text2text-and-building-a-demo-with-streamlit-c72009631887
@@ -270,6 +208,40 @@ def encoding_test():
     print("input_sentence: ", tokenizer.decode(test_sent4["input_ids"]))
     print("labels: ", tokenizer.decode(test_sent4["labels"]))
     
+def generate(test_dataset, trained_model, tokenizer):
+    input_ids =  tokenizer(test_dataset['orig.dutch'][2], return_tensors="pt").input_ids
+    print('original: ', test_dataset['orig.dutch'][2])
+    # afterwards simplified sentences need tokenization as well 
+    # print(len(orig_sent.split()), " words")
+    output = trained_model.generate(
+            input_ids, 
+            do_sample=False, # sampling method makes errors 
+            # min_new_tokens=13,
+            max_new_tokens=40, # longer is better!! # max_target_length, #128 # countOfWords as alternative
+            # doesnt work?  
+            # top_k=0, # either temperature or top_k
+            # temperature=0.7,  # more weight to powerful tokens
+            # # remove_invalid_values=True
+            # num_beams = 8,# preset
+            # early_stopping= True,
+            # length_penalty= 2.0,
+            # top_p=0.9, # top p of probability distribution
+            # top_k=2,
+            # temperature=0.8,
+            # min_length= 30,
+            # no_repeat_ngram_size= 3,
+            num_beams= 4,
+            )
+  
+    simplification = tokenizer.decode(output.squeeze(), skip_special_tokens=False)
+    with open("simplification.txt", "w") as f:
+        for word in simplification:
+            f.write(word)
+    lensimpl = len(simplification.split())
+    print(lensimpl, " words")
+    simplification.replace('. ', '.\n')
+    
+    return simplification
     
 # def compute_metrics(eval_preds):
 #     metric = evaluate.load("accuracy", "loss", "BLEU") # perplexity
@@ -321,8 +293,8 @@ if __name__ == '__main__':
     # tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
     # model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, gradient_checkpointing=True, use_cache=False)
     # wandb.watch(model, log="all")
-    dataset= get_data_txt(WIKILARGE_DATASET, 10)  
-    print(dataset['train'][3])  
+    # dataset= get_data_txt(WIKILARGE_DATASET, 10)  
+    # print(dataset['train'][3])  
     # tokenized_datasets = dataset.map(preprocess_function, batched=True)
     # print(tokenized_datasets)
     # time.sleep(7)
@@ -338,19 +310,17 @@ if __name__ == '__main__':
     # trainer.train()
     # trainer.save_model('./saved_model')
     # trainer.evaluate()
-    # model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
-    # # print(model)
-    # print('./saved_model/training_args')
+    trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
+    tokenizer = AutoTokenizer.from_pretrained('./saved_model')
+    # print(model)
+    print('./saved_model/training_args')
+    
 
     # GENERATION
-    test_dataset = get_test_data_txt(ASSET_DATASET, 30)
+    test_dataset = get_test_data_txt(ASSET_DATASET, 10)
     print(test_dataset)
-    print(test_dataset[29])
-    print(test_dataset[13])
-    print(test_dataset[23])
-    # load test data
-    # load model
-    # load tokenizer
+    generated_dataset= generate(test_dataset, trained_model, tokenizer)
+    print(generated_dataset)
     # load weights
     # dataset= get_data_txt(ASSET_DATASET, 10)
     # tokenized_datasets = dataset.map(preprocess_function, batched=True) # concatenation only for datasets, we have datasetdict # remove_columns=['herkomst', 'eenvoudig1']

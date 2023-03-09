@@ -1,0 +1,209 @@
+
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Downloading and preparing dataset text/default to C:/Users/Theresa/.cache/huggingface/datasets/text/default-676fdc30aba0fb05/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c...
+Dataset text downloaded and prepared to C:/Users/Theresa/.cache/huggingface/datasets/text/default-676fdc30aba0fb05/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c. Subsequent calls will reuse this data.
+Downloading and preparing dataset text/default to C:/Users/Theresa/.cache/huggingface/datasets/text/default-85991f29232d42b3/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c...
+Dataset text downloaded and prepared to C:/Users/Theresa/.cache/huggingface/datasets/text/default-85991f29232d42b3/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c. Subsequent calls will reuse this data.
+Dataset({
+    features: ['original', 'simple'],
+    num_rows: 10
+})
+DatasetDict({
+    train: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 7
+    })
+    validation: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 2
+    })
+    test: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 1
+    })
+})
+{'original': "Ka La Ku'oko'a (Hawaïaanse onafhankelijkheidsdag): Het koninkrijk Hawai'i wordt officieel erkend door het Verenigd Koninkrijk van Groot-Brittannië en Ierland en de Julimonarchie Frankrijk als een onafhankelijke natie.", 'simple': "28 november - Ka La Ku'oko'a: Hawaiiaanse onafhankelijkheidsdag. Het koninkrijk Hawaï werd officieel erkend door het Verenigd Koninkrijk en Frankrijk als een onafhankelijke natie."}
+DatasetDict({
+    train: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 7
+    })
+    validation: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 2
+    })
+    test: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 1
+    })
+})
+Using custom data configuration default-676fdc30aba0fb05
+Downloading data files: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 998.41it/s]
+Extracting data files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 200.08it/s]
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 63.96it/s]
+Using custom data configuration default-85991f29232d42b3
+Downloading data files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<?, ?it/s]
+Extracting data files: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 249.68it/s]
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 100.19it/s]
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 83.32ba/s]
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 125.06ba/s]
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 249.23ba/s]
+sentence 1
+input_sentence:  Voordat Persephone werd vrijgelaten aan Hermes, die was gestuurd om haar terug te halen, had Hades haar misleid om granaatappelpitjes te eten (zes of drie volgens de overlevering), wat haar dwong voor een periode van elk jaar terug te keren naar de onderwereld.</s>
+labels:  Toen Demeter naar de onderwereld ging om haar Persephone te redden, dwong Hades Persephone om de granaatappel te eten. Nadat ze van deze vrucht had gegeten, moest het haar in de onderwereld met Hades houden, zodat ze gedwongen zou worden met hem te trouwen.</s>
+sentence 2
+input_sentence:  Er is manuscriptbewijs dat Austen tot in de periode 1809-11 aan deze stukken bleef werken, en dat haar nicht en neef, Anna en James Edward Austen, tot in 1814 verdere toevoegingen maakten.</s>
+labels:  Er zijn aanwijzingen dat Austen later in zijn leven aan deze stukken bleef werken. Haar neef en nicht, James Edward en Anna Austen, hebben rond 1814 mogelijk nog meer aan haar werk toegevoegd.</s>
+sentence 3
+input_sentence:  Ka La Ku'oko'a (Hawaïaanse onafhankelijkheidsdag): Het koninkrijk Hawai'i wordt officieel erkend door het Verenigd Koninkrijk van Groot-Brittannië en Ierland en de Julimonarchie Frankrijk als een onafhankelijke natie.</s>
+labels:  28 november - Ka La Ku'oko'a: Hawaiiaanse onafhankelijkheidsdag. Het koninkrijk Hawaï werd officieel erkend door het Verenigd Koninkrijk en Frankrijk als een onafhankelijke natie.</s>
+sentence 4
+input_sentence:  Warmtekrachtkoppelingsinstallaties worden vaak aangetroffen in stadsverwarmingssystemen van steden, ziekenhuizen, gevangenissen, olieraffinaderijen, papierfabrieken, afvalwaterzuiveringsinstallaties, thermisch verbeterde oliewinningsbronnen en industriële installaties met grote verwarmingsbehoeften.</s>
+labels:  Warmtekrachtkoppelingsinstallaties worden vaak aangetroffen in stadsverwarmingssystemen van grote steden, ziekenhuizen, gevangenissen, olieraffinaderijen, papierfabrieken, afvalwaterzuiveringsinstallaties, thermisch verbeterde oliewinningsbronnen en industriële installaties met grote verwarmingsbehoeften.</s>
+The following columns in the training set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running training *****
+  Num examples = 7
+  Num Epochs = 3
+  Instantaneous batch size per device = 8
+  Total train batch size (w. parallel, distributed & accumulation) = 32
+  Gradient Accumulation steps = 4
+  Total optimization steps = 3
+Automatic Weights & Biases logging enabled, to disable set os.environ["WANDB_DISABLED"] = "true"
+  0%|                                                                                                                                                                  | 0/3 [00:00<?, ?it/s]You're using a T5TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+{'loss': 0.9068, 'learning_rate': 0.0002, 'epoch': 1.0}
+{'eval_loss': 3.631378173828125, 'eval_runtime': 0.4741, 'eval_samples_per_second': 4.218, 'eval_steps_per_second': 2.109, 'epoch': 1.0}
+ 33%|███████████████████████████████████████████████████▎                                                                                                      | 1/3 [00:09<00:18,  9.16s/it]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+ 33%|███████████████████████████████████████████████████▎                                                                                                      | 1/3 [00:09<00:18,  9.16s/it]Saving model checkpoint to ./output/checkpoint-1
+Configuration saved in ./output/checkpoint-1\config.json
+Model weights saved in ./output/checkpoint-1\pytorch_model.bin
+tokenizer config file saved in ./output/checkpoint-1\tokenizer_config.json
+Special tokens file saved in ./output/checkpoint-1\special_tokens_map.json
+Deleting older checkpoint [output\checkpoint-2] due to args.save_total_limit
+{'loss': 0.8688, 'learning_rate': 0.0004, 'epoch': 2.0}
+ 67%|██████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                   | 2/3 [00:23<00:12, 12.35s/it]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+{'eval_loss': 2.898861885070801, 'eval_runtime': 0.6207, 'eval_samples_per_second': 3.222, 'eval_steps_per_second': 1.611, 'epoch': 2.0}
+ 67%|██████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                   | 2/3 [00:24<00:12, 12.35s/it]Saving model checkpoint to ./output/checkpoint-2
+Configuration saved in ./output/checkpoint-2\config.json
+Model weights saved in ./output/checkpoint-2\pytorch_model.bin
+tokenizer config file saved in ./output/checkpoint-2\tokenizer_config.json
+Special tokens file saved in ./output/checkpoint-2\special_tokens_map.json
+Deleting older checkpoint [output\checkpoint-3] due to args.save_total_limit
+{'loss': 0.5572, 'learning_rate': 0.0006, 'epoch': 3.0}
+{'eval_loss': 2.7957236766815186, 'eval_runtime': 0.5063, 'eval_samples_per_second': 3.95, 'eval_steps_per_second': 1.975, 'epoch': 3.0}
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:35<00:00, 12.27s/it]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:36<00:00, 12.27s/it]Saving model checkpoint to ./output/checkpoint-3
+Configuration saved in ./output/checkpoint-3\config.json
+Model weights saved in ./output/checkpoint-3\pytorch_model.bin
+tokenizer config file saved in ./output/checkpoint-3\tokenizer_config.json
+Special tokens file saved in ./output/checkpoint-3\special_tokens_map.json
+Deleting older checkpoint [output\checkpoint-1] due to args.save_total_limit
+Training completed. Do not forget to share your model on huggingface.co/models =)
+Loading best model from ./output/checkpoint-3 (score: 2.7957236766815186).
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:39<00:00, 13.23s/it]
+Saving model checkpoint to ./saved_model
+Configuration saved in ./saved_model\config.json
+{'train_runtime': 39.6991, 'train_samples_per_second': 0.529, 'train_steps_per_second': 0.076, 'train_loss': 0.7775765061378479, 'epoch': 3.0}
+Model weights saved in ./saved_model\pytorch_model.bin
+tokenizer config file saved in ./saved_model\tokenizer_config.json
+Special tokens file saved in ./saved_model\special_tokens_map.json
+The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 1004.62it/s]
+loading configuration file ./saved_model\config.json
+Model config T5Config {
+  "_name_or_path": "./saved_model",
+  "architectures": [
+    "T5ForConditionalGeneration"
+  ],
+  "d_ff": 3072,
+  "d_kv": 64,
+  "d_model": 768,
+  "decoder_start_token_id": 0,
+  "dense_act_fn": "relu",
+  "dropout_rate": 0.1,
+  "eos_token_id": 1,
+  "feed_forward_proj": "relu",
+  "initializer_factor": 1.0,
+  "is_encoder_decoder": true,
+  "is_gated_act": false,
+  "layer_norm_epsilon": 1e-06,
+  "model_type": "t5",
+  "n_positions": 512,
+  "num_decoder_layers": 12,
+  "num_heads": 12,
+  "num_layers": 12,
+  "output_past": true,
+  "pad_token_id": 0,
+  "relative_attention_max_distance": 128,
+  "relative_attention_num_buckets": 32,
+  "task_specific_params": {
+    "summarization": {
+      "early_stopping": true,
+      "length_penalty": 2.0,
+      "max_length": 200,
+      "min_length": 30,
+      "no_repeat_ngram_size": 3,
+      "num_beams": 4,
+      "prefix": "summarize: "
+    },
+    "translation_en_to_de": {
+      "early_stopping": true,
+      "max_length": 300,
+      "num_beams": 4,
+      "prefix": "translate English to German: "
+    },
+    "translation_en_to_fr": {
+      "early_stopping": true,
+      "max_length": 300,
+      "num_beams": 4,
+      "prefix": "translate English to French: "
+    },
+    "translation_en_to_ro": {
+      "early_stopping": true,
+      "max_length": 300,
+      "num_beams": 4,
+      "prefix": "translate English to Romanian: "
+    }
+  },
+  "torch_dtype": "float32",
+  "transformers_version": "4.23.1",
+  "use_cache": false,
+  "vocab_size": 32103
+}
+loading weights file ./saved_model\pytorch_model.bin
+./saved_model/training_args
+All model checkpoint weights were used when initializing T5ForConditionalGeneration.
+All the weights of T5ForConditionalGeneration were initialized from the model checkpoint at ./saved_model.
+If your task is similar to the task the model of the checkpoint was trained on, you can already use T5ForConditionalGeneration for predictions without further training.
+loading file spiece.model
+loading file tokenizer.json
+loading file added_tokens.json
+loading file special_tokens_map.json
+loading file tokenizer_config.json
+Traceback (most recent call last):
+  File "c:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py", line 285, in <module>
+    os.remove("./output/runs")
+PermissionError: [WinError 5] Zugriff verweigert: './output/runs'
+[31m╭─────────────────────────────── [39m[1mTraceback (most recent call last)[31m[22m ────────────────────────────────╮
+[31m│[39m [33mc:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py[39m:[94m285[39m in [92m<module>[39m    [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   282 │   # print(model)                                                                         [31m│
+[31m│[39m   283 │   [96mprint[39m([33m'./saved_model/training_args'[39m)                                                   [31m│
+[31m│[39m   284 │   # delete checkpoints!                                                                  [31m│
+[31m│[39m [31m❱ [39m285 │   os.remove([33m"./output/runs"[39m)                                                             [31m│
+[31m│[39m   286 │   # GENERATION                                                                           [31m│
+[31m│[39m   287 │   test_dataset = get_test_data_txt(ASSET_DATASET, [94m30[39m)                                    [31m│
+[31m│[39m   288 │   [96mprint[39m(test_dataset)                                                                    [31m│
+[31m╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+[1mPermissionError: [[22mWinError [1m5][22m Zugriff verweigert: [32m'./output/runs'

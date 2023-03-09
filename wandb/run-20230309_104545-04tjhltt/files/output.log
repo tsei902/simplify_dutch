@@ -1,0 +1,271 @@
+
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Using custom data configuration default-676fdc30aba0fb05
+Found cached dataset text (C:/Users/Theresa/.cache/huggingface/datasets/text/default-676fdc30aba0fb05/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c)
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 374.93it/s]
+Dataset({
+    features: ['original', 'simple'],
+    num_rows: 10
+})
+DatasetDict({
+    train: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 7
+    })
+    validation: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 2
+    })
+    test: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 1
+    })
+})
+{'original': 'Er is manuscriptbewijs dat Austen tot in de periode 1809-11 aan deze stukken bleef werken, en dat haar nicht en neef, Anna en James Edward Austen, tot in 1814 verdere toevoegingen maakten.', 'simple': 'Er zijn aanwijzingen dat Austen later in zijn leven aan deze stukken bleef werken. Haar neef en nicht, James Edward en Anna Austen, hebben rond 1814 mogelijk nog meer aan haar werk toegevoegd.'}
+DatasetDict({
+    train: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 7
+    })
+    validation: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 2
+    })
+    test: Dataset({
+        features: ['original', 'simple', 'input_ids', 'attention_mask', 'labels'],
+        num_rows: 1
+    })
+})
+Using custom data configuration default-85991f29232d42b3
+Found cached dataset text (C:/Users/Theresa/.cache/huggingface/datasets/text/default-85991f29232d42b3/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c)
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 410.40it/s]
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 58.21ba/s]
+100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 153.58ba/s]
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<?, ?ba/s]
+sentence 1
+input_sentence:  Toen Japan tien jaar later weer een race verdiende op het F1-schema, ging het in plaats daarvan naar Suzuka.</s>
+labels:  Toen Japan tien jaar later weer werd toegevoegd aan het F1-schema, ging het in plaats daarvan naar Suzuka.</s>
+sentence 2
+input_sentence:  In een opmerkelijke vergelijkende analyse toonde Mandaean geleerde Säve-Söderberg aan dat Mani's Psalmen van Thomas nauw verwant waren aan Mandaean teksten.</s>
+labels:  Mandaean geleerde Säve-Söderberg toonde aan dat Mani's Psalmen van Thomas nauw verwant waren aan Mandaean teksten.</s>
+sentence 3
+input_sentence:  Er is manuscriptbewijs dat Austen tot in de periode 1809-11 aan deze stukken bleef werken, en dat haar nicht en neef, Anna en James Edward Austen, tot in 1814 verdere toevoegingen maakten.</s>
+labels:  Er zijn aanwijzingen dat Austen later in zijn leven aan deze stukken bleef werken. Haar neef en nicht, James Edward en Anna Austen, hebben rond 1814 mogelijk nog meer aan haar werk toegevoegd.</s>
+sentence 4
+input_sentence:  Dit was het eerste motorrace-evenement in de faciliteit sinds de eerste maand dat het in gebruik was, in augustus 1909.</s>
+labels:  Dit was het eerste motorrace-evenement in de faciliteit sinds de eerste maand dat het in gebruik was, in augustus 1909.</s>
+The following columns in the training set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running training *****
+  Num examples = 7
+  Num Epochs = 3
+  Instantaneous batch size per device = 8
+  Total train batch size (w. parallel, distributed & accumulation) = 32
+  Gradient Accumulation steps = 4
+  Total optimization steps = 3
+Automatic Weights & Biases logging enabled, to disable set os.environ["WANDB_DISABLED"] = "true"
+  0%|                                                                                                                                                                  | 0/3 [00:00<?, ?it/s]You're using a T5TokenizerFast tokenizer. Please note that with a fast tokenizer, using the `__call__` method is faster than using a method to encode the text followed by a call to the `pad` method to get a padded encoding.
+{'loss': 0.7077, 'learning_rate': 0.0002, 'epoch': 1.0}
+ 33%|███████████████████████████████████████████████████▎                                                                                                      | 1/3 [00:10<00:20, 10.32s/it]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+{'eval_loss': 5.404582977294922, 'eval_runtime': 0.707, 'eval_samples_per_second': 2.829, 'eval_steps_per_second': 1.414, 'epoch': 1.0}
+ 33%|███████████████████████████████████████████████████▎                                                                                                      | 1/3 [00:11<00:20, 10.32s/it]Saving model checkpoint to ./output/checkpoint-1
+Configuration saved in ./output/checkpoint-1\config.json
+Model weights saved in ./output/checkpoint-1\pytorch_model.bin
+tokenizer config file saved in ./output/checkpoint-1\tokenizer_config.json
+Special tokens file saved in ./output/checkpoint-1\special_tokens_map.json
+Deleting older checkpoint [output\checkpoint-2] due to args.save_total_limit
+{'loss': 0.729, 'learning_rate': 0.0004, 'epoch': 2.0}
+ 67%|██████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                   | 2/3 [00:24<00:12, 12.43s/it]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+ 67%|██████████████████████████████████████████████████████████████████████████████████████████████████████▋                                                   | 2/3 [00:24<00:12, 12.43s/it]Saving model checkpoint to ./output/checkpoint-2
+Configuration saved in ./output/checkpoint-2\config.json
+{'eval_loss': 3.254969596862793, 'eval_runtime': 0.7328, 'eval_samples_per_second': 2.729, 'eval_steps_per_second': 1.365, 'epoch': 2.0}
+Model weights saved in ./output/checkpoint-2\pytorch_model.bin
+tokenizer config file saved in ./output/checkpoint-2\tokenizer_config.json
+Special tokens file saved in ./output/checkpoint-2\special_tokens_map.json
+Deleting older checkpoint [output\checkpoint-3] due to args.save_total_limit
+{'loss': 0.5133, 'learning_rate': 0.0006, 'epoch': 3.0}
+{'eval_loss': 3.2120516300201416, 'eval_runtime': 0.7581, 'eval_samples_per_second': 2.638, 'eval_steps_per_second': 1.319, 'epoch': 3.0}
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:37<00:00, 12.79s/it]The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:38<00:00, 12.79s/it]Saving model checkpoint to ./output/checkpoint-3
+Configuration saved in ./output/checkpoint-3\config.json
+Model weights saved in ./output/checkpoint-3\pytorch_model.bin
+tokenizer config file saved in ./output/checkpoint-3\tokenizer_config.json
+Special tokens file saved in ./output/checkpoint-3\special_tokens_map.json
+Deleting older checkpoint [output\checkpoint-1] due to args.save_total_limit
+{'train_runtime': 41.4516, 'train_samples_per_second': 0.507, 'train_steps_per_second': 0.072, 'train_loss': 0.6499584913253784, 'epoch': 3.0}
+Training completed. Do not forget to share your model on huggingface.co/models =)
+Loading best model from ./output/checkpoint-3 (score: 3.2120516300201416).
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 3/3 [00:41<00:00, 13.81s/it]
+Saving model checkpoint to ./saved_model
+Configuration saved in ./saved_model\config.json
+Model weights saved in ./saved_model\pytorch_model.bin
+tokenizer config file saved in ./saved_model\tokenizer_config.json
+Special tokens file saved in ./saved_model\special_tokens_map.json
+The following columns in the evaluation set don't have a corresponding argument in `T5ForConditionalGeneration.forward` and have been ignored: original, simple. If original, simple are not expected by `T5ForConditionalGeneration.forward`,  you can safely ignore this message.
+***** Running Evaluation *****
+  Num examples = 2
+  Batch size = 8
+100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1/1 [00:00<?, ?it/s]
+loading configuration file ./saved_model\config.json
+Model config T5Config {
+  "_name_or_path": "./saved_model",
+  "architectures": [
+    "T5ForConditionalGeneration"
+  ],
+  "d_ff": 3072,
+  "d_kv": 64,
+  "d_model": 768,
+  "decoder_start_token_id": 0,
+  "dense_act_fn": "relu",
+  "dropout_rate": 0.1,
+  "eos_token_id": 1,
+  "feed_forward_proj": "relu",
+  "initializer_factor": 1.0,
+  "is_encoder_decoder": true,
+  "is_gated_act": false,
+  "layer_norm_epsilon": 1e-06,
+  "model_type": "t5",
+  "n_positions": 512,
+  "num_decoder_layers": 12,
+  "num_heads": 12,
+  "num_layers": 12,
+  "output_past": true,
+  "pad_token_id": 0,
+  "relative_attention_max_distance": 128,
+  "relative_attention_num_buckets": 32,
+  "task_specific_params": {
+    "summarization": {
+      "early_stopping": true,
+      "length_penalty": 2.0,
+      "max_length": 200,
+      "min_length": 30,
+      "no_repeat_ngram_size": 3,
+      "num_beams": 4,
+      "prefix": "summarize: "
+    },
+    "translation_en_to_de": {
+      "early_stopping": true,
+      "max_length": 300,
+      "num_beams": 4,
+      "prefix": "translate English to German: "
+    },
+    "translation_en_to_fr": {
+      "early_stopping": true,
+      "max_length": 300,
+      "num_beams": 4,
+      "prefix": "translate English to French: "
+    },
+    "translation_en_to_ro": {
+      "early_stopping": true,
+      "max_length": 300,
+      "num_beams": 4,
+      "prefix": "translate English to Romanian: "
+    }
+  },
+  "torch_dtype": "float32",
+  "transformers_version": "4.23.1",
+  "use_cache": false,
+  "vocab_size": 32103
+}
+loading weights file ./saved_model\pytorch_model.bin
+All model checkpoint weights were used when initializing T5ForConditionalGeneration.
+All the weights of T5ForConditionalGeneration were initialized from the model checkpoint at ./saved_model.
+If your task is similar to the task the model of the checkpoint was trained on, you can already use T5ForConditionalGeneration for predictions without further training.
+./saved_model/training_args
+Dataset({
+    features: ['orig.dutch', 'simp.0.dutch', 'simp.1.dutch', 'simp.2.dutch', 'simp.3.dutch', 'simp.4.dutch', 'simp.5.dutch'],
+    num_rows: 30
+})
+loading file spiece.model
+loading file tokenizer.json
+loading file added_tokens.json
+loading file special_tokens_map.json
+loading file tokenizer_config.json
+Traceback (most recent call last):
+  File "c:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py", line 319, in <module>
+    generated_dataset= generate(test_dataset, trained_model, tokenizer)
+  File "c:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py", line 213, in generate
+    input_ids =  tokenizer(test_dataset['test']['orig.dutch'], return_tensors="pt").input_ids
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\arrow_dataset.py", line 2356, in __getitem__
+    return self._getitem(
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\arrow_dataset.py", line 2340, in _getitem
+    pa_subtable = query_table(self._data, key, indices=self._indices if self._indices is not None else None)
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\formatting\formatting.py", line 460, in query_table
+    _check_valid_column_key(key, table.column_names)
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\formatting\formatting.py", line 400, in _check_valid_column_key
+    raise KeyError(f"Column {key} not in the dataset. Current columns in the dataset: {columns}")
+KeyError: "Column test not in the dataset. Current columns in the dataset: ['orig.dutch', 'simp.0.dutch', 'simp.1.dutch', 'simp.2.dutch', 'simp.3.dutch', 'simp.4.dutch', 'simp.5.dutch']"
+[31m╭─────────────────────────────── [39m[1mTraceback (most recent call last)[31m[22m ────────────────────────────────╮
+[31m│[39m [33mc:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py[39m:[94m319[39m in [92m<module>[39m    [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   316 │   # GENERATION                                                                           [31m│
+[31m│[39m   317 │   test_dataset = get_test_data_txt(ASSET_DATASET, [94m30[39m)                                    [31m│
+[31m│[39m   318 │   [96mprint[39m(test_dataset)                                                                    [31m│
+[31m│[39m [31m❱ [39m319 │   generated_dataset= generate(test_dataset, trained_model, tokenizer)                    [31m│
+[31m│[39m   320 │   [96mprint[39m(generated_dataset)                                                               [31m│
+[31m│[39m   321 │   # load weights                                                                         [31m│
+[31m│[39m   322 │   # dataset= get_data_txt(ASSET_DATASET, 10)                                             [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mc:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py[39m:[94m213[39m in [92mgenerate[39m    [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   210 │   [96mprint[39m([33m"labels: "[39m, tokenizer.decode(test_sent4[[33m"labels"[39m]))                              [31m│
+[31m│[39m   211                                                                                            [31m│
+[31m│[39m   212 [94mdef[39m [92mgenerate[39m(test_dataset, trained_model, tokenizer):                                      [31m│
+[31m│[39m [31m❱ [39m213 │   input_ids =  tokenizer(test_dataset[[33m'test'[39m][[33m'orig.dutch'[39m], return_tensors=[33m"pt"[39m).inpu   [31m│
+[31m│[39m   214 │   # afterwards simplified sentences need tokenization as well                            [31m│
+[31m│[39m   215 │   # print(len(orig_sent.split()), " words")                                              [31m│
+[31m│[39m   216 │   output = trained_model.generate(                                                       [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\arrow_datase[39m [31m│
+[31m│[39m [33mt.py[39m:[94m2356[39m in [92m__getitem__[39m                                                                         [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   2353 │                                                                                         [31m│
+[31m│[39m   2354 │   [94mdef[39m [92m__getitem__[39m([96mself[39m, key):  # noqa: F811                                             [31m│
+[31m│[39m   2355 │   │   [33m"""Can be used to index columns (by string names) or rows (by integer index or i[39m  [31m│
+[31m│[39m [31m❱ [39m2356 │   │   [94mreturn[39m [96mself[39m._getitem(                                                             [31m│
+[31m│[39m   2357 │   │   │   key,                                                                          [31m│
+[31m│[39m   2358 │   │   )                                                                                 [31m│
+[31m│[39m   2359                                                                                           [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\arrow_datase[39m [31m│
+[31m│[39m [33mt.py[39m:[94m2340[39m in [92m_getitem[39m                                                                            [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   2337 │   │   format_kwargs = kwargs[[33m"format_kwargs"[39m] [94mif[39m [33m"format_kwargs"[39m [95min[39m kwargs [94melse[39m [96mself[39m._  [31m│
+[31m│[39m   2338 │   │   format_kwargs = format_kwargs [94mif[39m format_kwargs [95mis[39m [95mnot[39m [94mNone[39m [94melse[39m {}                [31m│
+[31m│[39m   2339 │   │   formatter = get_formatter(format_type, features=[96mself[39m.features, decoded=decoded,   [31m│
+[31m│[39m [31m❱ [39m2340 │   │   pa_subtable = query_table([96mself[39m._data, key, indices=[96mself[39m._indices [94mif[39m [96mself[39m._indice  [31m│
+[31m│[39m   2341 │   │   formatted_output = format_table(                                                  [31m│
+[31m│[39m   2342 │   │   │   pa_subtable, key, formatter=formatter, format_columns=format_columns, output  [31m│
+[31m│[39m   2343 │   │   )                                                                                 [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\formatting\f[39m [31m│
+[31m│[39m [33mormatting.py[39m:[94m460[39m in [92mquery_table[39m                                                                  [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   457 │   [94mif[39m [95mnot[39m [96misinstance[39m(key, ([96mint[39m, [96mslice[39m, [96mrange[39m, [96mstr[39m, Iterable)):                            [31m│
+[31m│[39m   458 │   │   _raise_bad_key_type(key)                                                           [31m│
+[31m│[39m   459 │   [94mif[39m [96misinstance[39m(key, [96mstr[39m):                                                               [31m│
+[31m│[39m [31m❱ [39m460 │   │   _check_valid_column_key(key, table.column_names)                                   [31m│
+[31m│[39m   461 │   [94melse[39m:                                                                                  [31m│
+[31m│[39m   462 │   │   size = indices.num_rows [94mif[39m indices [95mis[39m [95mnot[39m [94mNone[39m [94melse[39m table.num_rows                 [31m│
+[31m│[39m   463 │   │   _check_valid_index_key(key, size)                                                  [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\formatting\f[39m [31m│
+[31m│[39m [33mormatting.py[39m:[94m400[39m in [92m_check_valid_column_key[39m                                                      [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   397                                                                                            [31m│
+[31m│[39m   398 [94mdef[39m [92m_check_valid_column_key[39m(key: [96mstr[39m, columns: List[[96mstr[39m]) -> [94mNone[39m:                         [31m│
+[31m│[39m   399 │   [94mif[39m key [95mnot[39m [95min[39m columns:                                                                 [31m│
+[31m│[39m [31m❱ [39m400 │   │   [94mraise[39m [96mKeyError[39m([33mf"Column {[39mkey[33m} not in the dataset. Current columns in the dataset[39m   [31m│
+[31m│[39m   401                                                                                            [31m│
+[31m│[39m   402                                                                                            [31m│
+[31m│[39m   403 [94mdef[39m [92m_check_valid_index_key[39m(key: Union[[96mint[39m, [96mslice[39m, [96mrange[39m, Iterable], size: [96mint[39m) -> [94mNone[39m:    [31m│
+[31m╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+[1mKeyError: [32m[22m"Column test not in the dataset. Current columns in the dataset: ['orig.dutch', 'simp.0.dutch', 'simp.1.dutch', 'simp.2.dutch', 'simp.3.dutch', 'simp.4.dutch', 'simp.5.dutch']"
