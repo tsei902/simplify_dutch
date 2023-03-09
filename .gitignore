@@ -1,3 +1,6 @@
 output
 saved_model
 -t5-base-dutch
+output/checkpoint-2
+output/checkpoint-3
+output/runs

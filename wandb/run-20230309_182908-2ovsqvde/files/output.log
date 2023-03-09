@@ -1,0 +1,56 @@
+
+Special tokens have been added in the vocabulary, make sure the associated word embeddings are fine-tuned or trained.
+Using custom data configuration default-8e0070c28d494a17
+Found cached dataset text (C:/Users/Theresa/.cache/huggingface/datasets/text/default-8e0070c28d494a17/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c)
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 37.31it/s]
+Using custom data configuration default-16388deb41941231
+Found cached dataset text (C:/Users/Theresa/.cache/huggingface/datasets/text/default-16388deb41941231/0.0.0/99cc88223027054f94ce0c7fd69d10eb172910fa0615671283a3c8e5e7af2f9c)
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 30.27it/s]
+Dataset({
+    features: ['original', 'simple'],
+    num_rows: 10
+})
+DatasetDict({
+    train: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 7
+    })
+    validation: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 2
+    })
+    test: Dataset({
+        features: ['original', 'simple'],
+        num_rows: 1
+    })
+})
+{'original': 'Toen Japan tien jaar later weer een race verdiende op het F1-schema, ging het in plaats daarvan naar Suzuka.', 'simple': 'Toen Japan tien jaar later weer werd toegevoegd aan het F1-schema, ging het in plaats daarvan naar Suzuka.'}
+Traceback (most recent call last):
+  File "c:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py", line 313, in <module>
+    tokenized_datasets = dataset.map(preprocess_function_train(dataset['original'], dataset['simple']), batched=True)
+  File "C:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\dataset_dict.py", line 57, in __getitem__
+    return super().__getitem__(k)
+KeyError: 'original'
+[31m╭─────────────────────────────── [39m[1mTraceback (most recent call last)[31m[22m ────────────────────────────────╮
+[31m│[39m [33mc:\Users\Theresa\OneDrive - KU Leuven\Documents\GitHub\simplify_dutch\main.py[39m:[94m313[39m in [92m<module>[39m    [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m   310 │   wandb.watch(model, log=[33m"all"[39m)                                                          [31m│
+[31m│[39m   311 │   dataset= get_data_txt(WIKILARGE_DATASET, [94m10[39m)                                           [31m│
+[31m│[39m   312 │   [96mprint[39m(dataset[[33m'train'[39m][[94m3[39m])                                                             [31m│
+[31m│[39m [31m❱ [39m313 │   tokenized_datasets = dataset.map(preprocess_function_train(dataset[[33m'original'[39m], data   [31m│
+[31m│[39m   314 │   [96mprint[39m(tokenized_datasets)                                                              [31m│
+[31m│[39m   315 │   time.sleep([94m7[39m)                                                                          [31m│
+[31m│[39m   316 │   tests= encoding_test(dataset)                                                          [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m [33mC:\Users\Theresa\AppData\Local\Programs\Python\Python310\lib\site-packages\datasets\dataset_dict[39m [31m│
+[31m│[39m [33m.py[39m:[94m57[39m in [92m__getitem__[39m                                                                            [31m│
+[31m│[39m                                                                                                  [31m│
+[31m│[39m     54 │                                                                                         [31m│
+[31m│[39m     55 │   [94mdef[39m [92m__getitem__[39m([96mself[39m, k) -> Dataset:                                                  [31m│
+[31m│[39m     56 │   │   [94mif[39m [96misinstance[39m(k, ([96mstr[39m, NamedSplit)) [95mor[39m [96mlen[39m([96mself[39m) == [94m0[39m:                            [31m│
+[31m│[39m [31m❱ [39m  57 │   │   │   [94mreturn[39m [96msuper[39m().[92m__getitem__[39m(k)                                                 [31m│
+[31m│[39m     58 │   │   [94melse[39m:                                                                             [31m│
+[31m│[39m     59 │   │   │   available_suggested_splits = [                                                [31m│
+[31m│[39m     60 │   │   │   │   split [94mfor[39m split [95min[39m (Split.TRAIN, Split.TEST, Split.VALIDATION) [94mif[39m split   [31m│
+[31m╰──────────────────────────────────────────────────────────────────────────────────────────────────╯
+[1mKeyError: [32m[22m'original'
