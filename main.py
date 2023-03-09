@@ -166,7 +166,7 @@ def preprocess_function_test(example):
     # https://medium.com/nlplanet/a-full-guide-to-finetuning-t5-for-text2text-and-building-a-demo-with-streamlit-c72009631887
     
     max_length = 256
-    input_ids = tokenizer(example, max_length=max_length, return_tensors="pt") # ,truncation=True) #, return_tensors="pt") # padding=True , )  # return_tensors="pt"
+    input_ids = tokenizer(example, max_length=max_length, return_tensors="pt" , truncation=True,  padding=True)
     return input_ids
 
 
@@ -225,7 +225,7 @@ def encoding_test(dataset):
     print("input_sentence: ", tokenizer.decode(test_sent4["input_ids"]))
     print("labels: ", tokenizer.decode(test_sent4["labels"]))
     
-def generate(tokenized_test_input, trained_model, tokenizer): #, output_attentions=True
+def generate(tokenized_test_input, trained_model, tokenizer):
      
     output = trained_model.generate( tokenized_test_input,  
                 do_sample=False, # sampling method makes errors 
@@ -246,12 +246,12 @@ def generate(tokenized_test_input, trained_model, tokenizer): #, output_attentio
                 num_beams= 4,
                 )
   
-    # try tokenizer.batck_decode(simplification)
-    simplification = tokenizer.decode(output.squeeze(), skip_special_tokens=False)
-    file=open("./resources/outputs/generate/simplification.txt", "r+") 
+    # try tokenizer.batch_decode(simplification)
+    simplification = tokenizer.decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
+    file=open("./resources/outputs/generate/simplification.txt", "a", encoding="utf8") 
     file.writelines(simplification)
+    file.write("\n")
     file.close()
-
     # lensimpl = len(simplification.split())
     # print(lensimpl, " words")
     # simplification.replace('. ', '.\n')
@@ -340,14 +340,23 @@ if __name__ == '__main__':
     # test_sent3['input_ids']
     # print("input_sentence: ", tokenizer.decode(test_sent3['input_ids']))
     # # print("labels: ", tokenizer.decode(test_sent3))
-    print(type(test_dataset['orig.dutch'])) # list of strings 
     
-    print(type(test_dataset['orig.dutch'][2])) # string
-    tokenized_test_input = preprocess_function_test(test_dataset['orig.dutch'][2])
-    print('tokenized test input from 2', tokenized_test_input)
-    print('tokenized test input from 2 INPUT IDS: ',tokenized_test_input['input_ids'])
-    print(type(tokenized_test_input['input_ids'])) # is handled as a list and not a tensor! 
-    generated_dataset= generate(tokenized_test_input['input_ids'], trained_model, tokenizer)
-    print(generated_dataset)
+    # print(type(test_dataset['orig.dutch'])) # list of strings 
+    
+    # print(type(test_dataset['orig.dutch'][2])) # string
+    # tokenized_test_input = preprocess_function_test(test_dataset['orig.dutch'][2])
+    
+    
+    # print('tokenized test input from 2', tokenized_test_input)
+    # print('tokenized test input from 2 INPUT IDS: ',tokenized_test_input['input_ids'])
+    # print(type(tokenized_test_input['input_ids'])) # is handled as a list and not a tensor! 
+    # generated_dataset= generate(tokenized_test_input['input_ids'], trained_model, tokenizer)
+    # print(generated_dataset)
+    
+    for i in range(1,len(test_dataset['orig.dutch'])): 
+        
+        tokenized_test_input = preprocess_function_test(test_dataset['orig.dutch'][i])
+        generated_dataset= generate(tokenized_test_input['input_ids'], trained_model, tokenizer)
+        print(generated_dataset)
 
     
