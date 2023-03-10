@@ -4,3 +4,5 @@ saved_model
 output/checkpoint-2
 output/checkpoint-3
 output/runs
+model_output
+wandb
