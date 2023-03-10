@@ -16,6 +16,7 @@ import pandas as pd
 import glob, os
 from utils import get_data_filepath, get_dataset_dir, read_lines
 import easse
+from easse.sari import corpus_sari
 
 WIKILARGE_DATASET = 'wikilarge'
 ASSET_TRAIN_DATASET = 'asset_train' # asset validation set
@@ -213,7 +214,7 @@ def generate(tokenized_test_input, trained_model, tokenizer):
                 )
     # simplification2 = tokenizer.batch_decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
     # print('simplification 2  ', simplification2)
-    simplification = tokenizer.decode(output.squeeze(), skip_special_tokens=False, clean_up_tokenization_space=True)
+    simplification = tokenizer.decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
     file=open("./resources/outputs/generate/simplification.txt", "a", encoding="utf8") 
     file.writelines(simplification)
     file.write("\n")
@@ -222,7 +223,12 @@ def generate(tokenized_test_input, trained_model, tokenizer):
     # print(lensimpl, " words")
     # simplification.replace('. ', '.\n')
     return simplification
-    
+
+def create_simplification_dataset(): 
+    folder_path= "./resources/outputs/generate/simplification.txt"
+    df = pd.read_csv(f"{folder_path}", encoding = 'utf8',sep="\t",header= 0) #, names=[header])
+    dataset =  Dataset.from_pandas(df)
+    return df # dataset
 # def compute_metrics(eval_preds):
 #     metric = evaluate.load("accuracy", "loss", "BLEU") # perplexity
 #     logits, labels = eval_preds
@@ -258,8 +264,7 @@ if __name__ == '__main__':
     # ELSE: 
     # test_dataset = dataset['test'] # 
     test_dataset = get_test_data_txt(ASSET_TEST_DATASET, 5)
-
-    # tests= encoding_test(dataset['train']['orig'][1],dataset['train']['simp'][1])
+    print(test_dataset)
     data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
     trainer = Seq2SeqTrainer(model=model,
                             args=training_args,
@@ -275,8 +280,8 @@ if __name__ == '__main__':
     trainer.evaluate()
     trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
     tokenizer = AutoTokenizer.from_pretrained('./saved_model')
-    # # print(model)
-    print('./saved_model/training_args')
+    # # # print(model)
+    # print('./saved_model/training_args')
     
     # GENERATION
     
@@ -286,11 +291,17 @@ if __name__ == '__main__':
         # print("tokenized input sentence from test ", tokenized_test_input)
         generated_dataset= generate(tokenized_test_input['input_ids'], trained_model, tokenizer)
         print(generated_dataset)
-        # save in file in method
-        sources = test_dataset['orig'][i]
-        predictions = simplification.txt
-        references = 
-        sariscore = sari.compute(sources, predictions,references)
+    #     # save in file in method
+        
+    predictions = create_simplification_dataset()
+        
+    # sources = test_dataset['orig'][1]
+    # print('source:', sources)
+    # predictions = predictions
+    # print('prediction:', predictions)
+    # references = test_dataset['simp.0'][1],test_dataset['simp.1'][1],test_dataset['simp.2'][1],test_dataset['simp.3'][1]
+    # print('references:', references)
+    # sariscore = corpus_sari(sources, predictions,references)
 
     
     # def evaluate_simplifier(simplifier, phase):
@@ -303,12 +314,11 @@ if __name__ == '__main__':
 #                                   quality_estimation=True)
 
 
-# from evaluate import load
-# sari = load("sari")
-# from evaluate import load
-# sari = load("sari")
-# sources=["About 95 species are currently accepted."]
-# predictions=["About 95 you now get in."]
-# references=[["About 95 species are currently known.","About 95 species are now accepted.","95 species are now accepted."]]
-# sari_score = sari.compute(sources=sources, predictions=predictions, references=references)
-# https://huggingface.co/spaces/evaluate-metric/sari
+    from evaluate import load
+    sari = load("sari")
+    sources=["Men denkt dat de Grote Donkere Vlek een gat vertegenwoordigt in het methaanwolkendek van Neptunus."]
+    predictions=["De Grote Donkere Vlek vertegenwoordigt de Grote Donkere Vlek een gat vertegenwoordigt de Grote Donkere Vlek een gat."]
+    references=[['De donkere vlek op Ne;tune kan een gat in de methaanwolken zijn.', 'Het is waarschijnlijk dat de Grote Donkere Vlek van Neptunus een gat in het methaanwolkendek is.', 'De Grote Donkere Vlek is een gat in het methaanwolkendek van Neptunus.', 'Men denkt dat de Grote Donkere Vlek een gat is in het methaanwolkendek van Neptunus.']]
+    sari_score = sari.compute(sources=sources, predictions=predictions, references=references)
+    print(sari_score)
+    # https://huggingface.co/spaces/evaluate-metric/sari
