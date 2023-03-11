@@ -15,8 +15,10 @@ import shutil
 import pandas as pd
 import glob, os
 from utils import get_data_filepath, get_dataset_dir, read_lines
-import easse
 from easse.sari import corpus_sari
+import spacy
+
+
 
 WIKILARGE_DATASET = 'wikilarge'
 ASSET_TRAIN_DATASET = 'asset_train' # asset validation set
@@ -229,6 +231,13 @@ def create_simplification_dataset():
     df = pd.read_csv(f"{folder_path}", encoding = 'utf8',sep="\t",header= 0) #, names=[header])
     dataset =  Dataset.from_pandas(df)
     return df # dataset
+
+def evaluate_sari(sources, predictions, references): 
+    # from EASSE package
+    sari_score = corpus_sari(sources, predictions, references)
+    print(sari_score)
+    return sari_score
+
 # def compute_metrics(eval_preds):
 #     metric = evaluate.load("accuracy", "loss", "BLEU") # perplexity
 #     logits, labels = eval_preds
@@ -241,6 +250,22 @@ def create_simplification_dataset():
 #     return metric.compute(predictions=predictions, references=labels)
 
 #gradient accumulation steps inbuilt!
+    # def evaluate_simplifier(simplifier, phase):
+#     pred_filepath = get_prediction_on_turkcorpus(simplifier, phase)
+#     pred_filepath = lowercase_file(pred_filepath)
+#     pred_filepath = to_lrb_rrb_file(pred_filepath)
+#     return evaluate_system_output(f'turkcorpus_{phase}_legacy',
+#                                   sys_sents_path=pred_filepath,
+#                                   metrics=['bleu', 'sari_legacy', 'fkgl'],
+#                                   quality_estimation=True)
+
+# def reformat_sentences(text): 
+#     nlp = spacy.load('en_core_web_sm')
+#     # text = "How are you today? I hope you have a great day"
+#     tokens = nlp(text)
+#     print(tokens)
+#     for sent in tokens.sents:
+#         print(sent.string.strip())
 
 
 if __name__ == '__main__':
@@ -256,28 +281,28 @@ if __name__ == '__main__':
     model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, gradient_checkpointing=True, use_cache=False)
     # REPAIR: model = model.get_device()
 
-    #Decide ABOUT DATASETS 
-    dataset= get_train_data_txt(WIKILARGE_DATASET, 5) 
-    print(dataset)
-    tokenized_dataset = dataset.map(preprocess_function_train, batched=True)
- 
-    # ELSE: 
-    # test_dataset = dataset['test'] # 
+    # #Decide ABOUT DATASETS 
+    # dataset= get_train_data_txt(WIKILARGE_DATASET, 5) 
+    # print(dataset)
+    # tokenized_dataset = dataset.map(preprocess_function_train, batched=True)
+
+    # # ELSE: 
+    # # test_dataset = dataset['test'] # 
     test_dataset = get_test_data_txt(ASSET_TEST_DATASET, 5)
-    print(test_dataset)
-    data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
-    trainer = Seq2SeqTrainer(model=model,
-                            args=training_args,
-                            train_dataset=tokenized_dataset['train'],
-                            eval_dataset=tokenized_dataset['validation'],
-                            data_collator=data_collator,
-                            tokenizer=tokenizer,
-                            # compute_metrics=compute_metrics
-                            )
-    set_seed(training_args.seed)
-    trainer.train()
-    trainer.save_model('./saved_model')
-    trainer.evaluate()
+    # print(test_dataset)
+    # data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
+    # trainer = Seq2SeqTrainer(model=model,
+    #                         args=training_args,
+    #                         train_dataset=tokenized_dataset['train'],
+    #                         eval_dataset=tokenized_dataset['validation'],
+    #                         data_collator=data_collator,
+    #                         tokenizer=tokenizer,
+    #                         # compute_metrics=compute_metrics
+    #                         )
+    # set_seed(training_args.seed)
+    # trainer.train()
+    # trainer.save_model('./saved_model')
+    # trainer.evaluate()
     trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
     tokenizer = AutoTokenizer.from_pretrained('./saved_model')
     # # # print(model)
@@ -285,15 +310,15 @@ if __name__ == '__main__':
     
     # GENERATION
     
-    # print(type(test_dataset['orig'])) # list of strings 
-    for i in range(0,len(test_dataset['orig'])): 
-        tokenized_test_input = preprocess_function_test(test_dataset['orig'][i])
-        # print("tokenized input sentence from test ", tokenized_test_input)
-        generated_dataset= generate(tokenized_test_input['input_ids'], trained_model, tokenizer)
-        print(generated_dataset)
-    #     # save in file in method
+    # # print(type(test_dataset['orig'])) # list of strings 
+    # for i in range(0,len(test_dataset['orig'])): 
+    #     tokenized_test_input = preprocess_function_test(test_dataset['orig'][i])
+    #     # print("tokenized input sentence from test ", tokenized_test_input)
+    #     generated_dataset= generate(tokenized_test_input['input_ids'], trained_model, tokenizer)
+    #     print(generated_dataset)
+    # #     # save in file in method
         
-    predictions = create_simplification_dataset()
+    # predictions = create_simplification_dataset()
         
     # sources = test_dataset['orig'][1]
     # print('source:', sources)
@@ -301,24 +326,34 @@ if __name__ == '__main__':
     # print('prediction:', predictions)
     # references = test_dataset['simp.0'][1],test_dataset['simp.1'][1],test_dataset['simp.2'][1],test_dataset['simp.3'][1]
     # print('references:', references)
-    # sariscore = corpus_sari(sources, predictions,references)
+    # 
+
+
+    # EVALUATION
+    
+    # assemble all formats, if necessary store
+    # first format into list of strings
+    references_test="About 95 species are currently known .","About 95 species are now accepted .","95 species are now accepted ."
+    
+
+    sources=["Men denkt dat de Grote Donkere Vlek een gat vertegenwoordigt in het methaanwolkendek van Neptunus."]
+    predictions=["De Grote Donkere Vlek vertegenwoordigt de Grote Donkere Vlek een gat om een put."]
+    references=[["De donkere vlek op Neptune kan een gat in de methaanwolken zijn."], 
+                ["Het is waarschijnlijk dat de Grote Donkere Vlek van Neptunus een gat in het methaanwolkendek is."], 
+                ["De Grote Donkere Vlek is een gat in het methaanwolkendek van Neptunus."], 
+                ["Men denkt dat de Grote Donkere Vlek een gat is in het methaanwolkendek van Neptunus."]]
+    c= corpus_sari(sources, predictions, references)
+    print(c)
+    # sources=["About 95 species are currently accepted ."]
+    # predictions=["About 95 you now get in ."]
+    # references=[["About 95 species are currently known .","About 95 species are now accepted .","95 species are now accepted ."]]
+    
+
+    # c= corpus_sari(orig_sents=["About 95 species are currently accepted."],  
+    #             sys_sents=["About 95 you now get in."], 
+    #             refs_sents=[["About 95 species are currently known."],
+    #                         ["About 95 species are now accepted."],  
+    #                         ["95 species are now accepted."]])
+    
 
     
-    # def evaluate_simplifier(simplifier, phase):
-#     pred_filepath = get_prediction_on_turkcorpus(simplifier, phase)
-#     pred_filepath = lowercase_file(pred_filepath)
-#     pred_filepath = to_lrb_rrb_file(pred_filepath)
-#     return evaluate_system_output(f'turkcorpus_{phase}_legacy',
-#                                   sys_sents_path=pred_filepath,
-#                                   metrics=['bleu', 'sari_legacy', 'fkgl'],
-#                                   quality_estimation=True)
-
-
-    from evaluate import load
-    sari = load("sari")
-    sources=["Men denkt dat de Grote Donkere Vlek een gat vertegenwoordigt in het methaanwolkendek van Neptunus."]
-    predictions=["De Grote Donkere Vlek vertegenwoordigt de Grote Donkere Vlek een gat vertegenwoordigt de Grote Donkere Vlek een gat."]
-    references=[['De donkere vlek op Ne;tune kan een gat in de methaanwolken zijn.', 'Het is waarschijnlijk dat de Grote Donkere Vlek van Neptunus een gat in het methaanwolkendek is.', 'De Grote Donkere Vlek is een gat in het methaanwolkendek van Neptunus.', 'Men denkt dat de Grote Donkere Vlek een gat is in het methaanwolkendek van Neptunus.']]
-    sari_score = sari.compute(sources=sources, predictions=predictions, references=references)
-    print(sari_score)
-    # https://huggingface.co/spaces/evaluate-metric/sari
