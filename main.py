@@ -276,22 +276,36 @@ def calculate_sari(test_dataset, predictions):
     sari_scores = []
     for i in range(0,len(predictions)): # range starts at 0
         print(i)
+        # SOURCES 
         sources = test_dataset['orig'][i].split(",'") # list with or without orig
-        print('source:', sources)        
+        print('source:', sources) 
+        # PREDICTIONS       
         prediction = predictions[i]
         print('prediction:', prediction)
         
-        # create a loop here! 
-        refs = []
+        # REFERENCES 
+        references= []
+        refs= []
         print(type(test_dataset)) # is an arrow_dataset.Dataset
-        for j in range(0, ((test_dataset.num_columns)-1)): 
-            column=  'simp.%d' % (j,) # 'simp.'+[j]+""  
-            ref = test_dataset[column][i].split(",'")
-            # print(type(ref))
-            # print(ref)
+        
+        if test_dataset == 'wikilarge':
+            ref = test_dataset['simp'][i].split(",'")
+                    # print(type(ref))
+            print('this is ref from wikilarge', ref)
+            # refs.append(ref)
+            # print('these are aggregated referencesrefs)
+            references= ref
+            print('these are aggregated references', references)
+        if test_dataset == 'asset_test':         
+            for j in range(0, ((test_dataset.num_columns)-1)): 
+                column=  'simp.%d' % (j,) # 'simp.'+[j]+""  
+                ref = test_dataset[column][i].split(",'")
+                # print(type(ref))
+                print(ref)
             refs.append(ref)
-            # print(refs)
-        references= refs
+            print(refs)
+            references= refs
+            print('these are aggregated references', references)
         # references = test_dataset['simp.0'][i].split(",'"),test_dataset['simp.1'][i].split(",'"),test_dataset['simp.2'][i].split(",'") ,test_dataset['simp.3'][i].split(",'"), test_dataset['simp.4'][i].split(",'"), test_dataset['simp.5'][i].split(",'")
         # references = [list(reference) for reference in references]
         # print('references:', references)
