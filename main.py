@@ -50,8 +50,8 @@ def get_train_data_txt(dataset, rows):
     # features = Features({'orig': Array2D(shape=(1,1), dtype='string'), 'simp': Array2D(shape=(1,1), dtype='string')})
     #, features=features
     dataset =  Dataset.from_pandas(main_dataframe).with_format("torch")
-    print('main dataset type:', dataset.format['type'] ) # torch
-    print('main dataset features:', dataset.features) # torch
+    #print('main dataset type:', dataset.format['type'] ) # torch
+    # print('main dataset features:', dataset.features) # torch
 
     dataset= dataset.select(range(rows))
     # dataloader = DataLoader(dataset.with_format("torch"), batch_size=4)
@@ -90,7 +90,7 @@ def get_test_data_txt(dataset, rows):
     test_dataset = DatasetDict({'test': Dataset.from_pandas(main_dataframe)}) # .with_format("torch")
     test_dataset= test_dataset['test'].select(range(rows))
     # test_dataset.set_format('torch') 
-    print(test_dataset)
+    # print(test_dataset)
     return test_dataset               
 
 def get_device():
@@ -174,16 +174,16 @@ training_args = Seq2SeqTrainingArguments(
         fp16=False, # True, # shorter bits, more efficient # tensorsneed to be a multiple of 8 # only savings with high batch size
         output_dir="./model_output/"
     )
-def encoding_test(source, target):
+def encoding_test(examples):
     # sentence 1
     print("encoding test by train method")
     print("sentence 1")
-    test_sent1= preprocess_function_train(source, target)  ##issue too short! müsste viel länger sein, weil der Paragraph auch viel länger ist!
+    test_sent1= preprocess_function_train(examples)  ##issue too short! müsste viel länger sein, weil der Paragraph auch viel länger ist!
     print(test_sent1) 
-    print('output type after tokenization  ', type(preprocess_function_train(source, target)))
+    print('output type after tokenization  ', type(preprocess_function_train(examples)))
     print('output type after tokenization  ', type(test_sent1["input_ids"]))
     print("input_sentence: ", tokenizer.decode(test_sent1["input_ids"]))
-    # print("input_sentence: ", tokenizer.convert_ids_to_tokens(test_sent1["input_ids"]))
+    print("input_sentence: ", tokenizer.convert_ids_to_tokens(test_sent1["input_ids"]))
     print("labels: ", tokenizer.decode(test_sent1["labels"]))
     
 def generate(tokenized_test_input, trained_model, tokenizer):
@@ -207,7 +207,7 @@ def generate(tokenized_test_input, trained_model, tokenizer):
                 num_beams= 4,
                 )
     print('This is the output of the generator', output) # output is tensor
-    print(type(output))
+    # print(type(output))
     # simplification2 = tokenizer.batch_decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
     # print('simplification 2  ', simplification2)
     simplification = tokenizer.decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
@@ -228,18 +228,13 @@ def create_simplification_dataset():
     with open(folder_path,  "r", encoding='utf8') as f:
         for line in f:
             line = line.rstrip('\n')
-            print('this is one line', line)
             line = [line]
-            print('linientyp', type(line))
             list.append(line)
-        print('list result', list)
-    print('listtype', type(list))
     return list
 
 def evaluate_sari(sources, predictions, references): 
     # from EASSE package
     sari_score = corpus_sari(sources, predictions, references)
-    print(sari_score)
     return sari_score
 
 # def compute_metrics(eval_preds):
@@ -272,51 +267,56 @@ def evaluate_sari(sources, predictions, references):
 #         print(sent.string.strip())
 
 #  constraints: class transformers.ConstraintListState
-def calculate_sari(test_dataset, predictions):
+
+
+def calculate_sari(dataset, test_dataset, predictions):
     sari_scores = []
-    for i in range(0,len(predictions)): # range starts at 0
-        print(i)
-        # SOURCES 
-        sources = test_dataset['orig'][i].split(",'") # list with or without orig
-        print('source:', sources) 
-        # PREDICTIONS       
+    for i in range(0, len(predictions)):  # range starts at 0
+        # print(i)
+        # SOURCES
+        sources = test_dataset['orig'][i].split(
+            ",'")  # list with or without orig
+        # print('source:', sources)
+        # PREDICTIONS
         prediction = predictions[i]
-        print('prediction:', prediction)
-        
-        # REFERENCES 
-        references= []
-        refs= []
-        print(type(test_dataset)) # is an arrow_dataset.Dataset
-        
-        if test_dataset == 'wikilarge':
-            ref = test_dataset['simp'][i].split(",'")
-                    # print(type(ref))
-            print('this is ref from wikilarge', ref)
-            # refs.append(ref)
-            # print('these are aggregated referencesrefs)
-            references= ref
-            print('these are aggregated references', references)
-        if test_dataset == 'asset_test':         
-            for j in range(0, ((test_dataset.num_columns)-1)): 
-                column=  'simp.%d' % (j,) # 'simp.'+[j]+""  
-                ref = test_dataset[column][i].split(",'")
+        # print('prediction:', prediction)
+
+        # REFERENCES
+        references = []
+        refs = []
+        if  'simp.0' in test_dataset.column_names: # 'asset_test':
+            # print('asset loop')
+            for j in range(0, ((test_dataset.num_columns)-1)):
+                column_name = 'simp.%d' % (j,)  # 'simp.'+[j]+""
+                ref = test_dataset[column_name][i].split(",'")
                 # print(type(ref))
-                print(ref)
+                # print(ref)
+                refs.append(ref)
+                # print(refs)
+            references = refs
+        else: 
+            # print('inwikilarge loop')
+            ref = test_dataset['simp'][i].split(",'")
+            # print(type(ref))
+            # print('this is ref from wikilarge', ref)
+            # refs.append(ref)
+            # # print('these are aggregated referencesrefs)
             refs.append(ref)
-            print(refs)
-            references= refs
-            print('these are aggregated references', references)
+            # print(refs)
+            references = refs
+            # print('these are aggregated references', references)
+        # print('these are aggregated references', references)
         # references = test_dataset['simp.0'][i].split(",'"),test_dataset['simp.1'][i].split(",'"),test_dataset['simp.2'][i].split(",'") ,test_dataset['simp.3'][i].split(",'"), test_dataset['simp.4'][i].split(",'"), test_dataset['simp.5'][i].split(",'")
         # references = [list(reference) for reference in references]
         # print('references:', references)
-        c= corpus_sari(sources, prediction, references)
-        print('sari', c)
+        c = corpus_sari(sources, prediction, references)
+        # print('sari', c)
         sari_scores.append(c)
-    print(sari_scores)
-    f= open("./resources/outputs/generate/sari.txt", "w")
-    for c in sari_scores: 
-            f.write(f"{c}")
-            f.write(",")
+    # print(sari_scores)
+    f = open("./resources/outputs/generate/sari.txt", "w")
+    for c in sari_scores:
+        f.write(f"{c}")
+        f.write(",")
     f.close()
 
 if __name__ == '__main__':
@@ -332,17 +332,44 @@ if __name__ == '__main__':
     # # REPAIR: model = model.get_device()
 
     # #Decide ABOUT DATASETS 
-    dataset= get_train_data_txt(WIKILARGE_DATASET, 7) 
+    dataset= get_train_data_txt(WIKILARGE_DATASET, 30) 
     print(dataset)
-    print(type(dataset)) # DatasetDict
     print('pre mapping', dataset['train'][:2])
     tokenized_dataset = dataset.map(preprocess_function_train, batched=True, batch_size=1)
     print('post mapping', tokenized_dataset['train'][:2])
 
+    vocabeln = tokenizer.vocab
+    print(type(vocabeln))
+    # print(vocabeln)
+    
+ 
+    # with open("./resources/outputs/generate/vocab_list.txt", "w")as f: #, encoding='utf8'
+    #     writer = csv.writer(f)
+    #     writer.writerow(vocabeln)
+    #     f.close()
+        
+    with open("./resources/outputs/generate/vocab_list.txt", "w",  encoding='utf8')as f:
+        f.write(str(vocabeln))
+        f.write(",")
+        f.close()
+   
+    
+    # with open("./resources/outputs/generate/vocab_list.txt", 'w', encoding='utf8') as fp:
+    #     fp.write('\n'.join(vocabeln))
+    
+    # folder_path= "./resources/outputs/generate/simplification.txt"
+    # list = []
+    # with open(folder_path,  "r", encoding='utf8') as f:
+    #     for line in f:
+    #         line = line.rstrip('\n')
+    #         line = [line]
+    #         list.append(line)
+  
+    
     # # ELSE: 
     # test_dataset = dataset['test'] # is already tokenized
     test_dataset = get_test_data_txt(ASSET_TEST_DATASET, 6)
-    # print(test_dataset)
+    print(test_dataset)
     # print('test dataset type:', test_dataset.format['type'] ) # torch
     # print(type(test_dataset)) # arow dataset
     # print(test_dataset['test'][:2])
@@ -384,12 +411,13 @@ if __name__ == '__main__':
         # print(type(generated_dataset)) # is a list
         # # print("generated_sentences: ", tokenizer.batch_decode())
     
-    # # Working format
-    # for i in range(0,len(test_dataset['orig'])): 
-    #     tokenized_test_input = preprocess_function_test(test_dataset['orig'][i])
-    #     print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
-    #     generated_dataset= generate(tokenized_test_input['input_ids'], trained_model, tokenizer)
-    #     print('generated data decoded!!', generated_dataset)
+    # Working format
+    for i in range(0,len(test_dataset['orig'])): 
+        print('test input sentence from dataset[orig]', test_dataset['orig'][i])
+        tokenized_test_input = preprocess_function_test(test_dataset['orig'][i])
+        print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
+        generated_dataset= generate(tokenized_test_input['input_ids'], trained_model, tokenizer)
+        print('generated data decoded!!: ', generated_dataset)
 
     predictions = create_simplification_dataset()
     # print('predictions', predictions) 
@@ -400,12 +428,10 @@ if __name__ == '__main__':
     # first format into list of strings
     # SARI Check only if datset = ASSSET!  
     # we need a list of strings here! 
-    sari = calculate_sari(test_dataset, predictions)
+    sari = calculate_sari(dataset, test_dataset, predictions)
+    print(sari)
     
     
-
-    
-
 
     
 

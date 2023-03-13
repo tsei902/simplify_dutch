@@ -6,3 +6,4 @@ output/checkpoint-3
 output/runs
 model_output
 wandb
+__pycache_
