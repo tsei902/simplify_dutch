@@ -11,11 +11,12 @@ import shutil
 import pandas as pd
 import glob, os
 from utils import get_data_filepath, get_dataset_dir, read_lines
-from easse.sari import corpus_sari, compute_ngram_stats
+from easse.sari import corpus_sari, compute_ngram_stats, get_corpus_sari_operation_scores
 import spacy
 from torch.utils.data import DataLoader
 import csv
-
+from statistics import mean
+import re
 
 WIKILARGE_DATASET = 'wikilarge'
 ASSET_TRAIN_DATASET = 'asset_train' # asset validation set
@@ -150,7 +151,7 @@ training_args = Seq2SeqTrainingArguments(
         per_device_train_batch_size=8,
         per_device_eval_batch_size=8,
         predict_with_generate=True, # use model for eval
-        num_train_epochs=3,
+        num_train_epochs=1,
         gradient_accumulation_steps=4,
         # gradient_checkpointing=True,
         # weight_decay= False
@@ -232,10 +233,7 @@ def create_simplification_dataset():
             list.append(line)
     return list
 
-def evaluate_sari(sources, predictions, references): 
-    # from EASSE package
-    sari_score = corpus_sari(sources, predictions, references)
-    return sari_score
+
 
 # def compute_metrics(eval_preds):
 #     metric = evaluate.load("accuracy", "loss", "BLEU") # perplexity
@@ -263,12 +261,21 @@ def evaluate_sari(sources, predictions, references):
 #  constraints: class transformers.ConstraintListState
 
 
-def calculate_sari(dataset, test_dataset, predictions):
+# FROM GRS PAPER
+# add, keep, delete = get_corpus_sari_operation_scores(orig_sents=orig_sents, sys_sents=sys_sents,
+#                                                      refs_sents=ref_sents)
+# overal_sari = (add + keep + delete) / 3
+# print(f'overal sari:{overal_sari}\
+# add: {add}, keep: {keep}, delete: {delete}')
+# return {"overall_sari": overal_sari, "addition": add, "keep": keep, "deletion": delete}
+
+def calculate_eval_sentence(dataset, test_dataset, predictions):
     sari_scores = []
     stats = []
-    print(len(predictions))
-    for i in range(1, len(predictions)):  # range starts at 0
-        # print(i)
+    print('len predictions' , len(predictions)) # 
+    print('len orig sentences', len(test_dataset['orig']))
+    for i in range(1,len(test_dataset['orig'])):  # range starts at 1 now, source list does not get overwritten
+        print(i)
         # SOURCES
         sources = test_dataset['orig'][i].split(
             ",'")  # list with or without orig
@@ -305,20 +312,54 @@ def calculate_sari(dataset, test_dataset, predictions):
         # references = test_dataset['simp.0'][i].split(",'"),test_dataset['simp.1'][i].split(",'"),test_dataset['simp.2'][i].split(",'") ,test_dataset['simp.3'][i].split(",'"), test_dataset['simp.4'][i].split(",'"), test_dataset['simp.5'][i].split(",'")
         # references = [list(reference) for reference in references]
         # print('references:', references)
-        # c = corpus_sari(sources, prediction, references) # from EASSE! 
-        stat = compute_ngram_stats(sources, predictions, references)
+        c = corpus_sari(sources, prediction, references) # from EASSE! 
+        # stat = compute_ngram_stats(sources, prediction, references)
+        
+        add_score, keep_score, del_score = get_corpus_sari_operation_scores(sources, prediction, references)
+        stat = add_score, keep_score, del_score
+        print('stat type', type(stat))
         print('stat', stat)
-        # print('sari', c)
-        # sari_scores.append(c)
+        print('sari', c)
+        sari_scores.append(c)
         stats.append(stat)
-    # print(sari_scores)
+
     f = open("./resources/outputs/generate/sari.txt", "w")
-    for c in stats: # sari_scores:
+    for c in sari_scores:
         f.write(f"{c}")
-        f.write(",")
+        f.write("\n")
     f.close()
-    return stats # sari_scores 
+
+    f = open("./resources/outputs/generate/stats.txt", "w")
+    for stat in stats:
+        print('stat type', type(stat))
+        f.write(f"{stat}")
+        f.write("\n")
+    f.close()
+    return sari_scores, stats
+
+def calculate_corpus_averages():
+    sari_df=  pd.read_csv("./resources/outputs/generate/sari.txt", header=None)
+    avg_sari = sari_df.mean() #(sari_scores)
+    print('sari_average', avg_sari) ##24.977
+    # df = pd.read_csv("./resources/outputs/generate/stats.txt", names= ['add_score', 'keep_score', 'del_score'], sep=',', dtype=float) 
     
+    # #     my_list = [tuple(line.split()) for line in input_file]
+    # # df = pd.DataFrame(my_list, columns =['add', 'keep', 'del'])
+    # print(df) 
+    
+    # # # df.apply(lambda row: to_frame(row), axis=1)
+    # # # print('these are the columns', df.columns)
+    # # # df.to_frame
+    # print(type(df))
+    # print(type(df['add_score']))
+    
+    # avg_add= df[['add_score', 'keep_score', 'del_score']].mean() # axis=1, numeric_only=True)
+    # test = df.mean(axis=0)
+    # print('means: ', avg_add)
+    # print('test', test)
+    # avg_add, avg_keep, avg_delete 
+    return avg_sari# , avg_add # , avg_keep, avg_delete
+
 def reshape_tokenizer(): 
     # Let's increase the vocabulary of Bert model and tokenizer
     # new_tokens = ['-']
@@ -354,19 +395,19 @@ if __name__ == '__main__':
     test_dataset = get_test_data_txt(ASSET_TEST_DATASET, 15, 22)
     print(test_dataset)    
     
-    data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
-    trainer = Seq2SeqTrainer(model=model,
-                            args=training_args,
-                            train_dataset=tokenized_dataset['train'],
-                            eval_dataset=tokenized_dataset['validation'],
-                            data_collator=data_collator,
-                            tokenizer=tokenizer,
-                            # compute_metrics=compute_metrics
-                            )
-    set_seed(training_args.seed)
-    trainer.train()
-    trainer.save_model('./saved_model')
-    trainer.evaluate()
+    # data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
+    # trainer = Seq2SeqTrainer(model=model,
+    #                         args=training_args,
+    #                         train_dataset=tokenized_dataset['train'],
+    #                         eval_dataset=tokenized_dataset['validation'],
+    #                         data_collator=data_collator,
+    #                         tokenizer=tokenizer,
+    #                         # compute_metrics=compute_metrics
+    #                         )
+    # set_seed(training_args.seed)
+    # trainer.train()
+    # trainer.save_model('./saved_model')
+    # trainer.evaluate()
     trained_model=model
     trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
     tokenizer = AutoTokenizer.from_pretrained('./saved_model')
@@ -391,26 +432,34 @@ if __name__ == '__main__':
         # # print("generated_sentences: ", tokenizer.batch_decode())
     
     # Working format
-    for i in range(0,len(test_dataset['orig'])): 
-        print('test input sentence from dataset[orig]', test_dataset['orig'][i])
-        tokenized_test_input = preprocess_function_test(test_dataset['orig'][i])
-        print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
-        generated_dataset= generate(tokenized_test_input['input_ids'], trained_model, tokenizer)
-        print('generated data decoded!!: ', generated_dataset)
+    # for i in range(0,len(test_dataset['orig'])): 
+    #     print('test input sentence from dataset[orig]', test_dataset['orig'][i])
+    #     tokenized_test_input = preprocess_function_test(test_dataset['orig'][i])
+    #     print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
+    #     generated_dataset= generate(tokenized_test_input['input_ids'], trained_model, tokenizer)
+    #     print('generated data decoded!!: ', generated_dataset)    
 
+    # EVALUATION & AVERAGES ON SENTENCE LEVEL
+    # MENTION EASSE
+    # assemble all formats, if necessary store 
     predictions = create_simplification_dataset()
     # print('predictions', predictions) 
-
-    # EVALUATION
-    # assemble all formats, if necessary store
-    # first format into list of strings
-    # SARI Check only if datset = ASSSET!  
-    # we need a list of strings here! 
-    stats = calculate_sari(dataset, test_dataset, predictions)
-    
-
-    # print('this is sari', sari_scores)
+    sari_scores, stats = calculate_eval_sentence(dataset, test_dataset, predictions)
+    print('this is sari', sari_scores)
     print('this is the stats', stats)
+    print('means', mean(sari_scores))
+    
+    # EVALUATION & AVERAGES ON CORPUS LEVEL
+    corpus_averages = calculate_corpus_averages()
+    print(corpus_averages)
+    
+    
+    
+    
+    
+    
+    
+    
     
 
     
