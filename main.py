@@ -1,7 +1,3 @@
-# model.gradient_checkpointing_enable()
-# model = model.to(device)
-# model.resize_token_embeddings(len(tokenizer))
-# model = AutoModelForSeq2SeqLM.from_pretrained("./content/drive/My Drive/Transformers/t5-base-dutch") # , from_pt=False)
 # import wandb
 from torch import cuda
 import torch
@@ -15,7 +11,7 @@ import shutil
 import pandas as pd
 import glob, os
 from utils import get_data_filepath, get_dataset_dir, read_lines
-from easse.sari import corpus_sari
+from easse.sari import corpus_sari, compute_ngram_stats
 import spacy
 from torch.utils.data import DataLoader
 import csv
@@ -28,7 +24,7 @@ ASSET_TEST_DATASET = 'asset_test'
 # WANDB_WATCH=all
 WANDB_DISABLED = True
 
-def get_train_data_txt(dataset, rows):        
+def get_train_data_txt(dataset, begin, end):        
     if dataset == 'asset_train': 
         folder_path = "./resources/datasets/asset/train/"
         file_path = "asset.valid."
@@ -53,7 +49,7 @@ def get_train_data_txt(dataset, rows):
     #print('main dataset type:', dataset.format['type'] ) # torch
     # print('main dataset features:', dataset.features) # torch
 
-    dataset= dataset.select(range(rows))
+    dataset= dataset.select(range(begin, end))
     # dataloader = DataLoader(dataset.with_format("torch"), batch_size=4)
     # dataset= dataset.select(range(rows))
     
@@ -74,7 +70,7 @@ def get_train_data_txt(dataset, rows):
     return dataset
 
 
-def get_test_data_txt(dataset, rows):        
+def get_test_data_txt(dataset, begin, end):        
     main_dataframe = pd.DataFrame()      
     if  dataset== 'asset_test': 
         folder_path = "./resources/datasets/asset/test/"
@@ -83,12 +79,12 @@ def get_test_data_txt(dataset, rows):
                 header= f.replace("asset.test.","").replace("?","")
                 header= header.replace(".txt","").replace("?","")
                 # header= header.replace("''","").replace("?","")
-                df = pd.read_csv(f"{folder_path}{f}", encoding = 'utf8',sep="\t",header= 0, names=[header])
+                df = pd.read_csv(f"{folder_path}{f}", encoding = 'utf8',sep="\t", names=[header]) # header= 0,
                 df.to_csv('./resources/outputs/test/out_df.txt', encoding='utf8',index=None) 
                 main_dataframe = pd.concat([main_dataframe,df],axis=1)
         main_dataframe.to_csv('./resources/outputs/test/out_main_dataframe.txt', encoding='utf8', index=None)          
     test_dataset = DatasetDict({'test': Dataset.from_pandas(main_dataframe)}) # .with_format("torch")
-    test_dataset= test_dataset['test'].select(range(rows))
+    test_dataset= test_dataset['test'].select(range(begin, end))
     # test_dataset.set_format('torch') 
     # print(test_dataset)
     return test_dataset               
@@ -115,8 +111,8 @@ def preprocess_function_train(examples):
     # https://medium.com/nlplanet/a-full-guide-to-finetuning-t5-for-text2text-and-building-a-demo-with-streamlit-c72009631887
     max_input_length = 128
     max_target_length = 128
-    model_inputs = tokenizer(examples['orig'], max_length=max_input_length ,  truncation=True)# , return_tensors='pt', padding=True) # "max_length") # ,  return_tensors='pt'
-    labels = tokenizer(examples['simp'], max_length=max_target_length , truncation=True) #,  return_tensors='pt', padding=True) # "max_length") , return_tensors='pt'
+    model_inputs = tokenizer(examples['orig'], max_length=max_input_length ,  truncation=True, add_special_tokens=False)# , return_tensors='pt', padding=True) # "max_length") # ,  return_tensors='pt'
+    labels = tokenizer(examples['simp'], max_length=max_target_length , truncation=True, add_special_tokens=False) #,  return_tensors='pt', padding=True) # "max_length") , return_tensors='pt'
 
     # not relevant any more bcs padding was kicked! 
     # important: we need to replace the index of the padding tokens by -100 
@@ -142,7 +138,7 @@ def preprocess_function_train(examples):
 def preprocess_function_test(example):
     # https://medium.com/nlplanet/a-full-guide-to-finetuning-t5-for-text2text-and-building-a-demo-with-streamlit-c72009631887
     max_length = 128
-    input_ids = tokenizer(example, max_length=max_length, truncation=True,  return_tensors="pt") # , padding='max_length', padding='max_length') # , )   #padding=True ,
+    input_ids = tokenizer(example, max_length=max_length, truncation=True,  return_tensors="pt", add_special_tokens=False) # , padding='max_length', padding='max_length') # , )   #padding=True ,
     print('this is the input ids after preprocessing in test', input_ids)
     return input_ids
 
@@ -159,7 +155,7 @@ training_args = Seq2SeqTrainingArguments(
         # gradient_checkpointing=True,
         # weight_decay= False
         adafactor = True,
-        seed = 4, 
+        seed = 20, 
         warmup_steps=5,
         # evaluation and logging
         evaluation_strategy = "epoch", # needs to remain epoch otherwise no tracking of training loss!
@@ -191,7 +187,7 @@ def generate(tokenized_test_input, trained_model, tokenizer):
                 tokenized_test_input,  
                 do_sample=False, # sampling method makes errors 
                 # min_new_tokens=13,
-                max_new_tokens=40, # longer is better!! # max_target_length, #128 # countOfWords as alternative
+                # max_new_tokens=40, # longer is better!! # max_target_length, #128 # countOfWords as alternative
                 # doesnt work?  
                 # top_k=0, # either temperature or top_k
                 # temperature=0.7,  # more weight to powerful tokens
@@ -205,6 +201,10 @@ def generate(tokenized_test_input, trained_model, tokenizer):
                 # min_length= 30,
                 # no_repeat_ngram_size= 3,
                 num_beams= 4,
+                suppress_tokens=[32003,32004,32005,32006,32007,32008,32009,32010,32011,32012,32013,32014,32015,32016,32017,32018,32019,32020,32021,32022,32023,32024,32025,32026,32027,32028,32029,32030,32031,32032,32033,32034,32035,32036,32037,32038,32039,32040,32041,32042,32043,32044,32045,32046,32047,32048,32049,32050,32051,32052,32053,32054,32055,32056,32057,32058,32059,32060,32061,32062,32063,32064,32065,32066,32067,32068,32069,32070,32071,32072,32073,32074,32075,32076,32077,32078,32079,32080,32081,32082,32083,32084,32085,32086,32087,32088,32089,32090,32091,32092,32093,32094,32095,32096,32097,32098,32099,32100,32101,32102], 
+                begin_suppress_tokens= [3,4,7], 
+                repetition_penalty=1.3 # CRTL PAPER!
+                
                 )
     print('This is the output of the generator', output) # output is tensor
     # print(type(output))
@@ -258,20 +258,16 @@ def evaluate_sari(sources, predictions, references):
 #                                   metrics=['bleu', 'sari_legacy', 'fkgl'],
 #                                   quality_estimation=True)
 
-# def reformat_sentences(text): 
-#     nlp = spacy.load('en_core_web_sm')
-#     # text = "How are you today? I hope you have a great day"
-#     tokens = nlp(text)
-#     print(tokens)
-#     for sent in tokens.sents:
-#         print(sent.string.strip())
+
 
 #  constraints: class transformers.ConstraintListState
 
 
 def calculate_sari(dataset, test_dataset, predictions):
     sari_scores = []
-    for i in range(0, len(predictions)):  # range starts at 0
+    stats = []
+    print(len(predictions))
+    for i in range(1, len(predictions)):  # range starts at 0
         # print(i)
         # SOURCES
         sources = test_dataset['orig'][i].split(
@@ -309,15 +305,29 @@ def calculate_sari(dataset, test_dataset, predictions):
         # references = test_dataset['simp.0'][i].split(",'"),test_dataset['simp.1'][i].split(",'"),test_dataset['simp.2'][i].split(",'") ,test_dataset['simp.3'][i].split(",'"), test_dataset['simp.4'][i].split(",'"), test_dataset['simp.5'][i].split(",'")
         # references = [list(reference) for reference in references]
         # print('references:', references)
-        c = corpus_sari(sources, prediction, references)
+        # c = corpus_sari(sources, prediction, references) # from EASSE! 
+        stat = compute_ngram_stats(sources, predictions, references)
+        print('stat', stat)
         # print('sari', c)
-        sari_scores.append(c)
+        # sari_scores.append(c)
+        stats.append(stat)
     # print(sari_scores)
     f = open("./resources/outputs/generate/sari.txt", "w")
-    for c in sari_scores:
+    for c in stats: # sari_scores:
         f.write(f"{c}")
         f.write(",")
     f.close()
+    return stats # sari_scores 
+    
+def reshape_tokenizer(): 
+    # Let's increase the vocabulary of Bert model and tokenizer
+    # new_tokens = ['-']
+    # num_added_toks = tokenizer.add_tokens(new_tokens)
+    # extra_ids=0,rint('We have added', num_added_toks, 'tokens')
+    # Notice: resize_token_embeddings expect to receive the full size of the new vocabulary, i.e., the length of the tokenizer.
+    print('vocab size', model.config.vocab_size)
+    print('special tokens', tokenizer.additional_special_tokens)
+    # print('tokens encoder', tokenizer.added_tokens_encoder)
 
 if __name__ == '__main__':
     # wandb.login()  
@@ -325,71 +335,40 @@ if __name__ == '__main__':
     # wandb.watch(model, log="all")
     
     model_checkpoint = "yhavinga/t5-base-dutch" #"yhavinga/t5-v1.1-base-dutch-cased" #"flax-community/t5-base-dutch"#
-    tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)
+    model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint,  use_cache=False) # gradient_checkpointing=True,
+    # # REPAIR: model = model.get_device()
+    tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)# , extra_ids=0, additional_special_tokens=0)
+    tokenizer = AutoTokenizer.from_pretrained(model_checkpoint , additional_special_tokens=None)# extra_ids=None,
     # # TO DO: get_added_vocab https://huggingface.co/transformers/v4.9.2/main_classes/tokenizer.html
     # # add_special_tokens
-    model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, gradient_checkpointing=True, use_cache=False)
-    # # REPAIR: model = model.get_device()
-
+    
     # #Decide ABOUT DATASETS 
-    dataset= get_train_data_txt(WIKILARGE_DATASET, 30) 
-    print(dataset)
+    dataset= get_train_data_txt(WIKILARGE_DATASET, 30, 40) 
+    # print(dataset)
     print('pre mapping', dataset['train'][:2])
     tokenized_dataset = dataset.map(preprocess_function_train, batched=True, batch_size=1)
     print('post mapping', tokenized_dataset['train'][:2])
 
-    vocabeln = tokenizer.vocab
-    print(type(vocabeln))
-    # print(vocabeln)
-    
- 
-    # with open("./resources/outputs/generate/vocab_list.txt", "w")as f: #, encoding='utf8'
-    #     writer = csv.writer(f)
-    #     writer.writerow(vocabeln)
-    #     f.close()
-        
-    with open("./resources/outputs/generate/vocab_list.txt", "w",  encoding='utf8')as f:
-        f.write(str(vocabeln))
-        f.write(",")
-        f.close()
-   
-    
-    # with open("./resources/outputs/generate/vocab_list.txt", 'w', encoding='utf8') as fp:
-    #     fp.write('\n'.join(vocabeln))
-    
-    # folder_path= "./resources/outputs/generate/simplification.txt"
-    # list = []
-    # with open(folder_path,  "r", encoding='utf8') as f:
-    #     for line in f:
-    #         line = line.rstrip('\n')
-    #         line = [line]
-    #         list.append(line)
-  
-    
     # # ELSE: 
     # test_dataset = dataset['test'] # is already tokenized
-    test_dataset = get_test_data_txt(ASSET_TEST_DATASET, 6)
-    print(test_dataset)
-    # print('test dataset type:', test_dataset.format['type'] ) # torch
-    # print(type(test_dataset)) # arow dataset
-    # print(test_dataset['test'][:2])
+    test_dataset = get_test_data_txt(ASSET_TEST_DATASET, 15, 22)
+    print(test_dataset)    
     
-    
-    # data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
-    # trainer = Seq2SeqTrainer(model=model,
-    #                         args=training_args,
-    #                         train_dataset=tokenized_dataset['train'],
-    #                         eval_dataset=tokenized_dataset['validation'],
-    #                         data_collator=data_collator,
-    #                         tokenizer=tokenizer,
-    #                         # compute_metrics=compute_metrics
-    #                         )
-    # set_seed(training_args.seed)
-    # trainer.train()
-    # trainer.save_model('./saved_model')
-    # trainer.evaluate()
+    data_collator = DataCollatorForSeq2Seq(tokenizer, model=model)
+    trainer = Seq2SeqTrainer(model=model,
+                            args=training_args,
+                            train_dataset=tokenized_dataset['train'],
+                            eval_dataset=tokenized_dataset['validation'],
+                            data_collator=data_collator,
+                            tokenizer=tokenizer,
+                            # compute_metrics=compute_metrics
+                            )
+    set_seed(training_args.seed)
+    trainer.train()
+    trainer.save_model('./saved_model')
+    trainer.evaluate()
     trained_model=model
-    # trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
+    trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
     tokenizer = AutoTokenizer.from_pretrained('./saved_model')
     # # # print(model)
     # print('./saved_model/training_args')
@@ -421,16 +400,19 @@ if __name__ == '__main__':
 
     predictions = create_simplification_dataset()
     # print('predictions', predictions) 
-    print('predictions dataset is of type ', type(predictions))
 
     # EVALUATION
     # assemble all formats, if necessary store
     # first format into list of strings
     # SARI Check only if datset = ASSSET!  
     # we need a list of strings here! 
-    sari = calculate_sari(dataset, test_dataset, predictions)
-    print(sari)
+    stats = calculate_sari(dataset, test_dataset, predictions)
     
+
+    # print('this is sari', sari_scores)
+    print('this is the stats', stats)
+    
+
     
 
     
