@@ -277,44 +277,24 @@ def calculate_eval_sentence(dataset, test_dataset, predictions):
     for i in range(1,len(test_dataset['orig'])):  # range starts at 1 now, source list does not get overwritten
         print(i)
         # SOURCES
-        sources = test_dataset['orig'][i].split(
-            ",'")  # list with or without orig
+        sources = test_dataset['orig'][i].split(",'")  # list with or without orig
         # print('source:', sources)
         # PREDICTIONS
         prediction = predictions[i]
-        # print('prediction:', prediction)
-
         # REFERENCES
         references = []
         refs = []
         if  'simp.0' in test_dataset.column_names: # 'asset_test':
-            # print('asset loop')
             for j in range(0, ((test_dataset.num_columns)-1)):
-                column_name = 'simp.%d' % (j,)  # 'simp.'+[j]+""
+                column_name = 'simp.%d' % (j,)
                 ref = test_dataset[column_name][i].split(",'")
-                # print(type(ref))
-                # print(ref)
                 refs.append(ref)
-                # print(refs)
             references = refs
         else: 
-            # print('inwikilarge loop')
             ref = test_dataset['simp'][i].split(",'")
-            # print(type(ref))
-            # print('this is ref from wikilarge', ref)
-            # refs.append(ref)
-            # # print('these are aggregated referencesrefs)
             refs.append(ref)
-            # print(refs)
             references = refs
-            # print('these are aggregated references', references)
-        # print('these are aggregated references', references)
-        # references = test_dataset['simp.0'][i].split(",'"),test_dataset['simp.1'][i].split(",'"),test_dataset['simp.2'][i].split(",'") ,test_dataset['simp.3'][i].split(",'"), test_dataset['simp.4'][i].split(",'"), test_dataset['simp.5'][i].split(",'")
-        # references = [list(reference) for reference in references]
-        # print('references:', references)
-        c = corpus_sari(sources, prediction, references) # from EASSE! 
-        # stat = compute_ngram_stats(sources, prediction, references)
-        
+        c = corpus_sari(sources, prediction, references) # from EASSE!         
         add_score, keep_score, del_score = get_corpus_sari_operation_scores(sources, prediction, references)
         stat = add_score, keep_score, del_score
         print('stat type', type(stat))
@@ -322,46 +302,32 @@ def calculate_eval_sentence(dataset, test_dataset, predictions):
         print('sari', c)
         sari_scores.append(c)
         stats.append(stat)
-
+    with open("resources/outputs/generate/stats.txt", "w", newline='') as f:
+            sheet = csv.writer(f)
+            sheet.writerow(('add', 'keep', 'del'))
+            for stat in stats:
+                sheet.writerow(stat)    
+        
     f = open("./resources/outputs/generate/sari.txt", "w")
     for c in sari_scores:
         f.write(f"{c}")
-        f.write("\n")
-    f.close()
-
-    f = open("./resources/outputs/generate/stats.txt", "w")
-    for stat in stats:
-        print('stat type', type(stat))
-        f.write(f"{stat}")
         f.write("\n")
     f.close()
     return sari_scores, stats
 
 def calculate_corpus_averages():
     sari_df=  pd.read_csv("./resources/outputs/generate/sari.txt", header=None)
-    avg_sari = sari_df.mean() #(sari_scores)
-    print('sari_average', avg_sari) ##24.977
-    # df = pd.read_csv("./resources/outputs/generate/stats.txt", names= ['add_score', 'keep_score', 'del_score'], sep=',', dtype=float) 
-    
-    # #     my_list = [tuple(line.split()) for line in input_file]
-    # # df = pd.DataFrame(my_list, columns =['add', 'keep', 'del'])
-    # print(df) 
-    
-    # # # df.apply(lambda row: to_frame(row), axis=1)
-    # # # print('these are the columns', df.columns)
-    # # # df.to_frame
-    # print(type(df))
-    # print(type(df['add_score']))
-    
-    # avg_add= df[['add_score', 'keep_score', 'del_score']].mean() # axis=1, numeric_only=True)
-    # test = df.mean(axis=0)
-    # print('means: ', avg_add)
-    # print('test', test)
-    # avg_add, avg_keep, avg_delete 
-    return avg_sari# , avg_add # , avg_keep, avg_delete
+    avg_sari = sari_df.mean().item()
+    print('sari_average', avg_sari)
+    df = pd.read_csv("./resources/outputs/generate/stats.txt")    
+    avg_add= df['add'].mean().item()
+    avg_keep = df['keep'].mean().item()
+    avg_delete = df['del'].mean().item()
+    # print('avgadd', avg_add)
+    # print('averages: ', avg_add, avg_keep, avg_delete)
+    return avg_sari , avg_add, avg_keep, avg_delete
 
-def reshape_tokenizer(): 
-    # Let's increase the vocabulary of Bert model and tokenizer
+def reshape_tokenizer(): # increase the vocabulary of Bert model and tokenizer
     # new_tokens = ['-']
     # num_added_toks = tokenizer.add_tokens(new_tokens)
     # extra_ids=0,rint('We have added', num_added_toks, 'tokens')
@@ -386,9 +352,9 @@ if __name__ == '__main__':
     # #Decide ABOUT DATASETS 
     dataset= get_train_data_txt(WIKILARGE_DATASET, 30, 40) 
     # print(dataset)
-    print('pre mapping', dataset['train'][:2])
+    # print('pre mapping', dataset['train'][:2])
     tokenized_dataset = dataset.map(preprocess_function_train, batched=True, batch_size=1)
-    print('post mapping', tokenized_dataset['train'][:2])
+    # print('post mapping', tokenized_dataset['train'][:2])
 
     # # ELSE: 
     # test_dataset = dataset['test'] # is already tokenized
@@ -445,9 +411,6 @@ if __name__ == '__main__':
     predictions = create_simplification_dataset()
     # print('predictions', predictions) 
     sari_scores, stats = calculate_eval_sentence(dataset, test_dataset, predictions)
-    print('this is sari', sari_scores)
-    print('this is the stats', stats)
-    print('means', mean(sari_scores))
     
     # EVALUATION & AVERAGES ON CORPUS LEVEL
     corpus_averages = calculate_corpus_averages()
