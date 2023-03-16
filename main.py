@@ -17,6 +17,7 @@ from torch.utils.data import DataLoader
 import csv
 from statistics import mean
 import re
+import paths
 
 WIKILARGE_DATASET = 'wikilarge'
 ASSET_TRAIN_DATASET = 'asset_train' # asset validation set

@@ -25,18 +25,12 @@ optuna
 #  torchtext 
 # evaluate
 # huggingface_hub nltk rouge-score
-dutch-word-embeddings@git+https://github.com:coosto/dutch-word-embeddings.git
-
+# dutch-word-embeddings@git+https://github.com:coosto/dutch-word-embeddings.git
+# dutch-word-embeddings
+# working version
+# https://github.com/coosto/dutch-word-embeddings/releases/download/v1.0/model.bin
+gensim
 
 #optuna ray
 # easse@git+https://github.com/feralvam/easse.git@8df369f025a7c927425482e802fb546fd5d06d84
 easse
-
-
-
-# !git clone http://github.com/feralvam/easse.git 
-# import os
-# os.getcwd()
-# os.chdir("easse")
-# os.getcwd()
-# !pip install .
