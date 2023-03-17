@@ -7,3 +7,4 @@ output/runs
 model_output
 wandb
 __pycache_
+resources/DUMPS
