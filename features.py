@@ -16,7 +16,6 @@ from string import punctuation
 import requests
 import gensim
 
-
 nltk.download('stopwords', quiet=True)
 nltk.download('averaged_perceptron_tagger', quiet=True)
 from nltk.corpus import stopwords
@@ -24,7 +23,7 @@ import nltk
 # from conf import DUMPS_DIR, WORD_EMBEDDINGS_NAME
 RESOURCES_DIR = Path('../resources')
 DATASETS_PATH = RESOURCES_DIR / "datasets"
-WORD_EMBEDDINGS_NAME = "glove.42B.300d"
+WORD_EMBEDDINGS_NAME = 'model'
 DUMPS_DIR = RESOURCES_DIR / "DUMPS"
 
 stopwords = set(stopwords.words("dutch"))
@@ -112,7 +111,7 @@ class LevenshteinRatio(Feature):
         return round(Levenshtein.ratio(original_text,
                                        simple_text), 2)
 
-
+# hier !!!!!
 class DependencyTreeDepthRatio(Feature):
 
     def __init__(self, stage, target_ratio):
@@ -193,42 +192,39 @@ class WordRankRatio(Feature):
             with open(model_filepath, 'rb') as f:
                 model = pickle.load(f)
             return model
-        else:
-            print("Downloading glove.42B.300d ...")
-            self._download_glove(model_name='glove.42B.300d', dest_dir=str(DUMPS_DIR))
+        else:            
+            print("Downloading dutch embeddings ...") # pretrained vectors
+            self._download_embeddings(model_name='coostco', dest_dir=str(DUMPS_DIR))
             print("Preprocessing word2rank...")
             DUMPS_DIR.mkdir(parents=True, exist_ok=True)
-            WORD_EMBEDDINGS_PATH = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.txt'
-            lines_generator = self._yield_lines(WORD_EMBEDDINGS_PATH)
+            WORD_EMBEDDINGS_PATH = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.bin'
+            model = self._load_word_embeddings(WORD_EMBEDDINGS_PATH) # returns index_to_key
+            # store into file
+            lines_generator = model # self._yield_lines(model) # (WORD_EMBEDDINGS_PATH)
+            
             word2rank = {}
             # next(lines_generator)
+            print('vocab_size', vocab_size)
             for i, line in enumerate(lines_generator):
-                if i >= vocab_size: break
-                word = line.split(' ')[0]
+                if i >= vocab_size: break # its not vocab size any more but  # len(model.key_to_index)
+                word = line.split(',')[0]
+                print('word', word)
                 word2rank[word] = i
                 print('ranked word?', word2rank[word])
-                print(type(word2rank))
-
+                
             pickle.dump(word2rank, open(model_filepath, 'wb'))
             txt_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.txt'
             zip_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.zip'
-            if txt_file.exists(): txt_file.unlink()
-            if zip_file.exists(): zip_file.unlink()
+            # if txt_file.exists(): txt_file.unlink()
+            # if zip_file.exists(): zip_file.unlink()
+            # print(word2rank)
             return word2rank
-
-    def _download_glove(self, model_name, dest_dir):
+        
+    def _download_embeddings(self, model_name, dest_dir): # pretrained rankings
         url = ''
-        if model_name == 'glove.6B':
-            url = 'http://nlp.stanford.edu/data/glove.6B.zip'
-        elif model_name == 'glove.42B.300d':
-            url = 'http://nlp.stanford.edu/data/glove.42B.300d.zip'
-        elif model_name == 'glove.840B.300d':
-            url = 'http://nlp.stanford.edu/data/glove.840B.300d.zip'
-        elif model_name == 'glove.twitter.27B':
-            url = 'http://nlp.stanford.edu/data/glove.twitter.27B.zip',
-        else:
-            possible_values = ['glove.6B', 'glove.42B.300d', 'glove.840B.300d', 'glove.twitter.27B']
-            raise ValueError('Unknown model_name. Possible values are {}'.format(possible_values))
+        if model_name == 'coostco':
+            url = 'https://github.com/coosto/dutch-word-embeddings/releases/download/v1.0/model.bin'
+
         file_path = self._download_url(url, dest_dir)
         out_filepath = Path(file_path)
         out_filepath = out_filepath.parent / f'{out_filepath.stem}.txt'
@@ -236,6 +232,11 @@ class WordRankRatio(Feature):
         if not out_filepath.exists():
             print("Extracting: ", Path(file_path).name)
             self._unzip(file_path, dest_dir)
+
+    def _load_word_embeddings(self, filepath):
+        model = gensim.models.KeyedVectors.load_word2vec_format(filepath, binary=True) # '../resources/DUMPS/model.bin'
+        model_indexes = model.index_to_key
+        return model_indexes
 
     def _yield_lines(self, filepath):
         filepath = Path(filepath)
