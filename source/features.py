@@ -111,7 +111,6 @@ class LevenshteinRatio(Feature):
         return round(Levenshtein.ratio(original_text,
                                        simple_text), 2)
 
-# hier !!!!!
 class DependencyTreeDepthRatio(Feature):
 
     def __init__(self, stage, target_ratio):
@@ -246,7 +245,7 @@ class WordRankRatio(Feature):
         
     def _download_embeddings(self, model_name, dest_dir): # pretrained rankings
         url = ''
-        if model_name =='coost0_model':
+        if model_name =='coosto_model':
             url = 'https://github.com/coosto/dutch-word-embeddings/releases/download/v1.0/model.bin'
 
         file_path = self._download_url(url, dest_dir)
