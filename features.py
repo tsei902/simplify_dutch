@@ -23,7 +23,7 @@ import nltk
 # from conf import DUMPS_DIR, WORD_EMBEDDINGS_NAME
 RESOURCES_DIR = Path('../resources')
 DATASETS_PATH = RESOURCES_DIR / "datasets"
-WORD_EMBEDDINGS_NAME = 'model'
+WORD_EMBEDDINGS_NAME = 'conllmodel' # 'coosto_model'
 DUMPS_DIR = RESOURCES_DIR / "DUMPS"
 
 stopwords = set(stopwords.words("dutch"))
@@ -155,6 +155,10 @@ class WordRankRatio(Feature):
         if stage == "train":
             self.tokenizer = MosesTokenizer(lang='nl')
             self.word2rank = self._get_word2rank()
+                       # with open ("./resources/DUMPS/word2rank.txt", "a", encoding="utf8") as file: 
+            #     file.writelines(self.word2rank)
+            #     file.write("\n")
+            #     file.close()
             self.length_rank = len(self.word2rank)
 
     def calculate_ratio(self, simple_text, original_text):
@@ -192,37 +196,57 @@ class WordRankRatio(Feature):
             with open(model_filepath, 'rb') as f:
                 model = pickle.load(f)
             return model
-        else:            
-            print("Downloading dutch embeddings ...") # pretrained vectors
-            self._download_embeddings(model_name='coostco', dest_dir=str(DUMPS_DIR))
+        else:
+            print("Processing", f"{WORD_EMBEDDINGS_NAME}...")
             print("Preprocessing word2rank...")
             DUMPS_DIR.mkdir(parents=True, exist_ok=True)
-            WORD_EMBEDDINGS_PATH = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.bin'
-            model = self._load_word_embeddings(WORD_EMBEDDINGS_PATH) # returns index_to_key
-            # store into file
-            lines_generator = model # self._yield_lines(model) # (WORD_EMBEDDINGS_PATH)
-            
+            WORD_EMBEDDINGS_PATH = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.txt'
+            lines_generator = self._yield_lines(WORD_EMBEDDINGS_PATH)
             word2rank = {}
             # next(lines_generator)
-            print('vocab_size', vocab_size)
             for i, line in enumerate(lines_generator):
-                if i >= vocab_size: break # its not vocab size any more but  # len(model.key_to_index)
-                word = line.split(',')[0]
-                print('word', word)
+                if i >= vocab_size: break
+                word = line.split(' ')[0]
                 word2rank[word] = i
-                print('ranked word?', word2rank[word])
-                
+
             pickle.dump(word2rank, open(model_filepath, 'wb'))
-            txt_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.txt'
-            zip_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.zip'
+            # txt_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.txt'
+            # zip_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.zip'
             # if txt_file.exists(): txt_file.unlink()
             # if zip_file.exists(): zip_file.unlink()
-            # print(word2rank)
-            return word2rank
+            return word2rank        
+        
+        # else:            
+            # print("Downloading dutch embeddings ...") # pretrained vectors
+            # self._download_embeddings(model_name='coostco', dest_dir=str(DUMPS_DIR))
+            # print("Preprocessing word2rank...")
+            # DUMPS_DIR.mkdir(parents=True, exist_ok=True)
+            # WORD_EMBEDDINGS_PATH = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.bin'
+            # model = self._load_word_embeddings(WORD_EMBEDDINGS_PATH) # returns index_to_key
+            # # store into file
+            # lines_generator = model # self._yield_lines(model) # (WORD_EMBEDDINGS_PATH)
+            
+            # word2rank = {}
+            # # next(lines_generator)
+            # print('vocab_size', vocab_size)
+            # for i, line in enumerate(lines_generator):
+            #     if i >= vocab_size: break # its not vocab size any more but  # len(model.key_to_index)
+            #     word = line.split(',')[0]
+            #     print('word', word)
+            #     word2rank[word] = i
+            #     print('ranked word?', word2rank[word])
+                
+            # pickle.dump(word2rank, open(model_filepath, 'wb'))
+            # txt_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.txt'
+            # zip_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.zip'
+            # # if txt_file.exists(): txt_file.unlink()
+            # # if zip_file.exists(): zip_file.unlink()
+            # # print(word2rank)
+            # return word2rank
         
     def _download_embeddings(self, model_name, dest_dir): # pretrained rankings
         url = ''
-        if model_name == 'coostco':
+        if model_name =='coost0_model':
             url = 'https://github.com/coosto/dutch-word-embeddings/releases/download/v1.0/model.bin'
 
         file_path = self._download_url(url, dest_dir)
