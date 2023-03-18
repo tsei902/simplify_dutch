@@ -13,13 +13,12 @@ from itertools import zip_longest
 # from fcntl import flock, LOCK_EX, LOCK_UN
 from urllib.request import urlretrieve
 from contextlib import contextmanager, AbstractContextManager
-
 import bz2
 import gzip
 import tarfile
 import zipfile
 
-from paths import DATASETS_DIR # , CACHES_DIR
+from source.paths import DATASETS_DIR # , CACHES_DIR
 
 def get_dataset_dir(dataset):
     return DATASETS_DIR / dataset
