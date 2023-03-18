@@ -13,7 +13,6 @@ from tqdm import tqdm
 from pathlib import Path
 import numpy as np
 from string import punctuation
-import requests
 import gensim
 
 nltk.download('stopwords', quiet=True)

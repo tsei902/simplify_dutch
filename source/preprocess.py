@@ -2,13 +2,14 @@ from datasets import load_dataset, DatasetDict, Dataset, concatenate_datasets, F
 import os
 import pandas as pd
 from model import tokenizer, model
+from paths import RESOURCES_DIR, DATASETS_DIR, DUMPS_DIR, OUTPUT_DIR, WIKILARGE_DATASET, ASSET_TEST_DATASET, ASSET_TRAIN_DATASET
 
 def get_train_data_txt(dataset, begin, end):        
-    if dataset == 'asset_train': 
-        folder_path = "./resources/datasets/asset/train/"
+    if dataset == ASSET_TRAIN_DATASET: #  'asset_train': 
+        folder_path = f'{DATASETS_DIR}/asset/train' #  "./resources/datasets/asset/train/"
         file_path = "asset.valid."
-    if dataset == 'wikilarge': 
-        folder_path = "./resources/datasets/wikilarge/"
+    if dataset == WIKILARGE_DATASET: # 'wikilarge': 
+        folder_path = f'{DATASETS_DIR}/wikilarge/'# "./resources/datasets/wikilarge/"
         file_path = "wikilarge.train."
     main_dataframe = pd.DataFrame()
     for f in os.listdir(folder_path):
@@ -18,9 +19,9 @@ def get_train_data_txt(dataset, begin, end):
                 # header= header.replace("''","").replace("?","")
                 df = pd.read_csv(f"{folder_path}{f}", encoding = 'utf8',sep="\t",header= 0, names=[header])
                 # df= pd.DataFrame([row.split(',')]for row in df)
-                df.to_csv('./resources/outputs/train/out_df.txt', encoding='utf8', index=None) 
+                df.to_csv(f'{OUTPUT_DIR}/train/out_df.txt', encoding='utf8', index=None) 
                 main_dataframe = pd.concat([main_dataframe,df],axis=1)    
-    main_dataframe.to_csv('./resources/outputs/train/out_main_dataframe.txt', encoding='utf8', index=None)     
+    main_dataframe.to_csv(f'{OUTPUT_DIR}/train/out_main_dataframe.txt', encoding='utf8', index=None)     
     #features = Features({"data": Array2D(shape=(2, 2), dtype='int32')})
     # features = Features({'orig': Array2D(shape=(1,1), dtype='string'), 'simp': Array2D(shape=(1,1), dtype='string')})
     #, features=features
@@ -51,17 +52,17 @@ def get_train_data_txt(dataset, begin, end):
 
 def get_test_data_txt(dataset, begin, end):        
     main_dataframe = pd.DataFrame()      
-    if  dataset== 'asset_test': 
-        folder_path = "./resources/datasets/asset/test/"
+    if  dataset== ASSET_TEST_DATASET: #  'asset_test': 
+        folder_path = f'{DATASETS_DIR}/asset/test/'
         for f in os.listdir(folder_path):
             if ('.txt' in f):
                 header= f.replace("asset.test.","").replace("?","")
                 header= header.replace(".txt","").replace("?","")
                 # header= header.replace("''","").replace("?","")
                 df = pd.read_csv(f"{folder_path}{f}", encoding = 'utf8',sep="\t", names=[header]) # header= 0,
-                df.to_csv('./resources/outputs/test/out_df.txt', encoding='utf8',index=None) 
+                df.to_csv(f'{OUTPUT_DIR}/test/out_df.txt', encoding='utf8',index=None) 
                 main_dataframe = pd.concat([main_dataframe,df],axis=1)
-        main_dataframe.to_csv('./resources/outputs/test/out_main_dataframe.txt', encoding='utf8', index=None)          
+        main_dataframe.to_csv(f'{OUTPUT_DIR}/test/out_main_dataframe.txt', encoding='utf8', index=None)          
     test_dataset = DatasetDict({'test': Dataset.from_pandas(main_dataframe)}) # .with_format("torch")
     test_dataset= test_dataset['test'].select(range(begin, end))
     # test_dataset.set_format('torch') 

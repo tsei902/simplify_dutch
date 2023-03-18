@@ -38,7 +38,7 @@ if __name__ == '__main__':
     
     # #Decide ABOUT DATASETS 
     dataset= preprocess.get_train_data_txt(WIKILARGE_DATASET, 30, 40) 
-    # print(dataset)
+    print('train_dataset', dataset)
     # print('pre mapping', dataset['train'][:2])
     tokenized_dataset = dataset.map((preprocess.preprocess_function_train), batched=True, batch_size=1)
     # print('post mapping', tokenized_dataset['train'][:2])
@@ -46,22 +46,22 @@ if __name__ == '__main__':
     # # ELSE: 
     # test_dataset = dataset['test'] # is already tokenized
     test_dataset = preprocess.get_test_data_txt(ASSET_TEST_DATASET, 15, 22)
-    print(test_dataset)    
+    print('test_dataset', test_dataset)    
     
-    data_collator = DataCollatorForSeq2Seq(model.tokenizer, model=model.model)
-    trainer = Seq2SeqTrainer(model=model.model,
-                            args=model.training_args,
-                            train_dataset=tokenized_dataset['train'],
-                            eval_dataset=tokenized_dataset['validation'],
-                            data_collator=data_collator,
-                            tokenizer=model.tokenizer,
-                            # compute_metrics=compute_metrics
-                            )
-    set_seed(model.training_args.seed)
-    trainer.train()
-    trainer.save_model('./saved_model')
-    trainer.evaluate()
-    trained_model=model
+    # data_collator = DataCollatorForSeq2Seq(model.tokenizer, model=model.model)
+    # trainer = Seq2SeqTrainer(model=model.model,
+    #                         args=model.training_args,
+    #                         train_dataset=tokenized_dataset['train'],
+    #                         eval_dataset=tokenized_dataset['validation'],
+    #                         data_collator=data_collator,
+    #                         tokenizer=model.tokenizer,
+    #                         # compute_metrics=compute_metrics
+    #                         )
+    # set_seed(model.training_args.seed)
+    # trainer.train()
+    # trainer.save_model('./saved_model')
+    # trainer.evaluate()
+    # trained_model=model
     trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
     tokenizer = AutoTokenizer.from_pretrained('./saved_model')
     # # print(model)
