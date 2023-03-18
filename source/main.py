@@ -68,17 +68,13 @@ if __name__ == '__main__':
     print('./saved_model/training_args')
     
     # GENERATION  
-    for i in range(0,len(test_dataset['orig'])): 
-        print('test input sentence from dataset[orig]', test_dataset['orig'][i])
-        tokenized_test_input = preprocess.preprocess_function_test(test_dataset['orig'][i])
-        print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
-        generated_dataset= model.generate(tokenized_test_input['input_ids'], trained_model, tokenizer)
-        print('generated data decoded!!: ', generated_dataset)    
+    predicted_sentences= model.generate(test_dataset['orig'], trained_model)
 
     # EVALUATION & AVERAGES ON SENTENCE LEVEL
     # MENTION EASSE
     # assemble all formats, if necessary store 
     predictions = model.create_simplification_dataset()
+    
     # print('predictions', predictions) 
     sari_scores, stats = evaluate.calculate_eval_sentence(dataset, test_dataset, predictions)
     

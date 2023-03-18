@@ -7,10 +7,12 @@ REPO_DIR = Path(__file__).resolve().parent.parent
 RESOURCES_DIR = REPO_DIR / 'resources'
 DATASETS_DIR = RESOURCES_DIR / 'datasets'
 DUMPS_DIR = RESOURCES_DIR / "DUMPS"
+OUTPUT_DIR = RESOURCES_DIR / "outputs"
+EXP_DIR = REPO_DIR / 'experiments'
+EXP_DIR.mkdir(parents=True, exist_ok=True)
 
 # DATASETS
 WIKILARGE_DATASET = 'wikilarge'
-OUTPUT_DIR = RESOURCES_DIR / "outputs"
 ASSET_TRAIN_DATASET = 'asset_train' # asset validation set
 ASSET_TEST_DATASET = 'asset_test'
 

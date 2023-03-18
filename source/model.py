@@ -1,6 +1,7 @@
 
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
 # , T5ForConditionalGeneration, TrainingArguments
+import preprocess
 
 model_checkpoint = "yhavinga/t5-base-dutch" #"yhavinga/t5-v1.1-base-dutch-cased" #"flax-community/t5-base-dutch"#
 model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint,  use_cache=False) # gradient_checkpointing=True,
@@ -105,3 +106,11 @@ def create_simplification_dataset():
             line = [line]
             list.append(line)
     return list
+
+def generate(data, pretrained_model):
+    for i in range(0,len(data)): 
+        print('test input sentence from dataset[orig]', data[i])
+        tokenized_test_input = preprocess.preprocess_function_test(data[i])
+        print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
+        generated_dataset= pretrained_model.generate(tokenized_test_input['input_ids'])
+        print('generated data decoded!!: ', generated_dataset)    
