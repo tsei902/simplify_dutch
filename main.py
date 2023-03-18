@@ -17,7 +17,8 @@ from torch.utils.data import DataLoader
 import csv
 from statistics import mean
 import re
-from source.paths import WIKILARGE_DATASET, ASSET_TRAIN_DATASET, ASSET_TEST_DATASET
+import source.paths import WIKILARGE_DATASET, ASSET_TRAIN_DATASET, ASSET_TEST_DATASET
+
 
 # WANDB_LOG_MODEL=True
 # WANDB_WATCH=all
