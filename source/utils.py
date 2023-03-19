@@ -17,8 +17,26 @@ import bz2
 import gzip
 import tarfile
 import zipfile
+import hashlib
+import json
 
-from source.paths import DATASETS_DIR # , CACHES_DIR
+from paths import DATASETS_DIR # , CACHES_DIR
+
+
+LANGUAGES = ['complex', 'simple']
+PHASES = ['train', 'valid', 'test']
+# SUBFOLDER = ['train', 'test']
+
+def get_data_filepath(dataset, phase, type, i=None):
+    suffix = ''
+    print('line passed 1')
+    if i is not None:
+        suffix = f'.{i}'
+        print('line passed 2', suffix)
+    filename = f'{dataset}.{phase}.{type}{suffix}'
+    print('this is the filename', filename)
+    return DATASETS_DIR / dataset / filename
+
 
 def get_dataset_dir(dataset):
     return DATASETS_DIR / dataset
@@ -76,3 +94,29 @@ def log_stdout(filepath, mute_stdout=False):
     finally:
         sys.stdout = save_stdout
         log_file.close()
+        
+def log_params(filepath, kwargs):
+    filepath = Path(filepath)
+    kwargs_str = dict()
+    for key in kwargs:
+        kwargs_str[key] = str(kwargs[key])
+    json.dump(kwargs_str, filepath.open('w'), indent=4)
+
+        
+def generate_hash(data):
+    h = hashlib.new('md5')
+    h.update(str(data).encode())
+    return h.hexdigest()
+
+
+def count_line(filepath):
+    filepath = Path(filepath)
+    line_count = 0
+    with filepath.open("r", encoding="utf-8") as f:
+        for line in f:
+            line_count += 1
+    return line_count
+
+
+def read_lines(filepath):
+    return [line.rstrip() for line in yield_lines(filepath)]

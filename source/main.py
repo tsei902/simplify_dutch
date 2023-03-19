@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     # # ELSE: 
     # test_dataset = dataset['test'] # is already tokenized
-    test_dataset = preprocess.get_test_data_txt(ASSET_TEST_DATASET, 15, 22)
+    test_dataset = preprocess.get_test_data_txt(ASSET_TEST_DATASET, 0, 358) # doesnt take first row.
     print('test_dataset', test_dataset)    
     
     # data_collator = DataCollatorForSeq2Seq(model.tokenizer, model=model.model)
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     print('./saved_model/training_args')
     
     # GENERATION  
-    predicted_sentences= model.generate(test_dataset['orig'], trained_model)
+    # predicted_sentences= model.create_generation(test_dataset['orig'], trained_model, tokenizer)
 
     # EVALUATION & AVERAGES ON SENTENCE LEVEL
     # MENTION EASSE

@@ -2,6 +2,7 @@
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
 # , T5ForConditionalGeneration, TrainingArguments
 import preprocess
+from paths import DATASETS_DIR, OUTPUT_DIR, RESOURCES_DIR, REPO_DIR
 
 model_checkpoint = "yhavinga/t5-base-dutch" #"yhavinga/t5-v1.1-base-dutch-cased" #"flax-community/t5-base-dutch"#
 model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint,  use_cache=False) # gradient_checkpointing=True,
@@ -81,24 +82,24 @@ def generate(tokenized_test_input, trained_model, tokenizer):
                 repetition_penalty=1.3 # CRTL PAPER!
                 
                 )
-    print('This is the output of the generator', output) # output is tensor
+    # print('This is the output of the generator', output) # output is tensor
     # print(type(output))
     # simplification2 = tokenizer.batch_decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
     # print('simplification 2  ', simplification2)
     simplification = tokenizer.decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
     # decode returns a list of strings
     # batc decode returns a 
-    file=open("./resources/outputs/generate/simplification.txt", "a", encoding="utf8") 
+    file=open(f'{OUTPUT_DIR}/generate/simplification.txt', "a", encoding="utf8") 
     file.writelines(simplification)
     file.write("\n")
     file.close()
-    # lensimpl = len(simplification.split())
-    # print(lensimpl, " words")
-    # simplification.replace('. ', '.\n')
+    # # lensimpl = len(simplification.split())
+    # # print(lensimpl, " words")
+    # # simplification.replace('. ', '.\n')
     return simplification
 
 def create_simplification_dataset(): 
-    folder_path= "./resources/outputs/generate/simplification.txt"
+    folder_path= f'{OUTPUT_DIR}/generate/simplification.txt'
     list = []
     with open(folder_path,  "r", encoding='utf8') as f:
         for line in f:
@@ -107,10 +108,11 @@ def create_simplification_dataset():
             list.append(line)
     return list
 
-def generate(data, pretrained_model):
+def create_generation(data, pretrained_model, tokenizer):
     for i in range(0,len(data)): 
-        print('test input sentence from dataset[orig]', data[i])
+        #print('test input sentence from dataset[orig]', data[i])
         tokenized_test_input = preprocess.preprocess_function_test(data[i])
-        print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
-        generated_dataset= pretrained_model.generate(tokenized_test_input['input_ids'])
-        print('generated data decoded!!: ', generated_dataset)    
+        #print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
+        generated_dataset= generate(tokenized_test_input['input_ids'], pretrained_model, tokenizer)
+        #print('generated data decoded!!: ', generated_dataset)
+    return generated_dataset  

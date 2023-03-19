@@ -4,6 +4,9 @@ import pandas as pd
 from model import tokenizer, model
 from paths import RESOURCES_DIR, DATASETS_DIR, DUMPS_DIR, OUTPUT_DIR, WIKILARGE_DATASET, ASSET_TEST_DATASET, ASSET_TRAIN_DATASET
 
+
+
+
 def get_train_data_txt(dataset, begin, end):        
     if dataset == ASSET_TRAIN_DATASET: #  'asset_train': 
         folder_path = f'{DATASETS_DIR}/asset/train' #  "./resources/datasets/asset/train/"
@@ -101,7 +104,7 @@ def preprocess_function_test(example):
     # https://medium.com/nlplanet/a-full-guide-to-finetuning-t5-for-text2text-and-building-a-demo-with-streamlit-c72009631887
     max_length = 128
     input_ids = tokenizer(example, max_length=max_length, truncation=True,  return_tensors="pt", add_special_tokens=False) # , padding='max_length', padding='max_length') # , )   #padding=True ,
-    print('this is the input ids after preprocessing in test', input_ids)
+    # print('this is the input ids after preprocessing in test', input_ids)
     return input_ids
 
 def encoding_test(examples):
