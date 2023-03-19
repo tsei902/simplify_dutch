@@ -54,7 +54,7 @@ def evaluate_on_asset(features_kwargs, phase, model_dirname=None):
         if "DependencyTreeDepthRatioFeature" in features_kwargs:
             print("DTD:", features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
         print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} ".format(scores['sari'], scores['bleu'], scores['fkgl']))
-        return scores
+        return scores['sari']
             # print("Execution time: --- %s seconds ---" % (time.time() - start_time))
     else:
         print("Already exist: ", output_score_filepath)

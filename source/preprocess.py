@@ -3,7 +3,7 @@ import os
 import pandas as pd
 from model import tokenizer, model
 from paths import RESOURCES_DIR, DATASETS_DIR, DUMPS_DIR, OUTPUT_DIR, WIKILARGE_DATASET, ASSET_TEST_DATASET, ASSET_TRAIN_DATASET
-
+from utils import yield_lines, generate_hash, 
 
 
 
@@ -127,3 +127,150 @@ def reshape_tokenizer(): # increase the vocabulary of Bert model and tokenizer
     print('vocab size', model.model.config.vocab_size)
     print('special tokens', tokenizer.additional_special_tokens)
     # print('tokens encoder', tokenizer.added_tokens_encoder)
+    
+class Preprocessor:
+    def __init__(self, features_kwargs=None):
+        super().__init__()
+
+        self.features = self.get_features(features_kwargs)
+        if features_kwargs:
+            self.hash = generate_hash(str(features_kwargs).encode())
+        else:
+            self.hash = "no_feature"
+
+    def get_class(self, class_name, *args, **kwargs):
+        return globals()[class_name](*args, **kwargs)
+
+    def get_features(self, feature_kwargs):
+        features = []
+        for feature_name, kwargs in feature_kwargs.items():
+            features.append(self.get_class(feature_name, **kwargs))
+        return features
+
+    def encode_sentence(self, sentence):
+        if self.features:
+            line = ''
+            for feature in self.features:
+                line += feature.encode_sentence(sentence) + ' '
+            line += ' ' + sentence
+            return line.rstrip()
+        else:
+            return sentence
+
+    def encode_sentence_pair(self, complex_sentence, simple_sentence):
+        # print(complex_sentence)
+        if self.features:
+            line = ''
+            for feature in self.features:
+                # startTime = timeit.default_timer()
+                # print(feature)
+                processed_complex, _ = feature.encode_sentence_pair(complex_sentence, simple_sentence)
+                line += processed_complex + ' '
+                # print(feature, timeit.default_timer() - startTime)
+            line += ' ' + complex_sentence
+            return line.rstrip()
+
+        else:
+            return complex_sentence
+
+    def decode_sentence(self, encoded_sentence):
+        for feature in self.features:
+            decoded_sentence = feature.decode_sentence(encoded_sentence)
+        return decoded_sentence
+
+    def encode_file(self, input_filepath, output_filepath):
+        with open(output_filepath, 'w') as f:
+            for line in yield_lines(input_filepath):
+                f.write(self.encode_sentence(line) + '\n')
+
+    def decode_file(self, input_filepath, output_filepath):
+        with open(output_filepath, 'w') as f:
+            for line in yield_lines(input_filepath):
+                f.write(self.decode_sentence(line) + '\n')
+
+    def process_encode_sentence_pair(self, sentences):
+        print(f"{sentences[2]}/{self.line_count}", sentences[0])  # sentence[0] index
+        return (self.encode_sentence_pair(sentences[0], sentences[1]))
+
+    def pool_encode_sentence_pair(self, args):
+        # print(f"{processed_line_count}/{self.line_count}")
+        complex_sent, simple_sent, queue = args
+        queue.put(1)
+        return self.encode_sentence_pair(complex_sent, simple_sent)
+
+    @print_execution_time
+    def encode_file_pair(self, complex_filepath, simple_filepath):
+        # print(f"Preprocessing file: {complex_filepath}")
+        processed_complex_sentences = []
+        self.line_count = count_line(simple_filepath)
+
+        nb_cores = multiprocessing.cpu_count()
+        manager = multiprocessing.Manager()
+        queue = manager.Queue()
+
+        pool = Pool(processes=nb_cores)
+        args = [(complex_sent, simple_sent, queue) for complex_sent, simple_sent in
+                yield_sentence_pair(complex_filepath, simple_filepath)]
+        res = pool.map_async(self.pool_encode_sentence_pair, args)
+        while not res.ready():
+            # remaining = res._number_left * res._chunksize
+            size = queue.qsize()
+            print(f"Preprocessing: {size} / {self.line_count}")
+            time.sleep(0.5)
+        encoded_sentences = res.get()
+        pool.close()
+        pool.join()
+        # pool.terminate()
+        # i = 0
+        # for complex_sentence, simple_sentence in yield_sentence_pair(complex_filepath, simple_filepath):
+        # # print(complex_sentence)
+        #     processed_complex_sentence = self.encode_sentence_pair(complex_sentence, simple_sentence)
+        #     i +=1
+        #     print(f"{i}/{self.line_count}", processed_complex_sentence)
+        # processed_complex_sentences.append(encoded_complex)
+
+        return encoded_sentences
+
+    def get_preprocessed_filepath(self, dataset, phase, type):
+        filename = f'{dataset}.{phase}.{type}'
+        return self.preprocessed_data_dir / filename
+
+    def preprocess_dataset(self, dataset):
+        # download_requirements()
+        self.preprocessed_data_dir = PROCESSED_DATA_DIR / self.hash / dataset
+        self.preprocessed_data_dir.mkdir(parents=True, exist_ok=True)
+        save_preprocessor(self)
+        print(f'Preprocessing dataset: {dataset}')
+
+        for phase in PHASES:
+            # for phase in ["valid", "test"]:
+            complex_filepath = get_data_filepath(dataset, phase, 'complex')
+            simple_filepath = get_data_filepath(dataset, phase, 'simple')
+
+            complex_output_filepath = self.preprocessed_data_dir / complex_filepath.name
+            simple_output_filepath = self.preprocessed_data_dir / simple_filepath.name
+            if complex_output_filepath.exists() and simple_output_filepath.exists():
+                continue
+
+            print(f'Prepocessing files: {complex_filepath.name} {simple_filepath.name}')
+            processed_complex_sentences = self.encode_file_pair(complex_filepath, simple_filepath)
+
+            write_lines(processed_complex_sentences, complex_output_filepath)
+            shutil.copy(simple_filepath, simple_output_filepath)
+
+        print(f'Preprocessing dataset "{dataset}" is finished.')
+        return self.preprocessed_data_dir
+
+
+if __name__ == '__main__':
+    features_kwargs = {
+        # 'WordRatioFeature': {'target_ratio': 0.8},
+        'CharRatioFeature': {'target_ratio': 0.8},
+        'LevenshteinRatioFeature': {'target_ratio': 0.8},
+        'WordRankRatioFeature': {'target_ratio': 0.8},
+        'DependencyTreeDepthRatioFeature': {'target_ratio': 0.8}
+    }
+    # features_kwargs = {}
+    preprocessor = Preprocessor(features_kwargs)
+    preprocessor.preprocess_dataset(WIKILARGE_DATASET)
+    # preprocessor.preprocess_dataset(NEWSELA_DATASET)

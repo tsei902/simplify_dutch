@@ -42,7 +42,7 @@ if __name__=='__main__':
     #     with log_stdout(tuning_logs):
             # study = optuna.create_study(study_name='TS_T5_study', direction="minimize", storage='sqlite:///TS_T5_study.db')
     study = optuna.create_study(study_name='Tokens_study', direction="maximize", load_if_exists=True) # storage=f'sqlite:///{tuning_log_dir}/Tokens_study.db', 
-    study.optimize(objective, n_trials=500)
+    study.optimize(objective, n_trials=5)
     print("Number of finished trials: {}".format(len(study.trials)))
     print("Best trial:")
     trial = study.best_trial
