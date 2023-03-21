@@ -1,24 +1,27 @@
-# -- fix path --
 from pathlib import Path
 import sys
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-# -- end fix path --
 from source import utils
 from functools import lru_cache
-from multiprocessing import Pool, Lock
+from multiprocessing import Pool
 from string import punctuation
 import multiprocessing
 import Levenshtein
 import numpy as np
 import spacy
+import os
 import nltk
+import tarfile
+import zipfile
+import urllib
+import pickle
+from tqdm import tqdm
 import shutil
+import gensim
 import time
-
 nltk.download('stopwords', quiet=True)
 from nltk.corpus import stopwords
 import re
-
 from paths import DUMPS_DIR, ASSET_DATASET,  PHASES, get_data_filepath, PROCESSED_DATA_DIR, \
     DATASETS_DIR, WIKILARGE_DATASET, WORD_EMBEDDINGS_NAME 
     # WORD_FREQUENCY_FILEPATH 
@@ -27,32 +30,25 @@ from utils import tokenize, yield_lines, load_dump, dump, write_lines, count_lin
 
 stopwords = set(stopwords.words('dutch'))
 
-
 def round(val):
     return '%.2f' % val
-
 
 def safe_division(a, b):
     return a / b if b else 0
 
-
 # def tokenize(sentence):
 #     return sentence.split()
-
 
 @lru_cache(maxsize=1024)
 def is_punctuation(word):
     return ''.join([char for char in word if char not in punctuation]) == ''
 
-
 @lru_cache(maxsize=128)
 def remove_punctuation(text):
     return ' '.join([word for word in tokenize(text) if not is_punctuation(word)])
 
-
 def remove_stopwords(text):
     return ' '.join([w for w in tokenize(text) if w.lower() not in stopwords])
-
 
 @lru_cache(maxsize=1024)
 def get_dependency_tree_depth(sentence):
@@ -66,20 +62,17 @@ def get_dependency_tree_depth(sentence):
         return 0
     return max(tree_depths)
 
-
 @lru_cache(maxsize=1)
 def get_spacy_model():
-    model = 'en_core_web_sm'
+    model = 'nl_core_news_sm'  # from spacy, Dutch pipeline optimized for CPU. Components: tok2vec, morphologizer, tagger, parser, lemmatizer (trainable_lemmatizer), senter, ner.
     if not spacy.util.is_package(model):
         spacy.cli.download(model)
         spacy.cli.link(model, model, force=True, model_path=spacy.util.get_package_path(model))
     return spacy.load(model)
 
-
 @lru_cache(maxsize=10 ** 6)
 def spacy_process(text):
     return get_spacy_model()(str(text))
-
 
 @lru_cache(maxsize=1)
 def get_word2rank(vocab_size=np.inf):
@@ -87,25 +80,64 @@ def get_word2rank(vocab_size=np.inf):
     if model_filepath.exists():
         return load_dump(model_filepath)
     else:
-        print("Downloading glove.42B.300d ...")
-        download_glove(model_name='glove.42B.300d', dest_dir=str(DUMPS_DIR))
+        print("Downloading dutch embeddings ...") # pretrained vectors
+        download_twitter_embeddings(model_name='coostco', dest_dir=str(DUMPS_DIR))
         print("Preprocessing word2rank...")
         DUMPS_DIR.mkdir(parents=True, exist_ok=True)
-        WORD_EMBEDDINGS_PATH = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.txt'
-        lines_generator = yield_lines(WORD_EMBEDDINGS_PATH)
+        WORD_EMBEDDINGS_PATH = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.bin'
+        model = load_word_embeddings(WORD_EMBEDDINGS_PATH) # returns index_to_key
+        # store into file
+        lines_generator = model 
         word2rank = {}
-        # next(lines_generator)
+        print('vocab_size', vocab_size)
         for i, line in enumerate(lines_generator):
-            if i >= vocab_size: break
-            word = line.split(' ')[0]
+            if i >= vocab_size: break # its not vocab size any more but  # len(model.key_to_index)
+            word = line.split(',')[0]
             word2rank[word] = i
-        dump(word2rank, model_filepath)
-        txt_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.txt'
-        zip_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.zip'
-        if txt_file.exists(): txt_file.unlink()
-        if zip_file.exists(): zip_file.unlink()
-        return word2rank
-
+        pickle.dump(word2rank, open(model_filepath, 'wb'))
+        # txt_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.txt'
+        # zip_file = DUMPS_DIR / f'{WORD_EMBEDDINGS_NAME}.zip'
+    return word2rank        
+    
+def load_word_embeddings(filepath):
+    model = gensim.models.KeyedVectors.load_word2vec_format(filepath, binary=True) # '../resources/DUMPS/model.bin'
+    model_indexes = model.index_to_key
+    return model_indexes   
+    
+def download_twitter_embeddings(model_name, dest_dir): # pretrained rankings
+    url = ''
+    if model_name == 'coosto_model':
+        url = 'https://github.com/coosto/dutch-word-embeddings/releases/download/v1.0/model.bin'
+    file_path = download_url(url, dest_dir)
+    out_filepath = Path(file_path)
+    out_filepath = out_filepath.parent / f'{out_filepath.stem}.txt'
+    # print(out_filepath, out_filepath.exists())
+    if not out_filepath.exists():
+        print("Extracting: ", Path(file_path).name)
+        unzip(file_path, dest_dir) 
+        
+def download_url(self, url, output_path):
+        name = url.split('/')[-1]
+        file_path = f'{output_path}/{name}'
+        if not Path(file_path).exists():
+            with tqdm(unit='B', unit_scale=True, leave=True, miniters=1,desc=name) as t:  # all optional kwargs
+                urllib.request.urlretrieve(url, filename=file_path, reporthook=self._download_report_hook(t), data=None)
+        return file_path   
+    
+def unzip(self, file_path, dest_dir=None):
+    if dest_dir is None:
+        dest_dir = os.path.dirname(file_path)
+    if file_path.endswith('.zip'):
+        with zipfile.ZipFile(file_path, "r") as zip_ref:
+            zip_ref.extractall(dest_dir)
+    elif file_path.endswith("tar.gz") or file_path.endswith("tgz"):
+        tar = tarfile.open(file_path, "r:gz")
+        tar.extractall(dest_dir)
+        tar.close()
+    elif file_path.endswith("tar"):
+        tar = tarfile.open(file_path, "r:")
+        tar.extractall(dest_dir)
+        tar.close()
 
 @lru_cache(maxsize=10000)
 def get_normalized_rank(word):
@@ -122,38 +154,38 @@ def get_complexity_score2(sentence):
         return 1.0
     return np.array([get_normalized_rank(word) for word in words]).mean()
 
-@lru_cache(maxsize=1)
-def get_word_frequency():
-    model_filepath = DUMPS_DIR / f'{WORD_FREQUENCY_FILEPATH.stem}.pk'
-    if model_filepath.exists():
-        return load_dump(model_filepath)
-    else:
-        DUMPS_DIR.mkdir(parents=True, exist_ok=True) 
-        word_freq = {}
-        for line in yield_lines(WORD_FREQUENCY_FILEPATH):
-            chunks = line.split(' ')
-            word = chunks[0]
-            freq = int(chunks[1])
-            word_freq[word] = freq
-        dump(word_freq, model_filepath)
-        return word_freq
+# @lru_cache(maxsize=1)
+# def get_word_frequency():
+#     model_filepath = DUMPS_DIR / f'{WORD_FREQUENCY_FILEPATH.stem}.pk'
+#     if model_filepath.exists():
+#         return load_dump(model_filepath)
+#     else:
+#         DUMPS_DIR.mkdir(parents=True, exist_ok=True) 
+#         word_freq = {}
+#         for line in yield_lines(WORD_FREQUENCY_FILEPATH):
+#             chunks = line.split(' ')
+#             word = chunks[0]
+#             freq = int(chunks[1])
+#             word_freq[word] = freq
+#         dump(word_freq, model_filepath)
+#         return word_freq
 
-@lru_cache(maxsize=10000)
-def get_normalized_frequency(word):
-    max = 153141437 # the 153141437, the max frequency
-    freq = get_word_frequency().get(word, 0)
-    return 1.0 - np.log(1 + freq) / np.log(1 + max)
+# @lru_cache(maxsize=10000)
+# def get_normalized_frequency(word):
+#     max = 153141437 # the 153141437, the max frequency
+#     freq = get_word_frequency().get(word, 0)
+#     return 1.0 - np.log(1 + freq) / np.log(1 + max)
 
 
-@lru_cache(maxsize=2048)
-def get_complexity_score(sentence):
-    # words = tokenize(remove_stopwords(remove_punctuation(sentence)))
-    words = tokenize(remove_punctuation(sentence))
-    words = [word for word in words if word in get_word2rank()]  # remove unknown words
-    if len(words) == 0:
-        return 1.0
+# @lru_cache(maxsize=2048)
+# def get_complexity_score(sentence):
+#     # words = tokenize(remove_stopwords(remove_punctuation(sentence)))
+#     words = tokenize(remove_punctuation(sentence))
+#     words = [word for word in words if word in get_word2rank()]  # remove unknown words
+#     if len(words) == 0:
+#         return 1.0
     
-    return np.array([get_normalized_frequency(word.lower()) for word in words]).mean()
+#     return np.array([get_normalized_frequency(word.lower()) for word in words]).mean()
 
 def download_requirements():
     get_spacy_model()
@@ -206,27 +238,37 @@ class LevenshteinRatioFeature(RatioFeature):
     def get_levenshtein_ratio(self, complex_sentence, simple_sentence):
         return round(Levenshtein.ratio(complex_sentence, simple_sentence))
 
-
 class WordRankRatioFeature(RatioFeature):
     def __init__(self, *args, **kwargs):
         super().__init__(self.get_word_rank_ratio, *args, **kwargs)
 
     def get_word_rank_ratio(self, complex_sentence, simple_sentence):
-        return round(min(safe_division(self.get_lexical_complexity_score(simple_sentence),
+        score = round(min(safe_division(self.get_lexical_complexity_score(simple_sentence),
                                        self.get_lexical_complexity_score(complex_sentence)), 2))
+        print('score', score)
+        return score
 
     def get_lexical_complexity_score(self, sentence):
+        print('enter lexical loop')
         words = tokenize(remove_stopwords(remove_punctuation(sentence)))
+        print('sentence "tokenization" into individal words', words)
         words = [word for word in words if word in get_word2rank()]
+        print('words here is the check if the word exists?', words)
+        print('still in lexical loop')
         if len(words) == 0:
             return np.log(1 + len(get_word2rank()))
-        return np.quantile([self.get_rank(word) for word in words], 0.75)
+        score =  np.quantile([self.get_rank(word) for word in words], 0.75)
+        print('score for each word', score)
+        print('lexical compexity score', score)
+        return score
 
     @lru_cache(maxsize=5000)
     def get_rank(self, word):
         rank = get_word2rank().get(word, len(get_word2rank()))
-        return np.log(1 + rank)
-
+        print('rank of word from word2rank - glove ', rank)
+        ranker = np.log(1 + rank)
+        print('ranker: ', ranker)
+        return ranker
 
 class DependencyTreeDepthRatioFeature(RatioFeature):
     def __init__(self, *args, **kwargs):
@@ -292,6 +334,7 @@ class Preprocessor:
                 # print(feature)
                 processed_complex, _ = feature.encode_sentence_pair(complex_sentence, simple_sentence)
                 line += processed_complex + ' '
+                print('featured sentence', line)
                 # print(feature, timeit.default_timer() - startTime)
             line += ' ' + complex_sentence
             return line.rstrip()
@@ -392,7 +435,7 @@ class Preprocessor:
 
 if __name__ == '__main__':
     features_kwargs = {
-        # 'WordRatioFeature': {'target_ratio': 0.8},
+        'WordRatioFeature': {'target_ratio': 0.8},
         'CharRatioFeature': {'target_ratio': 0.8},
         'LevenshteinRatioFeature': {'target_ratio': 0.8},
         'WordRankRatioFeature': {'target_ratio': 0.8},

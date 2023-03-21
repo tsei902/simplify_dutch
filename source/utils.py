@@ -96,11 +96,11 @@ from sacremoses import MosesDetokenizer, MosesTokenizer
 
 @lru_cache(maxsize=1)
 def get_tokenizer():
-    return MosesTokenizer(lang='en')
+    return MosesTokenizer(lang='nl')
 
 @lru_cache(maxsize=1)
 def get_detokenizer():
-    return MosesDetokenizer(lang='en')
+    return MosesDetokenizer(lang='nl')
 
 def tokenize(sentence):
     return get_tokenizer().tokenize(sentence)
@@ -117,9 +117,21 @@ def read_lines(filepath):
     return [line.rstrip() for line in yield_lines(filepath)]
 
 
+# # Returns file as list of lists
+def read_file(folder_path):
+    list = []
+    with open(folder_path,  "r", encoding='utf8') as f:
+        for line in f:
+            line = line.rstrip('\n')
+            line = [line]
+            list.append(line)
+    return list
+
+
 def yield_lines(filepath):
     filepath = Path(filepath)
-    with filepath.open('r') as f: # encoding="utf-8" encoding="latin1" encoding="latin-1"
+    with filepath.open('r', encoding="utf-8") as f: # is required in generation encoding and works with utf8
+        # makes an issue at ?? 
         for line in f:
             yield line.rstrip()
 

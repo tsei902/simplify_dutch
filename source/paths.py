@@ -13,6 +13,7 @@ OUTPUT_DIR = RESOURCES_DIR / "outputs"
 EXP_DIR = REPO_DIR / 'experiments'
 EXP_DIR.mkdir(parents=True, exist_ok=True)
 PROCESSED_DATA_DIR = RESOURCES_DIR / "processed_data"
+SIMPLIFICATION_DIR = OUTPUT_DIR/'generate'/'simplification.txt'
 
 # DATASETS
 WIKILARGE_DATASET = 'wikilarge'
@@ -23,6 +24,7 @@ WIKILARGE_PROCESSED = 'wikilarge_processed'
 ASSET_PROCESSED = 'asset_processed'
 # Word2VecSpecs
 WORD_EMBEDDINGS_NAME = "conllmodel"
+
 
 # WANDB
 # WANDB_LOG_MODEL=True

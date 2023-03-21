@@ -9,12 +9,13 @@ import numpy as np
 import evaluate
 import pandas as pd
 from paths import WIKILARGE_DATASET, ASSET_DATASET, ASSET_TRAIN_DATASET, ASSET_TEST_DATASET, PROCESSED_DATA_DIR, \
-    WIKILARGE_PROCESSED
+    WIKILARGE_PROCESSED, DATASETS_DIR, get_data_filepath, SIMPLIFICATION_DIR, OUTPUT_DIR
 import prepare
 import paths
 from preprocessor import Preprocessor
-import model
+from model import  tokenize_train, tokenize_test, T5model, tokenizer, training_args, simplify
 import evaluate
+from utils import read_lines, yield_lines, read_file
 
 # def compute_metrics(eval_preds):
 #     metric = evaluate.load("accuracy", "loss", "BLEU") # perplexity
@@ -59,35 +60,28 @@ if __name__ == '__main__':
     'WordRankRatioFeature': {'target_ratio': 0.8},
     'DependencyTreeDepthRatioFeature': {'target_ratio': 0.8}
     }
-    # preprocessor = Preprocessor(features) # maybe needs to get out of args dict
-    # preprocessor.preprocess_dataset(WIKILARGE_DATASET) # dataset)
+    preprocessor = Preprocessor(features) # maybe needs to get out of args dict
+    preprocessor.preprocess_dataset(WIKILARGE_DATASET) # dataset)
+    trainset_processed = prepare.get_train_data(WIKILARGE_PROCESSED, 1, 50) 
+    print(trainset_processed)
+    valset_processed = prepare.get_validation_data(WIKILARGE_PROCESSED, 1,50)
+    tokenized_train_dataset = trainset_processed.map((tokenize_train), batched=True, batch_size=1)
+    tokenized_val_dataset =  valset_processed.map((tokenize_train), batched=True, batch_size=1)
 
-    # # does not retain the dataset!!
-    # trainset_processed = prepare.get_train_data(WIKILARGE_PROCESSED, 1, 50) 
-    # print(trainset_processed)
-    # valset_processed = prepare.get_validation_data(WIKILARGE_PROCESSED, 1,50)
-    # tokenized_train_dataset = trainset_processed.map((prepare.tokenize_train), batched=True, batch_size=1)
-    # tokenized_val_dataset =  valset_processed.map((prepare.tokenize_train), batched=True, batch_size=1)
-
-
-
-    
     # TEST THE TOKENIZATION
-    
-    # data_collator = DataCollatorForSeq2Seq(model.tokenizer, model=model.model)
-    # trainer = Seq2SeqTrainer(model=model.model,
-    #                         args=model.training_args,
-    #                         train_dataset=tokenized_train_dataset['train'],
-    #                         eval_dataset=tokenized_val_dataset['validation'],
-    #                         data_collator=data_collator,
-    #                         tokenizer=model.tokenizer,
-    #                         # compute_metrics=compute_metrics
-    #                         )
-    # set_seed(model.training_args.seed)
-    # trainer.train()
-    # trainer.save_model('./saved_model')
-    # trainer.evaluate()
-    # trained_model=model
+    data_collator = DataCollatorForSeq2Seq(tokenizer, model=T5model)
+    trainer = Seq2SeqTrainer(model=T5model,
+                            args=training_args,
+                            train_dataset=tokenized_train_dataset['train'],
+                            eval_dataset=tokenized_val_dataset['validation'],
+                            data_collator=data_collator,
+                            tokenizer=tokenizer,
+                            # compute_metrics=compute_metrics
+                            )
+    set_seed(training_args.seed)
+    trainer.train()
+    trainer.save_model('./saved_model')
+    trainer.evaluate()
     trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
     tokenizer = AutoTokenizer.from_pretrained('./saved_model')
     # # # print(model)
@@ -101,39 +95,29 @@ if __name__ == '__main__':
     # test_dataset = prepare.get_test_data(ASSET_TEST_DATASET, 0, 358) # doesnt take first row.
     # print('test_dataset', test_dataset)
     
-    # # # GENERATION  
+    # # GENERATION  
+    # ASSET or WIKILARGE TEST
     
-    # define how to get the data
-    # give complex filepath
-    # get folder path here. 
-    # asset_path = PROCESSED_DATA_DIR/asset/'# "./resources/datasets/wikilarge/"
-    #     file_path = "asset.test." '
-    predicted_sentences= model.simplify(ASSET_TEST_DATASET, trained_model, tokenizer, features)
+    asset_pfad = get_data_filepath(WIKILARGE_DATASET, 'test', 'orig')
+    predicted_sentences= simplify(asset_pfad, trained_model, tokenizer, features)
 
-
-
-
-
-
-    # test set uses the "pure datasets as given initiall and "
 
     # # EVALUATION & AVERAGES ON SENTENCE LEVEL
     # # MENTION EASSE
-    # # assemble all formats, if necessary store 
-    # predictions = model.create_simplification_dataset()
-    
-    # # # print('predictions', predictions) 
+    # list of lists
+    # predictions = read_file(f'{OUTPUT_DIR}/generate/simplification.txt')
+
+
+    # # # # print('predictions', predictions) 
     # sari_scores, stats = evaluate.calculate_eval_sentence(tokenized_dataset, test_dataset, predictions)
-    
-    # # # EVALUATION & AVERAGES ON CORPUS LEVEL
+    # # # # EVALUATION & AVERAGES ON CORPUS LEVEL
     # corpus_averages = evaluate.calculate_corpus_averages()
-    # # print(corpus_averages)
+    # # # print(corpus_averages)
     
     
     # all easse datasets use the 13 a tokenizer - for all languages
-    # results = evaluate.evaluate_corpus(features_kwargs) # give test set here! 
-    # report = evaluate.report()
-    # reports = evaluate.get_all_scores()
+    results = evaluate.evaluate_corpus(features) # give test set here! 
+
     
     
     

@@ -2,7 +2,7 @@ from datasets import load_dataset, DatasetDict, Dataset, concatenate_datasets, F
 import os
 from preprocessor import Preprocessor
 import pandas as pd
-from model import tokenizer, model
+# from model import tokenizer, model
 from paths import RESOURCES_DIR, DATASETS_DIR, DUMPS_DIR, OUTPUT_DIR, WIKILARGE_DATASET, ASSET_TEST_DATASET, \
     ASSET_TRAIN_DATASET, WIKILARGE_PROCESSED, ASSET_PROCESSED, PROCESSED_DATA_DIR
 from utils import yield_lines, generate_hash
@@ -68,7 +68,6 @@ def get_validation_data(dataset, begin, end):
     # if dataset == WIKILARGE_DATASET: # 'wikilarge': 
     #     folder_path = f'{DATASETS_DIR}/wikilarge/'# "./resources/datasets/wikilarge/"
     #     file_path = "wikilarge.train."
-
     
     # checkback if data is processed!
     if dataset == WIKILARGE_PROCESSED: # 'wikilarge': 
@@ -133,58 +132,3 @@ def get_test_data(dataset, begin, end):
     # print(test_dataset)
     return test_dataset 
 
-def tokenize_train(examples):
-    # https://medium.com/nlplanet/a-full-guide-to-finetuning-t5-for-text2text-and-building-a-demo-with-streamlit-c72009631887
-    max_input_length = 128
-    max_target_length = 128
-    model_inputs = tokenizer(examples['orig'], max_length=max_input_length ,  truncation=True, add_special_tokens=False)# , return_tensors='pt', padding=True) # "max_length") # ,  return_tensors='pt'
-    labels = tokenizer(examples['simp'], max_length=max_target_length , truncation=True, add_special_tokens=False) #,  return_tensors='pt', padding=True) # "max_length") , return_tensors='pt'
-
-    # not relevant any more bcs padding was kicked! 
-    # important: we need to replace the index of the padding tokens by -100 
-    # such that they are not taken into account by the CrossEntropyLoss
-    # labels_with_ignore_index = []
-    # for labels_example in labels:
-    #   labels_example = [label if label != 0 else -100 for label in labels_example]
-    #   labels_with_ignore_index.append(labels_example)
-    
-    #       # important: we need to replace the index of the padding tokens by -100
-    #   # such that they are not taken into account by the CrossEntropyLoss
-    #   labels_with_ignore_index = []
-    #   for labels_example in labels:
-    #     labels_example = [label if label != 0 else -100 for label in labels_example]
-    #     labels_with_ignore_index.append(labels_example)
-    # model_inputs["labels"] = labels_with_ignore_index
-
-    model_inputs["labels"] = labels["input_ids"]
-    # tokenized_inputs['labels_attention_mask'] =  tokenized_labels['attention_mask']
-    # https://discuss.huggingface.co/t/dictionary-of-two-lists-to-datasets-and-fine-tuning-advices-for-fr-it-translation/20393/6
-    return model_inputs
-
-def tokenize_test(example):
-    # https://medium.com/nlplanet/a-full-guide-to-finetuning-t5-for-text2text-and-building-a-demo-with-streamlit-c72009631887
-    max_length = 128
-    input_ids = tokenizer(example, max_length=max_length, truncation=True,  return_tensors="pt", add_special_tokens=False) # , padding='max_length', padding='max_length') # , )   #padding=True ,
-    # print('this is the input ids after preprocessing in test', input_ids)
-    return input_ids
-
-def encoding_test(examples):
-    # sentence 1
-    print("encoding test by train method")
-    print("sentence 1")
-    test_sent1= tokenize_train(examples)  ##issue too short! müsste viel länger sein, weil der Paragraph auch viel länger ist!
-    print(test_sent1) 
-    print('output type after tokenization  ', type(tokenize_train(examples)))
-    print('output type after tokenization  ', type(test_sent1["input_ids"]))
-    print("input_sentence: ", tokenizer.decode(test_sent1["input_ids"]))
-    print("input_sentence: ", tokenizer.convert_ids_to_tokens(test_sent1["input_ids"]))
-    print("labels: ", tokenizer.decode(test_sent1["labels"]))
-    
-def reshape_tokenizer(): # increase the vocabulary of Bert model and tokenizer
-    # new_tokens = ['-']
-    # num_added_toks = tokenizer.add_tokens(new_tokens)
-    # extra_ids=0,rint('We have added', num_added_toks, 'tokens')
-    # Notice: resize_token_embeddings expect to receive the full size of the new vocabulary, i.e., the length of the tokenizer.
-    print('vocab size', model.model.config.vocab_size)
-    print('special tokens', tokenizer.additional_special_tokens)
-    # print('tokens encoder', tokenizer.added_tokens_encoder)

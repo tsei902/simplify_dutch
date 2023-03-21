@@ -19,11 +19,11 @@ def evaluate(params):
 
 def objective(trial: optuna.trial.Trial) -> float:
     params = {
-        'WordRatio' : trial.suggest_float('WordRatio', 0.20, 1.5, step= 0.05),
-        'CharRatio' : trial.suggest_float('CharRatio', 0.20, 1.5, step= 0.05),
-        'LevenshteinRatio' : trial.suggest_float('LevenshteinRatio', 0.20, 1.5, step= 0.05),
-        'WordRankRatio' : trial.suggest_float('WordRankRatio', 0.20, 1.5, step=0.05),
-        'DepthTreeRatio' : trial.suggest_float('DepthTreeRatio', 0.20, 1.5, step= 0.05),
+        'WordRatio' : trial.suggest_float('WordRatio', 0.20, 1.5, step=0.1), # 0.05),
+        'CharRatio' : trial.suggest_float('CharRatio', 0.20, 1.5, step=0.1), # 0.05),
+        'LevenshteinRatio' : trial.suggest_float('LevenshteinRatio', 0.20, 1.5, step= 0.1), #0.05),
+        'WordRankRatio' : trial.suggest_float('WordRankRatio', 0.20, 1.5, step=0.1), #0.05),
+        'DepthTreeRatio' : trial.suggest_float('DepthTreeRatio', 0.20, 1.5, step=0.1), # 0.05),
     }
     return evaluate(params)
 
