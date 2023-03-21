@@ -2,6 +2,7 @@ from easse.sari import corpus_sari, get_corpus_sari_operation_scores
 from easse.cli import evaluate_system_output
 # from source.model import T5FineTuner
 from easse.report import get_all_scores
+from easse.utils.constants import ( VALID_TEST_SETS, VALID_METRICS, DEFAULT_METRICS)
 import pandas as pd
 import csv
 import paths
@@ -60,6 +61,33 @@ def evaluate_on_asset(features_kwargs, phase, model_dirname=None):
         print("Already exist: ", output_score_filepath)
         print("".join(read_lines(output_score_filepath)))
 
+
+def evaluate_corpus(features_kwargs): 
+    pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt' # output_dir / f'{features_hash}_{complex_filepath.stem}.txt'
+    print('pred filepath', pred_filepath)
+    for i in range(len(pred_filepath)): 
+        scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True, metrics = VALID_METRICS)
+        
+        print('average values for the corpus still missing! ')
+        # we need average values on the corpus here!! 
+        # if "WordRatioFeature" in features_kwargs:
+        #     print("W:", features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
+        # if "CharRatioFeature" in features_kwargs:
+        #     print("C:", features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
+        # if "LevenshteinRatioFeature" in features_kwargs:
+        #     print("L:", features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
+        # if "WordRankRatioFeature" in features_kwargs:
+        #     print("WR:", features_kwargs["WordRankRatioFeature"]["target_ratio"], "\t", end="")
+        # if "DependencyTreeDepthRatioFeature" in features_kwargs:
+        #     print("DTD:", features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
+        # print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} ".format(scores['sari'], scores['bleu'], scores['fkgl']))
+        print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} \t SENT_BLEU: {:.2f} \t F1 {:.2f}  \t SARI_LEGACY {:.2f}".format(scores['sari'], scores['bleu'], scores['fkgl'], scores['sent_bleu'],  scores['f1_token'],  scores['sari_legacy']))
+        return scores['sari']
+            # print("Execution time: --- %s seconds ---" % (time.time() - start_time))
+
+
+
+
 def calculate_corpus_averages():
     sari_df=  pd.read_csv(f'{OUTPUT_DIR}/generate/sari.txt', header=None)
     avg_sari = sari_df.mean().item()
@@ -77,7 +105,7 @@ def calculate_eval_sentence(dataset, test_dataset, predictions):
     stats = []
     print('len predictions' , len(predictions)) # 
     print('len orig sentences', len(test_dataset['orig']))
-    for i in range(1,len(predictions)):  # range starts at 1 now, source list does not get overwritten
+    for i in range(0,len(predictions)):  # range starts at 1 now, source list does not get overwritten
         # print(i)
         # SOURCES
         sources = test_dataset['orig'][i].split(",'")  # list with or without orig

@@ -8,3 +8,5 @@ model_output
 wandb
 __pycache_
 resources/DUMPS
+source\__pycache__
+source/__pycache__

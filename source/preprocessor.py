@@ -15,7 +15,7 @@ import nltk
 import shutil
 import time
 
-nltk.download('stopwords')
+nltk.download('stopwords', quiet=True)
 from nltk.corpus import stopwords
 import re
 
