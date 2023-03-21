@@ -20,6 +20,7 @@ ASSET_DATASET = 'asset'
 ASSET_TRAIN_DATASET = 'asset_train' # asset validation set
 ASSET_TEST_DATASET = 'asset_test'
 WIKILARGE_PROCESSED = 'wikilarge_processed'
+ASSET_PROCESSED = 'asset_processed'
 # Word2VecSpecs
 WORD_EMBEDDINGS_NAME = "conllmodel"
 

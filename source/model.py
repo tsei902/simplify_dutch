@@ -2,6 +2,7 @@
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
 # , T5ForConditionalGeneration, TrainingArguments
 import prepare
+from preprocessor import Preprocessor, yield_lines
 from paths import DATASETS_DIR, OUTPUT_DIR, RESOURCES_DIR, REPO_DIR
 
 model_checkpoint = "yhavinga/t5-base-dutch" #"yhavinga/t5-v1.1-base-dutch-cased" #"flax-community/t5-base-dutch"#
@@ -59,8 +60,36 @@ class T5SimplificationModel():
         self.total_steps = None
         self.predictions = [] 
         
-def generate(tokenized_test_input, trained_model, tokenizer):
-    output = trained_model.generate( 
+
+
+# Postprocessing
+def create_simplification_dataset(): 
+    folder_path= f'{OUTPUT_DIR}/generate/simplification.txt'
+    list = []
+    with open(folder_path,  "r", encoding='utf8') as f:
+        for line in f:
+            line = line.rstrip('\n')
+            line = [line]
+            list.append(line)
+    return list
+
+# MOVE TO ANOTHER FODLDER? 
+def simplify(data, pretrained_model, tokenizer, features_kwargs):
+    max_length = 128
+    preprocessor = Preprocessor(features_kwargs)
+    for n_line, complex_sent in enumerate(yield_lines(data), start=1):
+    # for i in range(0,len(data)): 
+        sentence = preprocessor.encode_sentence(complex_sent)
+        print('sentence after preprocessor.encoding', sentence)
+        # sentence = "simplify: " + sentence
+        encoding = tokenizer(sentence, max_length=max_length, truncation=True, return_tensors="pt", add_special_tokens=False) # padding='max_length'
+        input_ids = encoding["input_ids"] # .to(device)
+        attention_masks = encoding["attention_mask"] # .to(device)
+        
+        #print('test input sentence from dataset[orig]', data[i])
+        tokenized_test_input = prepare.tokenize_test(data[i])
+        #print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
+        output= pretrained_model.generate( 
                 tokenized_test_input,  
                 do_sample=False, # sampling method makes errors 
                 # min_new_tokens=13,
@@ -98,22 +127,44 @@ def generate(tokenized_test_input, trained_model, tokenizer):
     # # print(lensimpl, " words")
     # # simplification.replace('. ', '.\n')
     return simplification
+     
 
-def create_simplification_dataset(): 
-    folder_path= f'{OUTPUT_DIR}/generate/simplification.txt'
-    list = []
-    with open(folder_path,  "r", encoding='utf8') as f:
-        for line in f:
-            line = line.rstrip('\n')
-            line = [line]
-            list.append(line)
-    return list
-
-def create_generation(data, pretrained_model, tokenizer):
-    for i in range(0,len(data)): 
-        #print('test input sentence from dataset[orig]', data[i])
-        tokenized_test_input = prepare.preprocess_function_test(data[i])
-        #print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
-        generated_dataset= generate(tokenized_test_input['input_ids'], pretrained_model, tokenizer)
-        #print('generated data decoded!!: ', generated_dataset)
-    return generated_dataset  
+# def generate(tokenized_test_input, trained_model, tokenizer):
+#     output = trained_model.generate( 
+#                 tokenized_test_input,  
+#                 do_sample=False, # sampling method makes errors 
+#                 # min_new_tokens=13,
+#                 # max_new_tokens=40, # longer is better!! # max_target_length, #128 # countOfWords as alternative
+#                 # doesnt work?  
+#                 # top_k=0, # either temperature or top_k
+#                 # temperature=0.7,  # more weight to powerful tokens
+#                 # # remove_invalid_values=True
+#                 # num_beams = 8,# preset
+#                 # early_stopping= True,
+#                 # length_penalty= 2.0,
+#                 # top_p=0.9, # top p of probability distribution
+#                 # top_k=2,
+#                 # temperature=0.8,
+#                 # min_length= 30,
+#                 # no_repeat_ngram_size= 3,
+#                 num_beams= 4,
+#                 suppress_tokens=[32003,32004,32005,32006,32007,32008,32009,32010,32011,32012,32013,32014,32015,32016,32017,32018,32019,32020,32021,32022,32023,32024,32025,32026,32027,32028,32029,32030,32031,32032,32033,32034,32035,32036,32037,32038,32039,32040,32041,32042,32043,32044,32045,32046,32047,32048,32049,32050,32051,32052,32053,32054,32055,32056,32057,32058,32059,32060,32061,32062,32063,32064,32065,32066,32067,32068,32069,32070,32071,32072,32073,32074,32075,32076,32077,32078,32079,32080,32081,32082,32083,32084,32085,32086,32087,32088,32089,32090,32091,32092,32093,32094,32095,32096,32097,32098,32099,32100,32101,32102], 
+#                 begin_suppress_tokens= [3,4,7], 
+#                 repetition_penalty=1.3 # CRTL PAPER!
+                
+#                 )
+#     # print('This is the output of the generator', output) # output is tensor
+#     # print(type(output))
+#     # simplification2 = tokenizer.batch_decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
+#     # print('simplification 2  ', simplification2)
+#     simplification = tokenizer.decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
+#     # decode returns a list of strings
+#     # batc decode returns a 
+#     file=open(f'{OUTPUT_DIR}/generate/simplification.txt', "a", encoding="utf8") 
+#     file.writelines(simplification)
+#     file.write("\n")
+#     file.close()
+#     # # lensimpl = len(simplification.split())
+#     # # print(lensimpl, " words")
+#     # # simplification.replace('. ', '.\n')
+#     return simplification

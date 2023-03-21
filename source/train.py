@@ -8,7 +8,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSe
 import numpy as np
 import evaluate
 import pandas as pd
-from paths import WIKILARGE_DATASET, ASSET_TRAIN_DATASET, ASSET_TEST_DATASET, PROCESSED_DATA_DIR, \
+from paths import WIKILARGE_DATASET, ASSET_DATASET, ASSET_TRAIN_DATASET, ASSET_TEST_DATASET, PROCESSED_DATA_DIR, \
     WIKILARGE_PROCESSED
 import prepare
 import paths
@@ -38,78 +38,89 @@ import evaluate
 #  constraints: class transformers.ConstraintListState
 
 if __name__ == '__main__':
-# #     # wandb.login()  
-# #     # wandb.init(project="dutch_simplification")   #wandb.log({'accuracy': train_acc, 'loss': train_loss})
-# #     # wandb.watch(model, log="all")
+    # wandb.login()  
+    # wandb.init(project="dutch_simplification")   #wandb.log({'accuracy': train_acc, 'loss': train_loss})
+    # wandb.watch(model, log="all")
     
-# #     # #Decide ABOUT DATASETS 
-# #     # dataset= prepare.get_train_data(WIKILARGE_DATASET, 30, 40) 
-# #     # print('train_dataset', dataset)
-# #     # # print('pre mapping', dataset['train'][:2])
-# #     # tokenized_dataset = dataset.map((prepare.preprocess_function_train), batched=True, batch_size=1)
-# #     # # print('post mapping', tokenized_dataset['train'][:2])
+    # #Decide ABOUT DATASETS 
+    # dataset= prepare.get_train_data(WIKILARGE_DATASET, 30, 40) 
+    # print('train_dataset', dataset)
+    # # print('pre mapping', dataset['train'][:2])
+    # tokenized_dataset = dataset.map((prepare.preprocess_function_train), batched=True, batch_size=1)
+    # # print('post mapping', tokenized_dataset['train'][:2])
 
-        
-    
-    
-# #     # add control tokens BEFORE TRAINING
-# #     # get features_kwargs
-    features_kwargs = {
+
+    # add control tokens BEFORE TRAINING
+    # get features_kwargs
+    features = {
     # 'WordRatioFeature': {'target_ratio': 0.8},
     'CharRatioFeature': {'target_ratio': 0.8},
     'LevenshteinRatioFeature': {'target_ratio': 0.8},
     'WordRankRatioFeature': {'target_ratio': 0.8},
     'DependencyTreeDepthRatioFeature': {'target_ratio': 0.8}
     }
-#     preprocessor = Preprocessor(features_kwargs) # maybe needs to get out of args dict
-#     preprocessor.preprocess_dataset(WIKILARGE_DATASET) # dataset)
+    # preprocessor = Preprocessor(features) # maybe needs to get out of args dict
+    # preprocessor.preprocess_dataset(WIKILARGE_DATASET) # dataset)
 
-#     # does not retain the dataset!!
-#     dataset_preprocessed = prepare.get_train_data(WIKILARGE_PROCESSED, 1, 50) 
-#     tokenized_dataset = dataset_preprocessed.map((prepare.preprocess_function_train), batched=True, batch_size=1)
-#     # get dataset
-#     #decide on format
+    # # does not retain the dataset!!
+    # trainset_processed = prepare.get_train_data(WIKILARGE_PROCESSED, 1, 50) 
+    # print(trainset_processed)
+    # valset_processed = prepare.get_validation_data(WIKILARGE_PROCESSED, 1,50)
+    # tokenized_train_dataset = trainset_processed.map((prepare.tokenize_train), batched=True, batch_size=1)
+    # tokenized_val_dataset =  valset_processed.map((prepare.tokenize_train), batched=True, batch_size=1)
+
+
+
     
-#     # TEST THE TOKENIZATION
+    # TEST THE TOKENIZATION
     
-#     data_collator = DataCollatorForSeq2Seq(model.tokenizer, model=model.model)
-#     trainer = Seq2SeqTrainer(model=model.model,
-#                             args=model.training_args,
-#                             train_dataset=tokenized_dataset['train'],
-#                             eval_dataset=tokenized_dataset['validation'],
-#                             data_collator=data_collator,
-#                             tokenizer=model.tokenizer,
-#                             # compute_metrics=compute_metrics
-#                             )
-#     set_seed(model.training_args.seed)
-#     trainer.train()
-#     trainer.save_model('./saved_model')
-#     trainer.evaluate()
-#     trained_model=model
-#     trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
-#     tokenizer = AutoTokenizer.from_pretrained('./saved_model')
-#     # # print(model)
-#     print('./saved_model/training_args')
+    # data_collator = DataCollatorForSeq2Seq(model.tokenizer, model=model.model)
+    # trainer = Seq2SeqTrainer(model=model.model,
+    #                         args=model.training_args,
+    #                         train_dataset=tokenized_train_dataset['train'],
+    #                         eval_dataset=tokenized_val_dataset['validation'],
+    #                         data_collator=data_collator,
+    #                         tokenizer=model.tokenizer,
+    #                         # compute_metrics=compute_metrics
+    #                         )
+    # set_seed(model.training_args.seed)
+    # trainer.train()
+    # trainer.save_model('./saved_model')
+    # trainer.evaluate()
+    # trained_model=model
+    trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
+    tokenizer = AutoTokenizer.from_pretrained('./saved_model')
+    # # # print(model)
+    # print('./saved_model/training_args')
     
-#    # # ELSE: 
-#     test_dataset = tokenized_dataset['test'] # is already tokenized
-#     # test_dataset = prepare.get_test_data(ASSET_TEST_DATASET, 0, 358) # doesnt take first row.
-#     print('test_dataset', test_dataset)
+    # ELSE: 
+    # 1) preprocess test data  ASSET and WIKILARGE
+    # preprocessor = Preprocessor(features_kwargs) # maybe needs to get out of args dict
+    # preprocessor.preprocess_dataset(ASSET_DATASET)
+    # 2) prepare and tokenize 
+    # test_dataset = prepare.get_test_data(ASSET_TEST_DATASET, 0, 358) # doesnt take first row.
+    # print('test_dataset', test_dataset)
     
-#     # # GENERATION  
-#     predicted_sentences= model.create_generation(test_dataset['orig'], trained_model, tokenizer)
+    # # # GENERATION  
+    
+    # define how to get the data
+    # give complex filepath
+    # get folder path here. 
+    # asset_path = PROCESSED_DATA_DIR/asset/'# "./resources/datasets/wikilarge/"
+    #     file_path = "asset.test." '
+    predicted_sentences= model.simplify(ASSET_TEST_DATASET, trained_model, tokenizer, features)
 
 
 
 
 
 
-
+    # test set uses the "pure datasets as given initiall and "
 
     # # EVALUATION & AVERAGES ON SENTENCE LEVEL
     # # MENTION EASSE
     # # assemble all formats, if necessary store 
-    predictions = model.create_simplification_dataset()
+    # predictions = model.create_simplification_dataset()
     
     # # # print('predictions', predictions) 
     # sari_scores, stats = evaluate.calculate_eval_sentence(tokenized_dataset, test_dataset, predictions)
@@ -120,7 +131,7 @@ if __name__ == '__main__':
     
     
     # all easse datasets use the 13 a tokenizer - for all languages
-    results = evaluate.evaluate_corpus(features_kwargs) # give test set here! 
+    # results = evaluate.evaluate_corpus(features_kwargs) # give test set here! 
     # report = evaluate.report()
     # reports = evaluate.get_all_scores()
     
