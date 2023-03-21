@@ -214,7 +214,6 @@ class RatioFeature:
         if not name: name = class_name
         return name
 
-
 class WordRatioFeature(RatioFeature):
     def __init__(self, *args, **kwargs):
         super().__init__(self.get_word_length_ratio, *args, **kwargs)
