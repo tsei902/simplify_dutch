@@ -4,6 +4,7 @@ import sys;
 sys.path.append(str(Path(__file__).resolve().parent.parent))  # fix path
 import os
 import wandb
+import time
 from model import tokenize_train
 from prepare import get_train_data, get_validation_data
 from utils import get_max_seq_length, log_stdout
@@ -21,7 +22,8 @@ def objective(trial: optuna.Trial):
         f"-{'yhavinga/t5-base-dutch'}",
         report_to = 'wandb',        
         # output_dir="./model_output/", 
-        learning_rate=trial.suggest_loguniform('learning_rate', low=4e-5, high=0.01),        #   ('learning_rate', 1e-6, 1e-3),
+        # generation_max_length=get_max_seq_length(WIKILARGE_DATASET),
+        learning_rate=trial.suggest_loguniform('learning_rate', low=4e-5, high=0.01),  #   ('learning_rate', 1e-6, 1e-3),
         # weight_decay=trial.suggest_loguniform('weight_decay', WD_MIN, WD_CEIL),        
         num_train_epochs = trial.suggest_categorical('num_epochs', [3, 5, 8]),         
         per_device_train_batch_size= trial.suggest_categorical('batch_size', [6, 8, 12, 18, 32]),       
@@ -35,7 +37,7 @@ def objective(trial: optuna.Trial):
         # gradient_checkpointing=True,
         # weight_decay= False
         adafactor = True,
-        seed = 4, 
+        seed = 12, 
         # evaluation and logging
         evaluation_strategy = "epoch", # needs to remain epoch otherwise no tracking of training loss!
         save_strategy = "epoch",
@@ -60,8 +62,11 @@ def objective(trial: optuna.Trial):
                             # compute_metrics=compute_metrics
                             )     
     
-    result = trainer.train()     
-    return result.training_loss
+    result = trainer.train()
+    # trainer.evaluate()     
+    return result
+
+   
 
 if __name__ == '__main__':
     wandb.login()  
@@ -72,7 +77,7 @@ if __name__ == '__main__':
     
     # prepare data
     features = {
-    # 'WordRatioFeature': {'target_ratio': 0.8},
+    'WordRatioFeature': {'target_ratio': 0.8},
     'CharRatioFeature': {'target_ratio': 0.8},
     'LevenshteinRatioFeature': {'target_ratio': 0.8},
     'WordRankRatioFeature': {'target_ratio': 0.8},
@@ -85,6 +90,7 @@ if __name__ == '__main__':
     trainset_processed = get_train_data(WIKILARGE_PROCESSED, 0, 10)  
     print(trainset_processed)
     valset_processed = get_validation_data(WIKILARGE_PROCESSED, 0,10)
+    print(valset_processed)
     tokenized_train_dataset = trainset_processed.map((tokenize_train), batched=True, batch_size=1)
     tokenized_val_dataset =  valset_processed.map((tokenize_train), batched=True, batch_size=1)   
     
@@ -92,15 +98,18 @@ if __name__ == '__main__':
     study = optuna.create_study(study_name='hp-search-dutch_t5_base', direction='minimize', pruner=optuna.pruners.MedianPruner())
     # optuna.pruners.BasePruner = () 
     # optuna.pruners.NopPruner()
-    study.optimize(func=objective, n_trials=10)
-    print(study.best_value)
-    print(study.best_params)
-    print(study.best_trial)
+    study.optimize(func=objective, n_trials=1)
     
-    print('Finding study best parameters')
-    best_lr = float(study.best_params['learning_rate'])
-    best_weight_decay = float(study.best_params['weight_decay'])
-    best_epoch = int(study.best_params['num_train_epochs']) 
+    
+    # time.sleep(10)
+    # print(study.best_value)
+    # print(study.best_params)
+    # print(study.best_trial)
+    
+    # print('Finding study best parameters')
+    # best_lr = float(study.best_params['learning_rate'])
+    # best_weight_decay = float(study.best_params['weight_decay'])
+    # best_epoch = int(study.best_params['num_train_epochs']) 
     
     print('Saving the best Optuna tuned model')
     if not path.exists('model'):
@@ -113,7 +122,10 @@ if __name__ == '__main__':
     # #https://python-bloggers.com/2022/08/hyperparameter-tuning-a-transformer-with-optuna/
 
     
-
+    # rerun with (study.best_trial)
+    # then evaluate 
+    # get sari scores
+    #  return evaluate_on_asset(args_dict['features_kwargs'], 'valid', exp_dir_path)
 
 
 # def run_tuning(trial, params):

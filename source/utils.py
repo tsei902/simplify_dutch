@@ -273,6 +273,7 @@ def get_max_seq_length(dataset):
         for line in yield_lines(simple_filepath):
             l = len(line.split())
             if l > max_length: max_length = l
+    print('max length', max_length)
     return max_length
 
 

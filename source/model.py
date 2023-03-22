@@ -29,7 +29,7 @@ training_args = Seq2SeqTrainingArguments(
         # gradient_checkpointing=True,
         # weight_decay= False
         adafactor = True,
-        seed = 4, 
+        seed = 12, 
         warmup_steps=5,
         # evaluation and logging
         evaluation_strategy = "epoch", # needs to remain epoch otherwise no tracking of training loss!

@@ -28,6 +28,9 @@ def get_train_data(dataset, begin, end):
   
     main_dataframe = pd.DataFrame()
     for f in os.listdir(folder_path):
+    # for f in os.listdir(file_path):
+        if f.startswith("wikilarge.train."):
+    
             # if ('.txt' in f):
             header= f.replace(file_path,"").replace("?","")
             # header= header.replace(".txt","").replace("?","")
@@ -83,6 +86,7 @@ def get_validation_data(dataset, begin, end):
         file_path = "wikilarge.valid."    
     main_dataframe = pd.DataFrame()
     for f in os.listdir(folder_path):
+        if f.startswith("wikilarge.valid."):
             # if ('.txt' in f):
             header= f.replace(file_path,"").replace("?","")
             # header= header.replace(".txt","").replace("?","")

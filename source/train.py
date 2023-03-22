@@ -66,25 +66,26 @@ if __name__ == '__main__':
     trainset_processed = prepare.get_train_data(WIKILARGE_PROCESSED, 1, 10)  
     print(trainset_processed)
     valset_processed = prepare.get_validation_data(WIKILARGE_PROCESSED, 1,10)
+    print(valset_processed)
     tokenized_train_dataset = trainset_processed.map((tokenize_train), batched=True, batch_size=1)
     tokenized_val_dataset =  valset_processed.map((tokenize_train), batched=True, batch_size=1)
 
     # # # TEST THE TOKENIZATION
-    data_collator = DataCollatorForSeq2Seq(tokenizer, model=T5model)
-    trainer = Seq2SeqTrainer(model=T5model,
-                            args=training_args,
-                            train_dataset=tokenized_train_dataset['train'],
-                            eval_dataset=tokenized_val_dataset['validation'],
-                            data_collator=data_collator,
-                            tokenizer=tokenizer,
-                            # compute_metrics=compute_metrics
-                            )
-    set_seed(training_args.seed)
-    trainer.train()
-    trainer.save_model('./saved_model')
-    trainer.evaluate()
-    trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
-    tokenizer = AutoTokenizer.from_pretrained('./saved_model')
+    # data_collator = DataCollatorForSeq2Seq(tokenizer, model=T5model)
+    # trainer = Seq2SeqTrainer(model=T5model,
+    #                         args=training_args,
+    #                         train_dataset=tokenized_train_dataset['train'],
+    #                         eval_dataset=tokenized_val_dataset['validation'],
+    #                         data_collator=data_collator,
+    #                         tokenizer=tokenizer,
+    #                         # compute_metrics=compute_metrics
+    #                         )
+    # set_seed(training_args.seed)
+    # trainer.train()
+    # trainer.save_model('./saved_model')
+    # trainer.evaluate()
+    # trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
+    # tokenizer = AutoTokenizer.from_pretrained('./saved_model')
     # # # print(model)
     # print('./saved_model/training_args')
     
@@ -99,8 +100,8 @@ if __name__ == '__main__':
     # # GENERATION  
     # ASSET or WIKILARGE TEST
     # here also on asset! 
-    asset_pfad = get_data_filepath(WIKILARGE_DATASET, 'test', 'orig')
-    predicted_sentences= simplify(asset_pfad, trained_model, tokenizer, features)
+    # asset_pfad = get_data_filepath(WIKILARGE_DATASET, 'test', 'orig')
+    # predicted_sentences= simplify(asset_pfad, trained_model, tokenizer, features)
 
 
     # # EVALUATION & AVERAGES ON SENTENCE LEVEL
