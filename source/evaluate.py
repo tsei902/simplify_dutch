@@ -5,6 +5,7 @@ from easse.report import get_all_scores
 from easse.utils.constants import ( VALID_TEST_SETS, VALID_METRICS, DEFAULT_METRICS)
 import pandas as pd
 import csv
+import wandb
 import paths
 import utils 
 from model import simplify
@@ -79,6 +80,7 @@ def evaluate_corpus(features_kwargs):
         #     print("DTD:", features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
         # print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} ".format(scores['sari'], scores['bleu'], scores['fkgl']))
         print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} \t SENT_BLEU: {:.2f} \t F1 {:.2f}  \t SARI_LEGACY {:.2f}".format(scores['sari'], scores['bleu'], scores['fkgl'], scores['sent_bleu'],  scores['f1_token'],  scores['sari_legacy']))
+        wandb.log({"Scores": scores})
         return scores['sari']
             # print("Execution time: --- %s seconds ---" % (time.time() - start_time))
 

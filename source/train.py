@@ -1,4 +1,4 @@
-# import wandb
+import wandb
 from torch import cuda
 from pathlib import Path
 import sys
@@ -39,9 +39,9 @@ from utils import read_lines, yield_lines, read_file
 #  constraints: class transformers.ConstraintListState
 
 if __name__ == '__main__':
-    # wandb.login()  
-    # wandb.init(project="dutch_simplification")   #wandb.log({'accuracy': train_acc, 'loss': train_loss})
-    # wandb.watch(model, log="all")
+    wandb.login()  
+    wandb.init(project="dutch_simplification")   #wandb.log({'accuracy': train_acc, 'loss': train_loss})
+    wandb.watch(T5model, log="all")
     
     # #Decide ABOUT DATASETS 
     # dataset= prepare.get_train_data(WIKILARGE_DATASET, 30, 40) 
@@ -60,15 +60,16 @@ if __name__ == '__main__':
     'WordRankRatioFeature': {'target_ratio': 0.8},
     'DependencyTreeDepthRatioFeature': {'target_ratio': 0.8}
     }
+    wandb.log({"features":features})
     preprocessor = Preprocessor(features) # maybe needs to get out of args dict
     preprocessor.preprocess_dataset(WIKILARGE_DATASET) # dataset)
-    trainset_processed = prepare.get_train_data(WIKILARGE_PROCESSED, 1, 50) 
+    trainset_processed = prepare.get_train_data(WIKILARGE_PROCESSED, 1, 10)  
     print(trainset_processed)
-    valset_processed = prepare.get_validation_data(WIKILARGE_PROCESSED, 1,50)
+    valset_processed = prepare.get_validation_data(WIKILARGE_PROCESSED, 1,10)
     tokenized_train_dataset = trainset_processed.map((tokenize_train), batched=True, batch_size=1)
     tokenized_val_dataset =  valset_processed.map((tokenize_train), batched=True, batch_size=1)
 
-    # TEST THE TOKENIZATION
+    # # # TEST THE TOKENIZATION
     data_collator = DataCollatorForSeq2Seq(tokenizer, model=T5model)
     trainer = Seq2SeqTrainer(model=T5model,
                             args=training_args,
@@ -97,7 +98,7 @@ if __name__ == '__main__':
     
     # # GENERATION  
     # ASSET or WIKILARGE TEST
-    
+    # here also on asset! 
     asset_pfad = get_data_filepath(WIKILARGE_DATASET, 'test', 'orig')
     predicted_sentences= simplify(asset_pfad, trained_model, tokenizer, features)
 

@@ -3,7 +3,8 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSe
 # , T5ForConditionalGeneration, TrainingArguments
 # import prepare
 from preprocessor import Preprocessor, yield_lines
-from paths import DATASETS_DIR, OUTPUT_DIR, RESOURCES_DIR, REPO_DIR
+from paths import DATASETS_DIR, OUTPUT_DIR, RESOURCES_DIR, REPO_DIR, WIKILARGE_DATASET
+
 
 model_checkpoint = "yhavinga/t5-base-dutch" #"yhavinga/t5-v1.1-base-dutch-cased" #"flax-community/t5-base-dutch"#
 T5model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint,  use_cache=False) # gradient_checkpointing=True,
@@ -28,7 +29,7 @@ training_args = Seq2SeqTrainingArguments(
         # gradient_checkpointing=True,
         # weight_decay= False
         adafactor = True,
-        seed = 20, 
+        seed = 4, 
         warmup_steps=5,
         # evaluation and logging
         evaluation_strategy = "epoch", # needs to remain epoch otherwise no tracking of training loss!
@@ -41,7 +42,8 @@ training_args = Seq2SeqTrainingArguments(
         # use_cache=False,
         push_to_hub=False,
         fp16=False, # True, # shorter bits, more efficient # tensorsneed to be a multiple of 8 # only savings with high batch size
-        output_dir="./model_output/"
+        output_dir="./model_output/", 
+        remove_unused_columns=True
     )
 
 class T5SimplificationModel():
@@ -81,8 +83,10 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs):
         output= pretrained_model.generate( 
                 input_ids,  
                 do_sample=False, # sampling method makes errors 
-                # min_new_tokens=13,
-                # max_new_tokens=40, # longer is better!! # max_target_length, #128 # countOfWords as alternative
+                max_length= 50,
+                min_length=13, 
+                # min_new_tokens=14, 
+                # max_new_tokens=200, # if not set, it evaluates to 20 # longer is better!! # max_target_length, #128 # countOfWords as alternative
                 # doesnt work?  
                 # top_k=0, # either temperature or top_k
                 # temperature=0.7,  # more weight to powerful tokens
@@ -96,9 +100,12 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs):
                 # min_length= 30,
                 # no_repeat_ngram_size= 3,
                 num_beams= 4,
+                # eos_token_id= 1,
                 suppress_tokens=[32003,32004,32005,32006,32007,32008,32009,32010,32011,32012,32013,32014,32015,32016,32017,32018,32019,32020,32021,32022,32023,32024,32025,32026,32027,32028,32029,32030,32031,32032,32033,32034,32035,32036,32037,32038,32039,32040,32041,32042,32043,32044,32045,32046,32047,32048,32049,32050,32051,32052,32053,32054,32055,32056,32057,32058,32059,32060,32061,32062,32063,32064,32065,32066,32067,32068,32069,32070,32071,32072,32073,32074,32075,32076,32077,32078,32079,32080,32081,32082,32083,32084,32085,32086,32087,32088,32089,32090,32091,32092,32093,32094,32095,32096,32097,32098,32099,32100,32101,32102], 
                 begin_suppress_tokens= [3,4,7], 
-                repetition_penalty=1.3 # CRTL PAPER!
+                repetition_penalty=1.3, # CRTL PAPER!
+                # point as an end token
+                # suppress any generation of a control token
                 )
         # print('This is the output of the generator', output) # output is tensor
         # print(type(output))
@@ -162,6 +169,8 @@ def reshape_tokenizer(): # increase the vocabulary of Bert model and tokenizer
     # num_added_toks = tokenizer.add_tokens(new_tokens)
     # extra_ids=0,rint('We have added', num_added_toks, 'tokens')
     # Notice: resize_token_embeddings expect to receive the full size of the new vocabulary, i.e., the length of the tokenizer.
-    print('vocab size', model.model.config.vocab_size)
+    print('vocab size', T5model.config.vocab_size)
     print('special tokens', tokenizer.additional_special_tokens)
     # print('tokens encoder', tokenizer.added_tokens_encoder)
+    
+

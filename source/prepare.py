@@ -1,5 +1,6 @@
 from datasets import load_dataset, DatasetDict, Dataset, concatenate_datasets, Features, Array2D
 import os
+import wandb
 from preprocessor import Preprocessor
 import pandas as pd
 # from model import tokenizer, model
@@ -20,7 +21,11 @@ def get_train_data(dataset, begin, end):
     # checkback if data is processed!
     if dataset == WIKILARGE_PROCESSED: # 'wikilarge': 
         folder_path = f'{PROCESSED_DATA_DIR}/wikilarge/'# "./resources/datasets/wikilarge/"
-        file_path = "wikilarge.train."    
+        file_path = "wikilarge.train."  
+        
+        
+        # get_data_filepath(WIKILARGE_PROCESSED, train, type, i=None):
+  
     main_dataframe = pd.DataFrame()
     for f in os.listdir(folder_path):
             # if ('.txt' in f):
@@ -44,11 +49,13 @@ def get_train_data(dataset, begin, end):
     # dataset= dataset.select(range(rows))
     
     # SPLIT: 90% train, 10% test + validation
-    train_testvalid = dataset.train_test_split(test_size=0.3)
+    # train_testvalid = dataset.train_test_split(test_size=0.3)
     # Split the 20% test + valid in half test, half valid
-    test_valid = train_testvalid['test'].train_test_split(test_size=0.3)
+    # test_valid = train_testvalid['test'].train_test_split(test_size=0.3)
     dataset = DatasetDict({
-        'train': train_testvalid['train'],
+        'train': dataset, # ['train'], 
+        
+        # train_testvalid['train'],
         # 'validation': test_valid['train'],
         # 'test': test_valid['test']
         })   # split rule: https://discuss.huggingface.co/t/how-to-split-main-dataset-into-train-dev-test-as-datasetdict/1090
@@ -58,6 +65,7 @@ def get_train_data(dataset, begin, end):
     # print('first sentences of dataset', dataset['train']['orig'][:5], end="\n")
     # print('first sentences of dataset_ COMPLETE', dataset['train']['orig'],end="\n")
     # print('first sentences of dataset', dataset['train']['simp'][:5],end="\n")
+    wandb.log({"Datasetname": file_path, "Start": begin, "End":end})
     return dataset
 
 def get_validation_data(dataset, begin, end):  
@@ -96,11 +104,12 @@ def get_validation_data(dataset, begin, end):
     # dataset= dataset.select(range(rows))
     
     # SPLIT: 90% train, 10% test + validation
-    train_testvalid = dataset.train_test_split(test_size=0.3)
+    # train_testvalid = dataset.train_test_split(test_size=0.3)
     # Split the 20% test + valid in half test, half valid
-    test_valid = train_testvalid['test'].train_test_split(test_size=0.3)
+    # test_valid = train_testvalid['test'].train_test_split(test_size=0.3)
     dataset = DatasetDict({
-         'validation': test_valid['train'],
+        'validation': dataset, # test_valid['train'],
+        #  'validation': test_valid['train'],
         # 'test': test_valid['test']
         })   # split rule: https://discuss.huggingface.co/t/how-to-split-main-dataset-into-train-dev-test-as-datasetdict/1090
     # dataset.set_format('pt')

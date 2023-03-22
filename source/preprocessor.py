@@ -413,9 +413,9 @@ class Preprocessor:
         print(f'Preprocessing dataset: {dataset}')
 
         for phase in PHASES:
-            for phase in ["train", "valid"]: 
-                complex_filepath = get_data_filepath(dataset, phase, 'orig')
-                simple_filepath = get_data_filepath(dataset, phase, 'simp')
+            # for phase in ["train", "valid"]: 
+            complex_filepath = get_data_filepath(dataset, phase, 'orig')
+            simple_filepath = get_data_filepath(dataset, phase, 'simp')
 
             complex_output_filepath = self.preprocessed_data_dir / complex_filepath.name
             simple_output_filepath = self.preprocessed_data_dir / simple_filepath.name

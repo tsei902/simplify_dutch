@@ -29,13 +29,13 @@ WORD_EMBEDDINGS_NAME = "conllmodel"
 # WANDB
 # WANDB_LOG_MODEL=True
 # WANDB_WATCH=all
-WANDB_DISABLED = True
+WANDB_DISABLED = False
 
 # DEVICE 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 LANGUAGES = ['complex', 'simple']
-PHASES = ['train', 'valid', 'test']
+PHASES = ['train', 'valid'] # , 'test']
 
 def get_data_filepath(dataset, phase, type, i=None):
     suffix = ''
