@@ -76,10 +76,10 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs):
         encoding = tokenizer(sentence, max_length=max_length, truncation=True, return_tensors="pt", add_special_tokens=False) # padding='max_length'
         input_ids = encoding["input_ids"] # .to(device)
         attention_masks = encoding["attention_mask"] # .to(device)
-        
+        # print('input_ids', input_ids)
         #print('test input sentence from dataset[orig]', data[i])
         # tokenized_test_input = prepare.tokenize_test(data[i])
-        #print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
+        # print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
         output= pretrained_model.generate( 
                 input_ids,  
                 do_sample=False, # sampling method makes errors 
@@ -107,8 +107,8 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs):
                 # point as an end token
                 # suppress any generation of a control token
                 )
-        # print('This is the output of the generator', output) # output is tensor
-        # print(type(output))
+        print('This is the output of the generator', output) # output is tensor
+        print(type(output))
         simplification = tokenizer.decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
         print('simplification: ', simplification)
         file=open(f'{OUTPUT_DIR}/generate/simplification.txt', "a", encoding="utf8") 

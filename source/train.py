@@ -63,12 +63,12 @@ if __name__ == '__main__':
     wandb.log({"features":features})
     preprocessor = Preprocessor(features) # maybe needs to get out of args dict
     preprocessor.preprocess_dataset(WIKILARGE_DATASET) # dataset)
-    trainset_processed = prepare.get_train_data(WIKILARGE_PROCESSED, 1, 10)  
-    print(trainset_processed)
-    valset_processed = prepare.get_validation_data(WIKILARGE_PROCESSED, 1,10)
-    print(valset_processed)
-    tokenized_train_dataset = trainset_processed.map((tokenize_train), batched=True, batch_size=1)
-    tokenized_val_dataset =  valset_processed.map((tokenize_train), batched=True, batch_size=1)
+    trainset_processed = prepare.get_train_data(WIKILARGE_PROCESSED, 0, 10)  
+    print('this is train 0', trainset_processed['train'][0])
+    valset_processed = prepare.get_validation_data(WIKILARGE_PROCESSED, 0,10)
+    print('val 0', valset_processed['validation'][0])
+    # tokenized_train_dataset = trainset_processed.map((tokenize_train), batched=True, batch_size=1)
+    # tokenized_val_dataset =  valset_processed.map((tokenize_train), batched=True, batch_size=1)
 
     # # # TEST THE TOKENIZATION
     # data_collator = DataCollatorForSeq2Seq(tokenizer, model=T5model)
@@ -84,8 +84,8 @@ if __name__ == '__main__':
     # trainer.train()
     # trainer.save_model('./saved_model')
     # trainer.evaluate()
-    # trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
-    # tokenizer = AutoTokenizer.from_pretrained('./saved_model')
+    trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
+    tokenizer = AutoTokenizer.from_pretrained('./saved_model')
     # # # print(model)
     # print('./saved_model/training_args')
     
@@ -100,8 +100,8 @@ if __name__ == '__main__':
     # # GENERATION  
     # ASSET or WIKILARGE TEST
     # here also on asset! 
-    # asset_pfad = get_data_filepath(WIKILARGE_DATASET, 'test', 'orig')
-    # predicted_sentences= simplify(asset_pfad, trained_model, tokenizer, features)
+    asset_pfad = get_data_filepath(WIKILARGE_DATASET, 'test', 'orig')
+    predicted_sentences= simplify(asset_pfad, trained_model, tokenizer, features)
 
 
     # # EVALUATION & AVERAGES ON SENTENCE LEVEL
@@ -117,8 +117,8 @@ if __name__ == '__main__':
     # # # print(corpus_averages)
     
     
-    # all easse datasets use the 13 a tokenizer - for all languages
-    results = evaluate.evaluate_corpus(features) # give test set here! 
+    # # all easse datasets use the 13 a tokenizer - for all languages
+    # results = evaluate.evaluate_corpus(features) # give test set here! 
 
     
     

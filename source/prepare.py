@@ -35,7 +35,7 @@ def get_train_data(dataset, begin, end):
             header= f.replace(file_path,"").replace("?","")
             # header= header.replace(".txt","").replace("?","")
             # header= header.replace("''","").replace("?","")
-            df = pd.read_csv(f"{folder_path}{f}", encoding = 'utf8',sep="\t",header= 0, names=[header])
+            df = pd.read_csv(f"{folder_path}{f}", encoding = 'utf8',sep="\t",names=[header]) # header= 0, 
             # df= pd.DataFrame([row.split(',')]for row in df)
             df.to_csv(f'{OUTPUT_DIR}/train/out_df', encoding='utf8', index=None) 
             main_dataframe = pd.concat([main_dataframe,df],axis=1)    
@@ -91,7 +91,7 @@ def get_validation_data(dataset, begin, end):
             header= f.replace(file_path,"").replace("?","")
             # header= header.replace(".txt","").replace("?","")
             # header= header.replace("''","").replace("?","")
-            df = pd.read_csv(f"{folder_path}{f}", encoding = 'utf8',sep="\t",header= 0, names=[header])
+            df = pd.read_csv(f"{folder_path}{f}", encoding = 'utf8',sep="\t", names=[header]) #header= 0,
             # df= pd.DataFrame([row.split(',')]for row in df)
             df.to_csv(f'{OUTPUT_DIR}/train/out_df', encoding='utf8', index=None) 
             main_dataframe = pd.concat([main_dataframe,df],axis=1)    
@@ -142,6 +142,6 @@ def get_test_data(dataset, begin, end):
     test_dataset = DatasetDict({'test': Dataset.from_pandas(main_dataframe)}) # .with_format("torch")
     test_dataset= test_dataset['test'].select(range(begin, end))
     # test_dataset.set_format('torch') 
-    # print(test_dataset)
+    print(test_dataset['test'][0])
     return test_dataset 
 

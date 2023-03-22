@@ -1,4 +1,4 @@
-# wandb
+wandb
 transformers 
 torch 
 numpy
@@ -31,6 +31,5 @@ optuna
 # https://github.com/coosto/dutch-word-embeddings/releases/download/v1.0/model.bin
 gensim
 
-#optuna ray
 # easse@git+https://github.com/feralvam/easse.git@8df369f025a7c927425482e802fb546fd5d06d84
 easse
