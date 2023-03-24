@@ -18,18 +18,20 @@ SIMPLIFICATION_DIR = OUTPUT_DIR/'generate'/'simplification.txt'
 # DATASETS
 WIKILARGE_DATASET = 'wikilarge'
 ASSET_DATASET = 'asset'
-ASSET_TRAIN_DATASET = 'asset_train' # asset validation set
-ASSET_TEST_DATASET = 'asset_test'
+ASSET_TRAIN_DATASET = 'asset/valid' # asset validation set
+ASSET_TEST_DATASET = 'asset/test'
 WIKILARGE_PROCESSED = 'wikilarge_processed'
 ASSET_PROCESSED = 'asset_processed'
 # Word2VecSpecs
 WORD_EMBEDDINGS_NAME = "conllmodel"
 
 
-# WANDB
+# ENVIRONMENT
 # WANDB_LOG_MODEL=True
 # WANDB_WATCH=all
-WANDB_DISABLED = False
+# WANDB_DISABLED = True
+WANDB_SILENT = True
+TOKENIZERS_PARALLELISM=False
 
 # DEVICE 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"

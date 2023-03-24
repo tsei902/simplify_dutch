@@ -9,7 +9,7 @@ import wandb
 import paths
 import utils 
 from model import simplify
-from paths import EXP_DIR, OUTPUT_DIR
+from paths import EXP_DIR, OUTPUT_DIR, ASSET_TEST_DATASET, ASSET_DATASET
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
 # , T5ForConditionalGeneration, TrainingArguments
 # import model
@@ -18,7 +18,7 @@ from utils import log_stdout, generate_hash, count_line, read_lines, get_data_fi
 # import time
 from paths import ASSET_DATASET
 
-def evaluate_on_asset(features_kwargs, phase, model_dirname=None):
+def evaluate_on_asset(features_kwargs): #, phase): # model_dirname=None):
     dataset = "asset"
     # output_dir = REPO_DIR / f"outputs/{_model_dirname}"
     # model_dir =  EXP_DIR / model_dirname #get_last_experiment_dir() if model_dirname is None else
@@ -29,13 +29,14 @@ def evaluate_on_asset(features_kwargs, phase, model_dirname=None):
     tokenizer = AutoTokenizer.from_pretrained('./saved_model')
 
     features_hash = generate_hash(features_kwargs)
-    output_score_filepath = output_dir/ f"score_{features_hash}_{dataset}_{phase}_log.txt"
+    # output_score_filepath = output_dir/ f"score_{features_hash}_{dataset}_{phase}_log.txt"
     
     # if not output_score_filepath.exists() or count_line(output_score_filepath) == 0:
         # start_time = time.time()
         # complex_filepath = get_data_filepath(dataset, phase, 'orig')
     asset_pfad = get_data_filepath(ASSET_DATASET, 'test', 'orig')
-    # simplify(asset_pfad, pretrained_model, tokenizer, features_kwargs)
+    asset_path = f'{ASSET_DATASET}/test/'
+    simplify(asset_path, pretrained_model, tokenizer, features_kwargs)
     pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt' # output_dir / f'{features_hash}_{complex_filepath.stem}.txt'
     print('pred filepath', pred_filepath)
     
@@ -44,21 +45,22 @@ def evaluate_on_asset(features_kwargs, phase, model_dirname=None):
     # print('this is the complex filepath', complex_filepath)
         # if pred_filepath.exists() and count_line(pred_filepath) == count_line(complex_filepath):
         #     print("File is already processed.")
-    scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True)
-    if "WordRatioFeature" in features_kwargs:
-        print("W:", features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
-    if "CharRatioFeature" in features_kwargs:
-        print("C:", features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
-    if "LevenshteinRatioFeature" in features_kwargs:
-        print("L:", features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
-    if "WordRankRatioFeature" in features_kwargs:
-        print("WR:", features_kwargs["WordRankRatioFeature"]["target_ratio"], "\t", end="")
-    if "DependencyTreeDepthRatioFeature" in features_kwargs:
-        print("DTD:", features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
-    print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} ".format(scores['sari'], scores['bleu'], scores['fkgl']))
-    
-            # print("Execution time: --- %s seconds ---" % (time.time() - start_time))
-    return scores['sari']
+    for i in range(len(pred_filepath)):
+        scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True)
+        if "WordRatioFeature" in features_kwargs:
+            print("W:", features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
+        if "CharRatioFeature" in features_kwargs:
+            print("C:", features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
+        if "LevenshteinRatioFeature" in features_kwargs:
+            print("L:", features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
+        if "WordRankRatioFeature" in features_kwargs:
+            print("WR:", features_kwargs["WordRankRatioFeature"]["target_ratio"], "\t", end="")
+        if "DependencyTreeDepthRatioFeature" in features_kwargs:
+            print("DTD:", features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
+        print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} ".format(scores['sari'], scores['bleu'], scores['fkgl']))
+        
+                # print("Execution time: --- %s seconds ---" % (time.time() - start_time))
+        return scores['sari']
 
 def evaluate_corpus(features_kwargs): 
     pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt' # output_dir / f'{features_hash}_{complex_filepath.stem}.txt'

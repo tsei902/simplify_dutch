@@ -11,3 +11,6 @@ resources/DUMPS
 source/__pycache__
 source\__pycache__
 -yhavinga
+model
+tuning
+trial

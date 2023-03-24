@@ -6,7 +6,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
 # , T5ForConditionalGeneration, TrainingArguments
 import numpy as np
-import evaluate
+from evaluate import evaluate_corpus, evaluate_on_asset
 import pandas as pd
 from paths import WIKILARGE_DATASET, ASSET_DATASET, ASSET_TRAIN_DATASET, ASSET_TEST_DATASET, PROCESSED_DATA_DIR, \
     WIKILARGE_PROCESSED, DATASETS_DIR, get_data_filepath, SIMPLIFICATION_DIR, OUTPUT_DIR
@@ -100,8 +100,8 @@ if __name__ == '__main__':
     # # GENERATION  
     # ASSET or WIKILARGE TEST
     # here also on asset! 
-    asset_pfad = get_data_filepath(WIKILARGE_DATASET, 'test', 'orig')
-    predicted_sentences= simplify(asset_pfad, trained_model, tokenizer, features)
+    # asset_pfad = get_data_filepath(WIKILARGE_DATASET, 'test', 'orig')
+    # predicted_sentences= simplify(asset_pfad, trained_model, tokenizer, features)
 
 
     # # EVALUATION & AVERAGES ON SENTENCE LEVEL
@@ -120,8 +120,7 @@ if __name__ == '__main__':
     # # all easse datasets use the 13 a tokenizer - for all languages
     # results = evaluate.evaluate_corpus(features) # give test set here! 
 
-    
-    
+    results_asset = evaluate.evaluate_on_asset(features)    
     
     
     

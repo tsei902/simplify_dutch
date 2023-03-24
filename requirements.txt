@@ -1,35 +1,36 @@
 wandb
 transformers 
-torch 
+torch
+optuna
+
 numpy
 evaluate
 cuda-python 
 datasets 
 pynvml 
 sentencepiece
-accelerate 
-bitsandbytes
+# accelerate 
+# bitsandbytes
 pandas
 numpy
-glob2
+# glob2
 utils
 pathlib
 sacrebleu
 sacremoses
 spacy
 python_Levenshtein # ==0.12.0
-spacy
-seaborn
-gensim
-optuna
+# seaborn
+# gensim
+# git+https://github.com/feralvam/easse.git
+# easse
+statsmodels
+
 #  torchtext 
-# evaluate
+
 # huggingface_hub nltk rouge-score
 # dutch-word-embeddings@git+https://github.com:coosto/dutch-word-embeddings.git
 # dutch-word-embeddings
 # working version
 # https://github.com/coosto/dutch-word-embeddings/releases/download/v1.0/model.bin
-gensim
 
-# easse@git+https://github.com/feralvam/easse.git@8df369f025a7c927425482e802fb546fd5d06d84
-easse

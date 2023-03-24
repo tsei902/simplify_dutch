@@ -14,7 +14,7 @@ def evaluate(params):
         'DependencyTreeDepthRatioFeature': {'target_ratio': params['DepthTreeRatio']}
     }
     # print('into evalaution')
-    return evaluate_on_asset(features_kwargs, 'test', 'eval1')
+    return evaluate_on_asset(features_kwargs) # , 'test') # , 'eval1')
     # evaluate_on_asset(features_kwargs, 'valid')
 
 def objective(trial: optuna.trial.Trial) -> float:

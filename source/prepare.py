@@ -68,7 +68,7 @@ def get_train_data(dataset, begin, end):
     # print('first sentences of dataset', dataset['train']['orig'][:5], end="\n")
     # print('first sentences of dataset_ COMPLETE', dataset['train']['orig'],end="\n")
     # print('first sentences of dataset', dataset['train']['simp'][:5],end="\n")
-    wandb.log({"Datasetname": file_path, "Start": begin, "End":end})
+    # wandb.log({"Datasetname": file_path, "Start": begin, "End":end})
     return dataset
 
 def get_validation_data(dataset, begin, end):  
