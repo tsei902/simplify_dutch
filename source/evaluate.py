@@ -10,7 +10,7 @@ import paths
 import utils 
 from utils import generate_hash
 from model import simplify
-from paths import DUMPS_DIR, ASSET_DATASET,  PHASES, get_data_filepath, EXP_DIR, OUTPUT_DIR, ASSET_TEST_DATASET, ASSET_DATASET
+from paths import DUMPS_DIR, ASSET_DATASET,  PHASES, get_data_filepath, EXP_DIR, OUTPUT_DIR, ASSET_DATASET
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
 # , T5ForConditionalGeneration, TrainingArguments
 # import model
@@ -19,6 +19,10 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSe
 # import time
 from paths import ASSET_DATASET
 
+DEFAULT_METRICS = ['bleu', 'sari', 'fkgl', 'sent_bleu', 'f1_token', 'sari_by_operation']
+
+
+
 def evaluate_on_asset(features_kwargs): #, phase): # model_dirname=None):
     dataset = "asset"
     # output_dir = REPO_DIR / f"outputs/{_model_dirname}"
@@ -26,10 +30,12 @@ def evaluate_on_asset(features_kwargs): #, phase): # model_dirname=None):
     output_dir = OUTPUT_DIR / "evaluate_on_asset"
     output_dir.mkdir(parents=True, exist_ok=True)
     print("Output dir: ", output_dir)
+    features_hash = generate_hash(features_kwargs)
+    
     pretrained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
     tokenizer = AutoTokenizer.from_pretrained('./saved_model')
 
-    features_hash = generate_hash(features_kwargs)
+    
     # output_score_filepath = output_dir/ f"score_{features_hash}_{dataset}_{phase}_log.txt"
     
     # if not output_score_filepath.exists() or count_line(output_score_filepath) == 0:
@@ -47,7 +53,7 @@ def evaluate_on_asset(features_kwargs): #, phase): # model_dirname=None):
         # if pred_filepath.exists() and count_line(pred_filepath) == count_line(complex_filepath):
         #     print("File is already processed.")
     for i in range(len(pred_filepath)):
-        scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True)
+        scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True,metrics = DEFAULT_METRICS)
         if "WordRatioFeature" in features_kwargs:
             print("W:", features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
         if "CharRatioFeature" in features_kwargs:
@@ -58,34 +64,30 @@ def evaluate_on_asset(features_kwargs): #, phase): # model_dirname=None):
             print("WR:", features_kwargs["WordRankRatioFeature"]["target_ratio"], "\t", end="")
         if "DependencyTreeDepthRatioFeature" in features_kwargs:
             print("DTD:", features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
-        print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} ".format(scores['sari'], scores['bleu'], scores['fkgl']))
-        
+        print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} \t SENT_BLEU: {:.2f} \t F1 {:.2f}  \t SARI_ADD {:.2f} \t SARI_KEEP {:.2f} \t SARI_DELETE {:.2f}".format(scores['sari'], scores['bleu'], scores['fkgl'], scores['sent_bleu'],  scores['f1_token'],  scores['sari_add'], scores['sari_keep'], scores['sari_del'])) # test
+        # wandb.log({"Scores": scores})
                 # print("Execution time: --- %s seconds ---" % (time.time() - start_time))
-        return scores['sari']
+
 
 def evaluate_corpus(features_kwargs): 
     pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt' # output_dir / f'{features_hash}_{complex_filepath.stem}.txt'
     print('pred filepath', pred_filepath)
     for i in range(len(pred_filepath)): 
-        scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True, metrics = VALID_METRICS)
-        
-        print('average values for the corpus still missing! ')
-        # we need average values on the corpus here!! 
-        # if "WordRatioFeature" in features_kwargs:
-        #     print("W:", features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
-        # if "CharRatioFeature" in features_kwargs:
-        #     print("C:", features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
-        # if "LevenshteinRatioFeature" in features_kwargs:
-        #     print("L:", features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
-        # if "WordRankRatioFeature" in features_kwargs:
-        #     print("WR:", features_kwargs["WordRankRatioFeature"]["target_ratio"], "\t", end="")
-        # if "DependencyTreeDepthRatioFeature" in features_kwargs:
-        #     print("DTD:", features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
-        # print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} ".format(scores['sari'], scores['bleu'], scores['fkgl']))
-        print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} \t SENT_BLEU: {:.2f} \t F1 {:.2f}  \t SARI_LEGACY {:.2f}".format(scores['sari'], scores['bleu'], scores['fkgl'], scores['sent_bleu'],  scores['f1_token'],  scores['sari_legacy']))
-        wandb.log({"Scores": scores})
+        scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True, metrics = DEFAULT_METRICS) # VALID_METRICS)
+        if "WordRatioFeature" in features_kwargs:
+            print("W:", features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
+        if "CharRatioFeature" in features_kwargs:
+            print("C:", features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
+        if "LevenshteinRatioFeature" in features_kwargs:
+            print("L:", features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
+        if "WordRankRatioFeature" in features_kwargs:
+            print("WR:", features_kwargs["WordRankRatioFeature"]["target_ratio"], "\t", end="")
+        if "DependencyTreeDepthRatioFeature" in features_kwargs:
+            print("DTD:", features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
+        print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} \t SENT_BLEU: {:.2f} \t F1 {:.2f}  \t SARI_ADD {:.2f} \t SARI_KEEP {:.2f} \t SARI_DELETE {:.2f}".format(scores['sari'], scores['bleu'], scores['fkgl'], scores['sent_bleu'],  scores['f1_token'],  scores['sari_add'], scores['sari_keep'], scores['sari_del'])) # test
+        # wandb.log({"Scores": scores})
+        # print("Execution time: --- %s seconds ---" % (time.time() - start_time))
         return scores['sari']
-            # print("Execution time: --- %s seconds ---" % (time.time() - start_time))
 
 
 

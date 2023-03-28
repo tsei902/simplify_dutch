@@ -4,8 +4,8 @@ import wandb
 from preprocessor import Preprocessor
 import pandas as pd
 # from model import tokenizer, model
-from paths import RESOURCES_DIR, DATASETS_DIR, DUMPS_DIR, OUTPUT_DIR, WIKILARGE_DATASET, ASSET_TEST_DATASET, \
-    ASSET_TRAIN_DATASET, WIKILARGE_PROCESSED, ASSET_PROCESSED, PROCESSED_DATA_DIR
+from paths import RESOURCES_DIR, DATASETS_DIR, DUMPS_DIR, OUTPUT_DIR, WIKILARGE_DATASET,  \
+    WIKILARGE_PROCESSED, ASSET_PROCESSED, PROCESSED_DATA_DIR # ASSET_TEST_DATASET, ASSET_TRAIN_DATASET,
 from utils import yield_lines, generate_hash
 
 def get_train_data(dataset, begin, end):  

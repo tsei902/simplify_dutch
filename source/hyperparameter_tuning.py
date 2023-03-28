@@ -28,10 +28,10 @@ def objective(trial):
     
         training_args = Seq2SeqTrainingArguments( 
         f"{wandb.run.name}", 
-        num_train_epochs= 3, # trial.suggest_categorical('num_epochs', [1, 3, 5, 8]),
+        num_train_epochs=trial.suggest_categorical('num_epochs', [2, 3]),
         learning_rate=  trial.suggest_float('learning_rate', 1e-4, 1e-3), # learning_rate=  trial.suggest_float('learning_rate', 1e-5, 1e-3),
-        per_device_train_batch_size=6, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),       
-        per_device_eval_batch_size=6, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),  
+        per_device_train_batch_size=8, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),       
+        per_device_eval_batch_size=8, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),  
         disable_tqdm=True, 
         predict_with_generate=True,
         # gradient_accumulation_steps=4,

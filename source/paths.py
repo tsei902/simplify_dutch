@@ -18,8 +18,8 @@ SIMPLIFICATION_DIR = OUTPUT_DIR/'generate'/'simplification.txt'
 # DATASETS
 WIKILARGE_DATASET = 'wikilarge'
 ASSET_DATASET = 'asset'
-ASSET_TRAIN_DATASET = 'asset/valid' # asset validation set
-ASSET_TEST_DATASET = 'asset/test'
+# ASSET_TRAIN_DATASET = 'asset/valid' # asset validation set
+# ASSET_TEST_DATASET = 'asset/test'
 WIKILARGE_PROCESSED = 'wikilarge_processed'
 ASSET_PROCESSED = 'asset_processed'
 # Word2VecSpecs

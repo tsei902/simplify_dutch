@@ -78,17 +78,21 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs):
     # for i in range(0,len(data)):
         print('complex sentence', complex_sent) 
         sentence = preprocessor.encode_sentence(complex_sent)
-        print('sentence after preprocessor.encoding', sentence)
+        print(type(sentence))
+        # print('sentence after preprocessor.encoding', sentence)
         # sentence = "simplify: " + sentence
-        encoding = tokenizer(sentence, max_length=max_length, truncation=True, return_tensors="pt", add_special_tokens=False) # padding='max_length'
-        input_ids = encoding["input_ids"] # .to(device)
-        attention_masks = encoding["attention_mask"] # .to(device)
-        # print('input_ids', input_ids)
+        
+        encoding = tokenizer(sentence, max_length=max_length, truncation=True,  return_tensors="pt",add_special_tokens=False)  # ,  padding='max_length')
+        # print(' TYPE', type(encoding))
+        # print('ENCODING AS A WHOLE', encoding)
+        input_ids = encoding.input_ids # .to(device)
+        # print('ENCODED IDS', input_ids)
+        print(type(input_ids))
+        # attention_masks = encoding["attention_mask"] # .to(device)
         #print('test input sentence from dataset[orig]', data[i])
         # tokenized_test_input = prepare.tokenize_test(data[i])
         # print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
-        output= pretrained_model.generate( 
-                input_ids,  
+        output= pretrained_model.generate(inputs = input_ids,  
                 do_sample=False, # sampling method makes errors 
                 max_length= 50,
                 min_length=13, 
@@ -109,7 +113,8 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs):
                 num_beams= 4,
                 # eos_token_id= 1,
                 suppress_tokens=[32003,32004,32005,32006,32007,32008,32009,32010,32011,32012,32013,32014,32015,32016,32017,32018,32019,32020,32021,32022,32023,32024,32025,32026,32027,32028,32029,32030,32031,32032,32033,32034,32035,32036,32037,32038,32039,32040,32041,32042,32043,32044,32045,32046,32047,32048,32049,32050,32051,32052,32053,32054,32055,32056,32057,32058,32059,32060,32061,32062,32063,32064,32065,32066,32067,32068,32069,32070,32071,32072,32073,32074,32075,32076,32077,32078,32079,32080,32081,32082,32083,32084,32085,32086,32087,32088,32089,32090,32091,32092,32093,32094,32095,32096,32097,32098,32099,32100,32101,32102], 
-                begin_suppress_tokens= [3,4,7, [0,13,2530,17,4,77]], 
+                begin_suppress_tokens= [3,4,7],
+                 # test: bad_words_ids = [[0,13,2530,17,4,77]], # List of token ids that are not allowed to be generated. In order to get the token ids of the words that should not appear in the generated text, use tokenizer(bad_words, add_prefix_space=True, add_special_tokens=False).input_ids.
                 repetition_penalty=1.3, # CRTL PAPER!
                 # point as an end token
                 # suppress any generation of a control token
@@ -129,6 +134,8 @@ def tokenize_train(examples):
     max_input_length = 128
     max_target_length = 128
     model_inputs = tokenizer(examples['orig'], max_length=max_input_length ,  truncation=True, add_special_tokens=False)# , return_tensors='pt', padding=True) # "max_length") # ,  return_tensors='pt'
+    # print('ENCODED IDS', model_inputs)
+    # print(type(model_inputs))
     labels = tokenizer(examples['simp'], max_length=max_target_length , truncation=True, add_special_tokens=False) #,  return_tensors='pt', padding=True) # "max_length") , return_tensors='pt'
 
     # not relevant any more bcs padding was kicked! 
@@ -159,16 +166,16 @@ def tokenize_test(example):
     # print('this is the input ids after preprocessing in test', input_ids)
     return input_ids
 
-def encoding_test(examples):
+def encoding_test(examples, phase):
     # sentence 1
-    print("encoding test by train method")
+    print("encoding test by", f'{phase}', "method")
     print("sentence 1")
-    test_sent1= tokenize_train(examples)  ##issue too short! müsste viel länger sein, weil der Paragraph auch viel länger ist!
+    test_sent1= examples[phase][0]
     print(test_sent1) 
-    print('output type after tokenization  ', type(tokenize_train(examples)))
+    print('output type after tokenization  ', type(test_sent1))
     print('output type after tokenization  ', type(test_sent1["input_ids"]))
     print("input_sentence: ", tokenizer.decode(test_sent1["input_ids"]))
-    print("input_sentence: ", tokenizer.convert_ids_to_tokens(test_sent1["input_ids"]))
+    # print("input_sentence: ", tokenizer.convert_ids_to_tokens(test_sent1["input_ids"]))
     print("labels: ", tokenizer.decode(test_sent1["labels"]))
     
 def reshape_tokenizer(): # increase the vocabulary of Bert model and tokenizer
