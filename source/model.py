@@ -56,6 +56,13 @@ class T5SimplificationModel():
         self.tokenizer = AutoTokenizer.from_pretrained(model_checkpoint)# , use_fast=True
         self.model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, gradient_checkpointing=True, use_cache=False, return_tensors="pt")
 
+        # # https://discuss.huggingface.co/t/do-you-train-all-layers-when-fine-tuning-t5/1034/5
+        # self.block = nn.ModuleList(
+        #     [T5Block(config, has_relative_attention_bias=bool(i == 0)) for i in range(config.num_layers)]
+        # )
+        # self.final_layer_norm = T5LayerNorm(config.d_model, eps=config.layer_norm_epsilon)
+        # self.dropout = nn.Dropout(config.dropout_rate)
+        
         # self.model = T5ForConditionalGeneration.from_pretrained(self.hparams.model_name).to(self.hparams.device)
         # self.tokenizer = AutoTokenizer.from_pretrained(self.hparams.model_name, use_fast=True)
 
