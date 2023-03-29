@@ -7,6 +7,7 @@ import tempfile
 # PATHS
 REPO_DIR = Path(__file__).resolve().parent.parent
 RESOURCES_DIR = REPO_DIR / 'resources'
+NOTEBOOKS_DIR = REPO_DIR / 'notebooks'
 DATASETS_DIR = RESOURCES_DIR / 'datasets'
 DUMPS_DIR = RESOURCES_DIR / "DUMPS"
 OUTPUT_DIR = RESOURCES_DIR / "outputs"
@@ -22,6 +23,7 @@ ASSET_DATASET = 'asset'
 # ASSET_TEST_DATASET = 'asset/test'
 WIKILARGE_PROCESSED = 'wikilarge_processed'
 ASSET_PROCESSED = 'asset_processed'
+
 # Word2VecSpecs
 WORD_EMBEDDINGS_NAME = "conllmodel"
 
@@ -71,7 +73,6 @@ def get_last_experiment_dir():
 
 
 if __name__ == '__main__':
-    # print(REPO_DIR)
-    # print(get_experiments_dir())
-    # print(str(Path(__file__).resolve().parent.parent))
-    print(get_temp_filepath())
+    print("REPO", REPO_DIR)
+    print('FILEPATH', str(Path(__file__).resolve().parent.parent))
+    # print(get_temp_filepath())

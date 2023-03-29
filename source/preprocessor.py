@@ -433,6 +433,9 @@ class Preprocessor:
 
 
 if __name__ == '__main__':
+    print(REPO_DIR)
+    print(get_experiments_dir())
+    print(str(Path(__file__).resolve().parent.parent))
     features_kwargs = {
         'WordRatioFeature': {'target_ratio': 0.8},
         'CharRatioFeature': {'target_ratio': 0.8},

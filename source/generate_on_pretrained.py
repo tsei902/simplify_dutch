@@ -9,7 +9,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
 # , T5ForConditionalGeneration, TrainingArguments
 import numpy as np
-from evaluate import evaluate_corpus, evaluate_on_asset
+from evaluate import evaluate_corpus
 import pandas as pd
 from paths import WIKILARGE_DATASET, ASSET_DATASET, PROCESSED_DATA_DIR, \
     WIKILARGE_PROCESSED, DATASETS_DIR, get_data_filepath, SIMPLIFICATION_DIR, OUTPUT_DIR # ASSET_TRAIN_DATASET, ASSET_TEST_DATASET, 

@@ -8,66 +8,50 @@ import csv
 import wandb
 import paths
 import utils 
-from utils import generate_hash
+from utils import generate_hash, count_line
 from model import simplify
-from paths import DUMPS_DIR, ASSET_DATASET,  PHASES, get_data_filepath, EXP_DIR, OUTPUT_DIR, ASSET_DATASET
+from paths import REPO_DIR, DUMPS_DIR, ASSET_DATASET,  PHASES, get_data_filepath, EXP_DIR, OUTPUT_DIR, WIKILARGE_DATASET
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
 # , T5ForConditionalGeneration, TrainingArguments
-# import model
-
-# from preprocess import get_data_filepath
-# import time
 from paths import ASSET_DATASET
 
 DEFAULT_METRICS = ['bleu', 'sari', 'fkgl', 'sent_bleu', 'f1_token', 'sari_by_operation']
 
 
 
-def evaluate_on_asset(features_kwargs): #, phase): # model_dirname=None):
+def evaluate_on_dataset(features_kwargs, model_dirname, eval_dataset): #, phase): # model_dirname=None):
     dataset = "asset"
-    # output_dir = REPO_DIR / f"outputs/{_model_dirname}"
-    # model_dir =  EXP_DIR / model_dirname #get_last_experiment_dir() if model_dirname is None else
-    output_dir = OUTPUT_DIR / "evaluate_on_asset"
+    model_dir = REPO_DIR /f"{model_dirname}"
+    print(model_dir)
+    pretrained_model =  AutoModelForSeq2SeqLM.from_pretrained(model_dir)
+    tokenizer = AutoTokenizer.from_pretrained(model_dir)
+    output_dir = OUTPUT_DIR / "evaluate_on_dataset"
     output_dir.mkdir(parents=True, exist_ok=True)
     print("Output dir: ", output_dir)
     features_hash = generate_hash(features_kwargs)
-    
-    pretrained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
-    tokenizer = AutoTokenizer.from_pretrained('./saved_model')
 
-    
-    # output_score_filepath = output_dir/ f"score_{features_hash}_{dataset}_{phase}_log.txt"
-    
-    # if not output_score_filepath.exists() or count_line(output_score_filepath) == 0:
-        # start_time = time.time()
-        # complex_filepath = get_data_filepath(dataset, phase, 'orig')
-    asset_pfad = get_data_filepath(ASSET_DATASET, 'test', 'orig')
-    asset_path = f'{ASSET_DATASET}/test/'
-    simplify(asset_path, pretrained_model, tokenizer, features_kwargs)
     pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt' # output_dir / f'{features_hash}_{complex_filepath.stem}.txt'
-    print('pred filepath', pred_filepath)
-    
-    # ref_filepaths = [get_data_filepath(dataset, phase,  'simp', i) for i in range(4)]
-    # complex_filepath = get_data_filepath(dataset, phase, 'orig')
-    # print('this is the complex filepath', complex_filepath)
-        # if pred_filepath.exists() and count_line(pred_filepath) == count_line(complex_filepath):
-        #     print("File is already processed.")
+    print('pred filepath', pred_filepath) # string object
+    pfad = get_data_filepath(eval_dataset, 'test', 'orig') 
+    if pred_filepath and count_line(pred_filepath) == count_line(pfad):
+        print("File is already processed.")
+    else:
+        simplify(pfad, pretrained_model, tokenizer, features_kwargs)
     for i in range(len(pred_filepath)):
         scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True,metrics = DEFAULT_METRICS)
         if "WordRatioFeature" in features_kwargs:
-            print("W:", features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
+            print("W:", "%.2f" % features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
         if "CharRatioFeature" in features_kwargs:
-            print("C:", features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
+            print("C:", "%.2f" % features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
         if "LevenshteinRatioFeature" in features_kwargs:
-            print("L:", features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
+            print("L:", "%.2f" % features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
         if "WordRankRatioFeature" in features_kwargs:
-            print("WR:", features_kwargs["WordRankRatioFeature"]["target_ratio"], "\t", end="")
+            print("WR:","%.2f" % features_kwargs["WordRankRatioFeature"]["target_ratio"], "\t", end="")
         if "DependencyTreeDepthRatioFeature" in features_kwargs:
-            print("DTD:", features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
+            print("DTD:", "%.2f" % features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
         print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} \t SENT_BLEU: {:.2f} \t F1 {:.2f}  \t SARI_ADD {:.2f} \t SARI_KEEP {:.2f} \t SARI_DELETE {:.2f}".format(scores['sari'], scores['bleu'], scores['fkgl'], scores['sent_bleu'],  scores['f1_token'],  scores['sari_add'], scores['sari_keep'], scores['sari_del'])) # test
         # wandb.log({"Scores": scores})
-                # print("Execution time: --- %s seconds ---" % (time.time() - start_time))
-
+        # write lines into output dir 
 
 def evaluate_corpus(features_kwargs): 
     pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt' # output_dir / f'{features_hash}_{complex_filepath.stem}.txt'
@@ -150,4 +134,10 @@ def calculate_eval_sentence(dataset, test_dataset, predictions):
     f.close()
     return sari_scores, stats
 
-
+    #######NOT NEEDED ATM!!
+    # PREPROCESS TEST DATA (ASSET and WIKILARGE) 
+    # preprocessor = Preprocessor(features)
+    # preprocessor.preprocess_dataset(ASSET_DATASET)
+    # # 2) prepare and tokenize 
+    # test_dataset = prepare.get_test_data(ASSET_PROCESSED, 0, 358) # doesnt take first row.
+    # print('test_dataset', test_dataset)

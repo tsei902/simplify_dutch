@@ -78,7 +78,7 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs):
     # for i in range(0,len(data)):
         print('complex sentence', complex_sent) 
         sentence = preprocessor.encode_sentence(complex_sent)
-        print(type(sentence))
+        # print(type(sentence))
         # print('sentence after preprocessor.encoding', sentence)
         # sentence = "simplify: " + sentence
         
@@ -87,7 +87,7 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs):
         # print('ENCODING AS A WHOLE', encoding)
         input_ids = encoding.input_ids # .to(device)
         # print('ENCODED IDS', input_ids)
-        print(type(input_ids))
+        # print(type(input_ids))
         # attention_masks = encoding["attention_mask"] # .to(device)
         #print('test input sentence from dataset[orig]', data[i])
         # tokenized_test_input = prepare.tokenize_test(data[i])
@@ -104,7 +104,7 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs):
                 # # remove_invalid_values=True
                 # num_beams = 8,# preset
                 # early_stopping= True,
-                # length_penalty= 2.0,
+                # length_penalty= 2.0, # read up again
                 # top_p=0.9, # top p of probability distribution
                 # top_k=2,
                 # temperature=0.8,
@@ -114,13 +114,13 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs):
                 # eos_token_id= 1,
                 suppress_tokens=[32003,32004,32005,32006,32007,32008,32009,32010,32011,32012,32013,32014,32015,32016,32017,32018,32019,32020,32021,32022,32023,32024,32025,32026,32027,32028,32029,32030,32031,32032,32033,32034,32035,32036,32037,32038,32039,32040,32041,32042,32043,32044,32045,32046,32047,32048,32049,32050,32051,32052,32053,32054,32055,32056,32057,32058,32059,32060,32061,32062,32063,32064,32065,32066,32067,32068,32069,32070,32071,32072,32073,32074,32075,32076,32077,32078,32079,32080,32081,32082,32083,32084,32085,32086,32087,32088,32089,32090,32091,32092,32093,32094,32095,32096,32097,32098,32099,32100,32101,32102], 
                 begin_suppress_tokens= [3,4,7],
-                 # test: bad_words_ids = [[0,13,2530,17,4,77]], # List of token ids that are not allowed to be generated. In order to get the token ids of the words that should not appear in the generated text, use tokenizer(bad_words, add_prefix_space=True, add_special_tokens=False).input_ids.
+                # bad_words_ids = [[0,13,2530,17,4,77]],# works but is slow # List of token ids that are not allowed to be generated. In order to get the token ids of the words that should not appear in the generated text, use tokenizer(bad_words, add_prefix_space=True, add_special_tokens=False).input_ids.
                 repetition_penalty=1.3, # CRTL PAPER!
                 # point as an end token
                 # suppress any generation of a control token
                 )
-        print('This is the output of the generator', output) # output is tensor
-        print(type(output))
+        # print('This is the output of the generator', output) # output is tensor
+        # print(type(output))
         simplification = tokenizer.decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
         print('simplification: ', simplification)
         file=open(f'{OUTPUT_DIR}/generate/simplification.txt', "a", encoding="utf8") 

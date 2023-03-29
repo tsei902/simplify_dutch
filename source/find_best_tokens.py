@@ -1,9 +1,10 @@
 from pathlib import Path; import sys; sys.path.append(str(Path(__file__).resolve().parent.parent)) # fix path
 
 from source.utils import log_stdout
-from source.evaluate import evaluate_on_asset
+from source.evaluate import evaluate_on_dataset
 from paths import EXP_DIR
 import optuna
+from paths import ASSET_DATASET, WIKILARGE_DATASET
 
 def evaluate(params):
     features_kwargs = {
@@ -14,8 +15,7 @@ def evaluate(params):
         'DependencyTreeDepthRatioFeature': {'target_ratio': params['DepthTreeRatio']}
     }
     # print('into evalaution')
-    return evaluate_on_asset(features_kwargs) # , 'test') # , 'eval1')
-    # evaluate_on_asset(features_kwargs, 'valid')
+    return evaluate_on_dataset(features_kwargs, 'saved_model_adam', ASSET_DATASET)
 
 def objective(trial: optuna.trial.Trial) -> float:
     params = {
@@ -28,7 +28,6 @@ def objective(trial: optuna.trial.Trial) -> float:
     return evaluate(params)
 
 if __name__=='__main__':
-
     # # # pruner: optuna.pruners.BasePruner = (
     # #     optuna.pruners.MedianPruner() if args.pruning else optuna.pruners.NopPruner()
     # # )
