@@ -1,10 +1,15 @@
-from pathlib import Path; import sys; sys.path.append(str(Path(__file__).resolve().parent.parent)) # fix path
-
-from source.utils import log_stdout
+from pathlib import Path
+import sys
+sys.path.append(str(Path(__file__).resolve().parent.parent)) # fix path
 from source.evaluate import evaluate_on_dataset
 from paths import EXP_DIR
 import optuna
+import wandb
+from optuna.integration.wandb import WeightsAndBiasesCallback
 from paths import ASSET_DATASET, WIKILARGE_DATASET
+
+wandb_kwargs = {"project": "Tokens_tuning"}
+wandbc = WeightsAndBiasesCallback(wandb_kwargs=wandb_kwargs, as_multirun=True)
 
 def evaluate(params):
     features_kwargs = {
@@ -14,8 +19,8 @@ def evaluate(params):
         'WordRankRatioFeature': {'target_ratio': params['WordRankRatio']},
         'DependencyTreeDepthRatioFeature': {'target_ratio': params['DepthTreeRatio']}
     }
-    # print('into evalaution')
-    return evaluate_on_dataset(features_kwargs, 'saved_model_adam', ASSET_DATASET)
+    return evaluate_on_dataset(features_kwargs, 'saved_model_adam', ASSET_DATASET) # takes test file automatically
+    
 
 def objective(trial: optuna.trial.Trial) -> float:
     params = {
@@ -28,24 +33,6 @@ def objective(trial: optuna.trial.Trial) -> float:
     return evaluate(params)
 
 if __name__=='__main__':
-    # # # pruner: optuna.pruners.BasePruner = (
-    # #     optuna.pruners.MedianPruner() if args.pruning else optuna.pruners.NopPruner()
-    # # )
-    # tuning_log_dir = EXP_DIR / 'tuning_logs'
-    # tuning_log_dir.mkdir(parents=True, exist_ok=True)
-    # i = 1
-    # tuning_logs = tuning_log_dir / f'tokens_logs_{i}.txt'
-    # while(tuning_logs.exists()):
-    #     i += 1
-    #     tuning_logs = tuning_log_dir / f'tokens_logs_{i}.txt'
-    #     with log_stdout(tuning_logs):
-            # study = optuna.create_study(study_name='TS_T5_study', direction="minimize", storage='sqlite:///TS_T5_study.db')
-    study = optuna.create_study(study_name='Tokens_study', direction="maximize", load_if_exists=True) # storage=f'sqlite:///{tuning_log_dir}/Tokens_study.db', 
-    study.optimize(objective, n_trials=5)
-    print("Number of finished trials: {}".format(len(study.trials)))
-    print("Best trial:")
-    trial = study.best_trial
-    print("  Value: {}".format(trial.value))
-    print("  Params: ")
-    for key, value in trial.params.items():
-        print("    {}: {}".format(key, value))
+
+    study = optuna.create_study(direction="maximize", load_if_exists=True) # storage=f'sqlite:///{tuning_log_dir}/Tokens_study.db', 
+    study.optimize(objective, n_trials=5, callbacks=[wandbc],  gc_after_trial=True)

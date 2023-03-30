@@ -1,34 +1,10 @@
-import os
-import git
 import sys
-import time
-import pandas as pd
-from urllib.parse import urlparse
-import logging
-import shutil
-import tempfile
-from tqdm import tqdm
 from pathlib import Path
-from itertools import zip_longest
-# from fcntl import flock, LOCK_EX, LOCK_UN
-from urllib.request import urlretrieve
-from contextlib import contextmanager, AbstractContextManager
-import bz2
-import gzip
-import tarfile
-import zipfile
+# sys.path.append(str(Path(__file__).resolve().parent.parent))
+import time
+from contextlib import contextmanager
 import hashlib
 import json
-
-from paths import DATASETS_DIR # , CACHES_DIR
-
-# -- fix path --
-# from pathlib import Path
-# import sys
-
-# sys.path.append(str(Path(__file__).resolve().parent.parent))
-# -- end fix path --
-
 import pickle
 import re
 import sys
@@ -38,61 +14,10 @@ from functools import lru_cache, wraps
 from pathlib import Path
 import hashlib
 
+
 from paths import DUMPS_DIR, WIKILARGE_DATASET, get_temp_filepath, get_data_filepath
 import json
 from sacremoses import MosesDetokenizer, MosesTokenizer
-
-# LANGUAGES = ['complex', 'simple']
-# PHASES = ['train', 'valid', 'test']
-# # SUBFOLDER = ['train', 'test']
-
-# # CLEF
-# def get_data_filepath(dataset, phase, type, i=None):
-#     suffix = ''
-#     print('line passed 1')
-#     if i is not None:
-#         suffix = f'.{i}'
-#         print('line passed 2', suffix)
-#     filename = f'{dataset}.{phase}.{type}{suffix}'
-#     print('this is the filename', filename)
-#     return DATASETS_DIR / dataset / filename
-
-# # CLEF
-# def get_dataset_dir(dataset):
-#     return DATASETS_DIR / dataset
-
-# #CLEF
-# def read_lines(filepath, n_lines=float('inf'), prop=1):
-#     return list(yield_lines(filepath, n_lines, prop))
-
-# #CLEF
-# def yield_lines(filepath, n_lines=float('inf'), prop=1):
-#     if prop < 1:
-#         assert n_lines == float('inf')
-#         n_lines = int(prop * count_lines(filepath))
-#     with open(filepath, 'r') as f:
-#         for i, l in enumerate(f):
-#             if i >= n_lines:
-#                 break
-#             yield l.rstrip('\n')
-
-# # CLEF         
-# def count_lines(filepath):
-#     n_lines = 0
-#     with Path(filepath).open() as f:
-#         for l in f:
-#             n_lines += 1
-#     return n_lines
-
-#CLEF
-# def get_data_filepath(dataset, phase, language, i=None):
-#     suffix = ''  # Create suffix e.g. for multiple references
-#     if i is not None:
-#         suffix = f'.{i}'
-#     filename = f'{dataset}.{phase}.{language}{suffix}'
-#     return get_dataset_dir(dataset) / filename
-
-# CHENG SHEANG
 
 @lru_cache(maxsize=1)
 def get_tokenizer():
@@ -116,6 +41,11 @@ def write_lines(lines, filepath):
 def read_lines(filepath):
     return [line.rstrip() for line in yield_lines(filepath)]
 
+def read_lines_ref(filename):
+    with open(filename, encoding="utf-8") as f:
+        lines = f.readlines()
+        lines = [x.strip() for x in lines]
+    return lines
 
 # # Returns file as list of lists
 def read_file(folder_path):

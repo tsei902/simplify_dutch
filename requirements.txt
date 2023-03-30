@@ -34,3 +34,4 @@ statsmodels
 # working version
 # https://github.com/coosto/dutch-word-embeddings/releases/download/v1.0/model.bin
 
+compound-split

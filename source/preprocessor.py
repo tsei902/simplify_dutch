@@ -29,6 +29,7 @@ from utils import tokenize, yield_lines, load_dump, dump, write_lines, count_lin
     print_execution_time, save_preprocessor, yield_sentence_pair
 
 stopwords = set(stopwords.words('dutch'))
+from compound_split import doc_split
 
 def round(val):
     return '%.2f' % val
@@ -76,11 +77,11 @@ def spacy_process(text):
 
 @lru_cache(maxsize=1)
 def get_word2rank(vocab_size=np.inf):
-    model_filepath = DUMPS_DIR / f"{WORD_EMBEDDINGS_NAME}.pk"
+    model_filepath = DUMPS_DIR / f"{WORD_EMBEDDINGS_NAME}.pk"  # should be CoNNL 17 model!
     if model_filepath.exists():
         return load_dump(model_filepath)
     else:
-        print("Downloading dutch embeddings ...") # pretrained vectors
+        print("Downloading alterantive coostco dutch embeddings ...") # pretrained vectors
         download_twitter_embeddings(model_name='coostco', dest_dir=str(DUMPS_DIR))
         print("Preprocessing word2rank...")
         DUMPS_DIR.mkdir(parents=True, exist_ok=True)
@@ -235,8 +236,11 @@ class LevenshteinRatioFeature(RatioFeature):
         super().__init__(self.get_levenshtein_ratio, *args, **kwargs)
 
     def get_levenshtein_ratio(self, complex_sentence, simple_sentence):
-        return round(Levenshtein.ratio(complex_sentence, simple_sentence))
-
+        # old return round(Levenshtein.ratio(complex_sentence, simple_sentence))
+        complex_sentence = tokenize(complex_sentence)
+        simple_sentence = tokenize(simple_sentence)
+        return round(Levenshtein.seqratio(complex_sentence, simple_sentence))
+    
 class WordRankRatioFeature(RatioFeature):
     def __init__(self, *args, **kwargs):
         super().__init__(self.get_word_rank_ratio, *args, **kwargs)
@@ -251,6 +255,8 @@ class WordRankRatioFeature(RatioFeature):
         print('enter lexical loop')
         words = tokenize(remove_stopwords(remove_punctuation(sentence)))
         print('sentence "tokenization" into individal words', words)
+        words = doc_split.maximal_split(words)
+        print('result nach max split', words)
         words = [word for word in words if word in get_word2rank()]
         print('words here is the check if the word exists?', words)
         print('still in lexical loop')
@@ -433,9 +439,7 @@ class Preprocessor:
 
 
 if __name__ == '__main__':
-    print(REPO_DIR)
-    print(get_experiments_dir())
-    print(str(Path(__file__).resolve().parent.parent))
+
     features_kwargs = {
         'WordRatioFeature': {'target_ratio': 0.8},
         'CharRatioFeature': {'target_ratio': 0.8},

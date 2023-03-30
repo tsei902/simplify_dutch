@@ -71,12 +71,12 @@ class T5SimplificationModel():
 
 
 
-def simplify(data, pretrained_model, tokenizer, features_kwargs):
+def simplify(data, pretrained_model, tokenizer, features_kwargs, output_folder=None):
     max_length = 128
     preprocessor = Preprocessor(features_kwargs)
     for n_line, complex_sent in enumerate(yield_lines(data), start=0):
     # for i in range(0,len(data)):
-        print('complex sentence', complex_sent) 
+        # print('complex sentence', complex_sent) 
         sentence = preprocessor.encode_sentence(complex_sent)
         # print(type(sentence))
         # print('sentence after preprocessor.encoding', sentence)
@@ -122,8 +122,9 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs):
         # print('This is the output of the generator', output) # output is tensor
         # print(type(output))
         simplification = tokenizer.decode(output.squeeze(), skip_special_tokens=True, clean_up_tokenization_space=True)
-        print('simplification: ', simplification)
-        file=open(f'{OUTPUT_DIR}/generate/simplification.txt', "a", encoding="utf8") 
+        # print('simplification: ', simplification)
+        output_location = f'{OUTPUT_DIR}/generate/simplification.txt' if output_folder is None else output_folder        
+        file=open(output_location, "a", encoding="utf8") 
         file.writelines(simplification)
         file.write("\n")
         file.close()

@@ -8,7 +8,7 @@ import csv
 import wandb
 import paths
 import utils 
-from utils import generate_hash, count_line
+from utils import generate_hash, count_line, read_lines_ref
 from model import simplify
 from paths import REPO_DIR, DUMPS_DIR, ASSET_DATASET,  PHASES, get_data_filepath, EXP_DIR, OUTPUT_DIR, WIKILARGE_DATASET
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
@@ -17,26 +17,62 @@ from paths import ASSET_DATASET
 
 DEFAULT_METRICS = ['bleu', 'sari', 'fkgl', 'sent_bleu', 'f1_token', 'sari_by_operation']
 
-
-
 def evaluate_on_dataset(features_kwargs, model_dirname, eval_dataset): #, phase): # model_dirname=None):
-    dataset = "asset"
+    wandb.init(project= "Tokens_tuning", job_type="evaluation_SARI")
+    if eval_dataset== ASSET_DATASET: 
+        dataset= "asset_test"
+    model_dir = REPO_DIR /f"{model_dirname}"
+    print(model_dir)
+    pretrained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model_adam')
+    tokenizer = AutoTokenizer.from_pretrained('./saved_model_adam')
+    output_dir = OUTPUT_DIR / "evaluate_on_dataset"
+    output_dir.mkdir(parents=True, exist_ok=True)
+    print("Output dir: ", output_dir)
+    # features_hash = generate_hash(features_kwargs)
+
+    pred_filepath = f'{OUTPUT_DIR}/evaluate_on_dataset/simp_{wandb.run.name}.txt'
+    orig_pfad = get_data_filepath(eval_dataset, 'test', 'orig') 
+    # ref_pfad = get_data_filepath(dataset, phase, 'simple')
+    ref_filepaths = [get_data_filepath(eval_dataset, 'test', 'simp', i) for i in range(10)]
+    simplify(orig_pfad, pretrained_model, tokenizer, features_kwargs, output_folder=pred_filepath )
+    for i in range(len(pred_filepath)):
+        scores = evaluate_system_output(test_set="custom", orig_sents_path=orig_pfad, sys_sents_path=str(pred_filepath), refs_sents_paths= ref_filepaths,  lowercase=True,metrics = DEFAULT_METRICS)
+        if "WordRatioFeature" in features_kwargs:
+            print("W:", "%.2f" % features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
+        if "CharRatioFeature" in features_kwargs:
+            print("C:", "%.2f" % features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
+        if "LevenshteinRatioFeature" in features_kwargs:
+            print("L:", "%.2f" % features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
+        if "WordRankRatioFeature" in features_kwargs:
+            print("WR:","%.2f" % features_kwargs["WordRankRatioFeature"]["target_ratio"], "\t", end="")
+        if "DependencyTreeDepthRatioFeature" in features_kwargs:
+            print("DTD:", "%.2f" % features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
+        print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} \t SENT_BLEU: {:.2f} \t F1 {:.2f}  \t SARI_ADD {:.2f} \t SARI_KEEP {:.2f} \t SARI_DELETE {:.2f}".format(scores['sari'], scores['bleu'], scores['fkgl'], scores['sent_bleu'],  scores['f1_token'],  scores['sari_add'], scores['sari_keep'], scores['sari_del'])) # test
+        # write lines into output dir 
+        print(scores)
+        wandb.log(scores)
+        return  scores['sari']
+    
+def evaluate_on_asset(features_kwargs, model_dirname, eval_dataset): #, phase): # model_dirname=None):
+    # wandb.init(project= "Tokens_tuning", job_type="evaluation_SARI")
+    if eval_dataset== ASSET_DATASET: 
+        dataset= "asset_test"
     model_dir = REPO_DIR /f"{model_dirname}"
     print(model_dir)
     pretrained_model =  AutoModelForSeq2SeqLM.from_pretrained(model_dir)
     tokenizer = AutoTokenizer.from_pretrained(model_dir)
-    output_dir = OUTPUT_DIR / "evaluate_on_dataset"
-    output_dir.mkdir(parents=True, exist_ok=True)
-    print("Output dir: ", output_dir)
-    features_hash = generate_hash(features_kwargs)
+    # output_dir = OUTPUT_DIR / "evaluate_on_asset"
+    # output_dir.mkdir(parents=True, exist_ok=True)
+    # print("Output dir: ", output_dir)
+    # features_hash = generate_hash(features_kwargs)
 
     pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt' # output_dir / f'{features_hash}_{complex_filepath.stem}.txt'
-    print('pred filepath', pred_filepath) # string object
-    pfad = get_data_filepath(eval_dataset, 'test', 'orig') 
-    if pred_filepath and count_line(pred_filepath) == count_line(pfad):
+    orig_pfad = get_data_filepath(eval_dataset, 'test', 'orig') 
+    
+    if pred_filepath and count_line(pred_filepath) == count_line(orig_pfad):
         print("File is already processed.")
     else:
-        simplify(pfad, pretrained_model, tokenizer, features_kwargs)
+        simplify(orig_pfad, pretrained_model, tokenizer, features_kwargs)
     for i in range(len(pred_filepath)):
         scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True,metrics = DEFAULT_METRICS)
         if "WordRatioFeature" in features_kwargs:
@@ -50,8 +86,10 @@ def evaluate_on_dataset(features_kwargs, model_dirname, eval_dataset): #, phase)
         if "DependencyTreeDepthRatioFeature" in features_kwargs:
             print("DTD:", "%.2f" % features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
         print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} \t SENT_BLEU: {:.2f} \t F1 {:.2f}  \t SARI_ADD {:.2f} \t SARI_KEEP {:.2f} \t SARI_DELETE {:.2f}".format(scores['sari'], scores['bleu'], scores['fkgl'], scores['sent_bleu'],  scores['f1_token'],  scores['sari_add'], scores['sari_keep'], scores['sari_del'])) # test
-        # wandb.log({"Scores": scores})
         # write lines into output dir 
+        # print(scores)
+        # wandb.log(scores)
+        return  scores['sari']
 
 def evaluate_corpus(features_kwargs): 
     pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt' # output_dir / f'{features_hash}_{complex_filepath.stem}.txt'
@@ -59,15 +97,15 @@ def evaluate_corpus(features_kwargs):
     for i in range(len(pred_filepath)): 
         scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True, metrics = DEFAULT_METRICS) # VALID_METRICS)
         if "WordRatioFeature" in features_kwargs:
-            print("W:", features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
+            print("W:", "%.2f" % features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
         if "CharRatioFeature" in features_kwargs:
-            print("C:", features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
+            print("C:", "%.2f" % features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
         if "LevenshteinRatioFeature" in features_kwargs:
-            print("L:", features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
+            print("L:", "%.2f" % features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
         if "WordRankRatioFeature" in features_kwargs:
-            print("WR:", features_kwargs["WordRankRatioFeature"]["target_ratio"], "\t", end="")
+            print("WR:","%.2f" % features_kwargs["WordRankRatioFeature"]["target_ratio"], "\t", end="")
         if "DependencyTreeDepthRatioFeature" in features_kwargs:
-            print("DTD:", features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
+            print("DTD:", "%.2f" % features_kwargs["DependencyTreeDepthRatioFeature"]["target_ratio"], "\t", end="")
         print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} \t SENT_BLEU: {:.2f} \t F1 {:.2f}  \t SARI_ADD {:.2f} \t SARI_KEEP {:.2f} \t SARI_DELETE {:.2f}".format(scores['sari'], scores['bleu'], scores['fkgl'], scores['sent_bleu'],  scores['f1_token'],  scores['sari_add'], scores['sari_keep'], scores['sari_del'])) # test
         # wandb.log({"Scores": scores})
         # print("Execution time: --- %s seconds ---" % (time.time() - start_time))

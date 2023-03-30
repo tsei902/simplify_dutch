@@ -6,7 +6,7 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
 # , T5ForConditionalGeneration, TrainingArguments
 import numpy as np
-from evaluate import evaluate_corpus, evaluate_on_dataset
+from evaluate import evaluate_corpus, evaluate_on_dataset, evaluate_on_asset
 import pandas as pd
 from paths import WIKILARGE_DATASET, ASSET_DATASET,  PROCESSED_DATA_DIR, \
     WIKILARGE_PROCESSED, ASSET_PROCESSED,  DATASETS_DIR, get_data_filepath, SIMPLIFICATION_DIR, OUTPUT_DIR # ASSET_TRAIN_DATASET, ASSET_TEST_DATASET,
@@ -122,7 +122,7 @@ if __name__ == '__main__':
     # # EVALUATION & AVERAGES ON CORPUS AND SENTENCE LEVEL
     # # all easse datasets use the 13 a tokenizer - for all languages
     # results = evaluate.evaluate_corpus(features) # give test set here! 
-    # results_asset = evaluate.evaluate_on_dataset(features, 'saved_model_adam', ASSET_DATASET)    
+    # results_asset = evaluate.evaluate_on_asset(features, 'saved_model_adam', ASSET_DATASET)    
     
     
     
