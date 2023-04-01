@@ -15,7 +15,7 @@ from paths import WIKILARGE_PROCESSED
 from transformers.optimization import Adafactor, AdafactorSchedule
 import os
 os.environ["TOKENIZERS_PARALLELISM"]="False"
-os.environ["WANDB_SILENT"]="True"
+os.environ["WANDB_SILENT"]="False"
 import transformers
 transformers.logging.set_verbosity_error()
 
@@ -29,12 +29,12 @@ def objective(trial):
         training_args = Seq2SeqTrainingArguments( 
         f"{wandb.run.name}", 
         num_train_epochs=trial.suggest_categorical('num_epochs', [2, 3]),
-        learning_rate=  trial.suggest_float('learning_rate', 1e-4, 1e-3), # learning_rate=  trial.suggest_float('learning_rate', 1e-5, 1e-3),
-        per_device_train_batch_size=8, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),       
-        per_device_eval_batch_size=8, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),  
+        learning_rate= trial.suggest_float('learning_rate', 1e-5, 1e-4), # learning_rate=  trial.suggest_float('learning_rate', 1e-5, 1e-3),
+        per_device_train_batch_size=12, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),       
+        per_device_eval_batch_size=12, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),  
         disable_tqdm=True, 
         predict_with_generate=True,
-        # gradient_accumulation_steps=4,
+        gradient_accumulation_steps=4,
         # gradient_checkpointing=True,
         data_seed=12,
         seed = 12, 
@@ -47,12 +47,12 @@ def objective(trial):
         # the second uses 2*p/n, and so on: iteration i uses i*p/n, until we hit the nominal rate at iteration n.
         
         # evaluation and logging
-        evaluation_strategy = "steps",
-        # save_strategy = "epoch",
-        # save_total_limit=1,
+        evaluation_strategy = "epoch",
+        save_strategy = "epoch",
+        save_total_limit=1,
         # logging_strategy="epoch",
         # logging_steps = 1, 
-        # load_best_model_at_end=True,
+        load_best_model_at_end=True,
         metric_for_best_model = "eval_loss",
         # use_cache=False,
         push_to_hub=False,

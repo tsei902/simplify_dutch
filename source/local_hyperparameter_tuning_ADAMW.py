@@ -18,7 +18,7 @@ os.environ["WANDB_SILENT"]="True"
 import transformers
 transformers.logging.set_verbosity_error()
 
-wandb_kwargs = {"project": "2000_adam_hyperparameter_tuning"}
+wandb_kwargs = {"project": "10000_adam_hyperparameter_tuning"}
 wandbc = WeightsAndBiasesCallback(wandb_kwargs=wandb_kwargs, as_multirun=True)
 
 @wandbc.track_in_wandb()
@@ -27,7 +27,7 @@ def objective(trial):
     training_args = Seq2SeqTrainingArguments( 
         f"{wandb.run.name}", 
         num_train_epochs =3, #  trial.suggest_categorical('num_epochs', [1,2,3]), # ,5]),
-        learning_rate=  trial.suggest_float('learning_rate', 1e-5, 1e-3),             
+        learning_rate= 1e-3, #  trial.suggest_float('learning_rate', 1e-5, 1e-3),             
         per_device_train_batch_size=6, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),       
         per_device_eval_batch_size=6, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),  
         optim="adamw_torch",  

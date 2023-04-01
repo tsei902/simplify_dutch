@@ -36,4 +36,4 @@ def objective(trial: optuna.trial.Trial) -> float:
 if __name__=='__main__':
 
     study = optuna.create_study(direction="maximize", load_if_exists=True)  
-    study.optimize(objective, n_trials=2, callbacks=[wandbc],  gc_after_trial=True)
+    study.optimize(objective, n_trials=10, callbacks=[wandbc],  gc_after_trial=True)

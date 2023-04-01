@@ -29,7 +29,8 @@ easse
 statsmodels
 # TUPA
 #  torchtext 
-
+nltk
+wordnet
 # huggingface_hub nltk rouge-score
 # dutch-word-embeddings@git+https://github.com:coosto/dutch-word-embeddings.git
 # dutch-word-embeddings
