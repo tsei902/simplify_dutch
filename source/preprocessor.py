@@ -326,6 +326,7 @@ class Preprocessor:
             for feature in self.features:
                 line += feature.encode_sentence(sentence) + ' '
             line += ' ' + sentence
+            print('featured sentence', line)
             return line.rstrip()
         else:
             return sentence

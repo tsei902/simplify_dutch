@@ -1,8 +1,7 @@
+import easse
 from easse.sari import corpus_sari, get_corpus_sari_operation_scores
 from easse.cli import evaluate_system_output
-# from source.model import T5FineTuner
-from easse.report import get_all_scores
-from easse.utils.constants import ( VALID_TEST_SETS, VALID_METRICS, DEFAULT_METRICS)
+from easse.utils.constants import ( VALID_METRICS, DEFAULT_METRICS)
 import pandas as pd
 import csv
 import wandb
@@ -10,9 +9,8 @@ import paths
 import utils 
 from utils import generate_hash, count_line, read_lines_ref
 from model import simplify
-from paths import REPO_DIR, DUMPS_DIR, ASSET_DATASET,  PHASES, get_data_filepath, EXP_DIR, OUTPUT_DIR, WIKILARGE_DATASET
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
-# , T5ForConditionalGeneration, TrainingArguments
+from paths import REPO_DIR, ASSET_DATASET, get_data_filepath,  OUTPUT_DIR, WIKILARGE_DATASET
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 from paths import ASSET_DATASET
 
 DEFAULT_METRICS = ['bleu', 'sari', 'fkgl', 'sent_bleu', 'f1_token', 'sari_by_operation']
@@ -22,14 +20,12 @@ def evaluate_on_dataset(features_kwargs, model_dirname, eval_dataset): #, phase)
     if eval_dataset== ASSET_DATASET: 
         dataset= "asset_test"
     model_dir = REPO_DIR /f"{model_dirname}"
-    print(model_dir)
-    pretrained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model_adam')
-    tokenizer = AutoTokenizer.from_pretrained('./saved_model_adam')
+    print('model dir', model_dir)
+    pretrained_model =  AutoModelForSeq2SeqLM.from_pretrained(model_dir)
+    tokenizer = AutoTokenizer.from_pretrained(model_dir)
     output_dir = OUTPUT_DIR / "evaluate_on_dataset"
     output_dir.mkdir(parents=True, exist_ok=True)
     print("Output dir: ", output_dir)
-    # features_hash = generate_hash(features_kwargs)
-
     pred_filepath = f'{OUTPUT_DIR}/evaluate_on_dataset/simp_{wandb.run.name}.txt'
     orig_pfad = get_data_filepath(eval_dataset, 'test', 'orig') 
     # ref_pfad = get_data_filepath(dataset, phase, 'simple')
@@ -66,7 +62,7 @@ def evaluate_on_asset(features_kwargs, model_dirname, eval_dataset): #, phase): 
     # print("Output dir: ", output_dir)
     # features_hash = generate_hash(features_kwargs)
 
-    pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt' # output_dir / f'{features_hash}_{complex_filepath.stem}.txt'
+    pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt' 
     orig_pfad = get_data_filepath(eval_dataset, 'test', 'orig') 
     
     if pred_filepath and count_line(pred_filepath) == count_line(orig_pfad):
@@ -92,7 +88,7 @@ def evaluate_on_asset(features_kwargs, model_dirname, eval_dataset): #, phase): 
         return  scores['sari']
 
 def evaluate_corpus(features_kwargs): 
-    pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt' # output_dir / f'{features_hash}_{complex_filepath.stem}.txt'
+    pred_filepath = f'{OUTPUT_DIR}/generate/simplification.txt'
     print('pred filepath', pred_filepath)
     for i in range(len(pred_filepath)): 
         scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True, metrics = DEFAULT_METRICS) # VALID_METRICS)
@@ -110,10 +106,7 @@ def evaluate_corpus(features_kwargs):
         # wandb.log({"Scores": scores})
         # print("Execution time: --- %s seconds ---" % (time.time() - start_time))
         return scores['sari']
-
-
-
-
+    
 def calculate_corpus_averages():
     sari_df=  pd.read_csv(f'{OUTPUT_DIR}/generate/sari.txt', header=None)
     avg_sari = sari_df.mean().item()

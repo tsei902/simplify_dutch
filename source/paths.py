@@ -32,6 +32,7 @@ WORD_EMBEDDINGS_NAME = "conllmodel"
 # WANDB_LOG_MODEL=True
 # WANDB_WATCH=all
 # WANDB_DISABLED = True
+WANDB_MODE = "offline"
 WANDB_SILENT = True
 TOKENIZERS_PARALLELISM=False
 
@@ -59,6 +60,7 @@ def get_experiment_dir(create_dir=False):
     path = EXP_DIR / f'exp_{dir_name}'
     if create_dir == True: path.mkdir(parents=True, exist_ok=True)
     return path
+
 def get_tuning_log_dir():
     log_dir = EXP_DIR / 'tuning_logs'
     log_dir.mkdir(parents=True, exist_ok=True)
