@@ -15,3 +15,6 @@ model
 tuning
 trial
 saved_model_adam
+saved_model_adaf_2000
+saved_model_adaf_6000
+saved_model_adaf_10000

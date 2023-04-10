@@ -18,7 +18,7 @@ os.environ["WANDB_SILENT"]="True"
 import transformers
 transformers.logging.set_verbosity_error()
 
-wandb_kwargs = {"project": "10000_adam_hyperparameter_tuning"}
+wandb_kwargs = {"project": "hyperparameter_tuning_local_adam"}
 wandbc = WeightsAndBiasesCallback(wandb_kwargs=wandb_kwargs, as_multirun=True)
 
 @wandbc.track_in_wandb()
@@ -26,12 +26,12 @@ def objective(trial):
     
     training_args = Seq2SeqTrainingArguments( 
         f"{wandb.run.name}", 
-        num_train_epochs =3, #  trial.suggest_categorical('num_epochs', [1,2,3]), # ,5]),
-        learning_rate= 1e-3, #  trial.suggest_float('learning_rate', 1e-5, 1e-3),             
-        per_device_train_batch_size=6, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),       
-        per_device_eval_batch_size=6, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),  
+        num_train_epochs =3,                                    #  trial.suggest_categorical('num_epochs', [1,2,3]), # ,5]),
+        learning_rate= trial.suggest_categorical('learning_rate', [1e-5, 1e-4, 1e-3]),          # 1e-3, #  trial.suggest_float('learning_rate', 1e-5, 1e-3),             
+        per_device_train_batch_size=6,                          # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),       
+        per_device_eval_batch_size=6,                           # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),  
         optim="adamw_torch",  
-        adam_epsilon= trial.suggest_float("adam_epsilon", 1e-8, 3e-7),
+        adam_epsilon= 1e-8,                             # trial.suggest_float("adam_epsilon", 1e-8, 3e-7),
         disable_tqdm=True, 
         predict_with_generate=True,
         gradient_accumulation_steps=4,
@@ -52,7 +52,7 @@ def objective(trial):
         push_to_hub=False,
         fp16=False,
         remove_unused_columns=True
-    )
+        )
 
     data_collator = DataCollatorForSeq2Seq(tokenizer, model=t5dmodel)
     trainer = Seq2SeqTrainer(model=t5dmodel,

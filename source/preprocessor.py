@@ -252,27 +252,27 @@ class WordRankRatioFeature(RatioFeature):
         return score
 
     def get_lexical_complexity_score(self, sentence):
-        print('enter lexical loop')
+        # print('enter lexical loop')
         words = tokenize(remove_stopwords(remove_punctuation(sentence)))
-        print('sentence "tokenization" into individal words', words)
+        # print('sentence "tokenization" into individal words', words)
         words = doc_split.maximal_split(words)
-        print('result nach max split', words)
+        # print('result nach max split', words)
         words = [word for word in words if word in get_word2rank()]
-        print('words here is the check if the word exists?', words)
-        print('still in lexical loop')
+        # print('words here is the check if the word exists?', words)
+        # print('still in lexical loop')
         if len(words) == 0:
             return np.log(1 + len(get_word2rank()))
         score =  np.quantile([self.get_rank(word) for word in words], 0.75)
-        print('score for each word', score)
-        print('lexical compexity score', score)
+        # print('score for each word', score)
+        # print('lexical compexity score', score)
         return score
 
     @lru_cache(maxsize=5000)
     def get_rank(self, word):
         rank = get_word2rank().get(word, len(get_word2rank()))
-        print('rank of word from word2rank - glove ', rank)
+        # print('rank of word from word2rank - glove ', rank)
         ranker = np.log(1 + rank)
-        print('ranker: ', ranker)
+        # print('ranker: ', ranker)
         return ranker
 
 class DependencyTreeDepthRatioFeature(RatioFeature):
@@ -326,7 +326,7 @@ class Preprocessor:
             for feature in self.features:
                 line += feature.encode_sentence(sentence) + ' '
             line += ' ' + sentence
-            print('featured sentence', line)
+            # print('featured sentence', line)
             return line.rstrip()
         else:
             return sentence
@@ -340,7 +340,7 @@ class Preprocessor:
                 # print(feature)
                 processed_complex, _ = feature.encode_sentence_pair(complex_sentence, simple_sentence)
                 line += processed_complex + ' '
-                print('featured sentence', line)
+                # print('featured sentence', line)
                 # print(feature, timeit.default_timer() - startTime)
             line += ' ' + complex_sentence
             return line.rstrip()
@@ -375,7 +375,7 @@ class Preprocessor:
 
     @print_execution_time
     def encode_file_pair(self, complex_filepath, simple_filepath):
-        # print(f"Preprocessing file: {complex_filepath}")
+        print(f"Preprocessing file: {complex_filepath}")
         processed_complex_sentences = []
         self.line_count = count_line(simple_filepath)
 

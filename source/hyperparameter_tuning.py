@@ -20,39 +20,35 @@ import transformers
 transformers.logging.set_verbosity_error()
 
 
-wandb_kwargs = {"project": "10000_adaf_hyperparameter_tuning"}
+wandb_kwargs = {"project": "6000_adam_hyperparameter_tuning"}
 wandbc = WeightsAndBiasesCallback(wandb_kwargs=wandb_kwargs, as_multirun=True)
 
 @wandbc.track_in_wandb()
 def objective(trial):
-    
+        
         training_args = Seq2SeqTrainingArguments( 
         f"{wandb.run.name}", 
-        num_train_epochs=trial.suggest_categorical('num_epochs', [2, 3]),
-        learning_rate= trial.suggest_float('learning_rate', 1e-5, 1e-4), # learning_rate=  trial.suggest_float('learning_rate', 1e-5, 1e-3),
-        per_device_train_batch_size=12, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),       
-        per_device_eval_batch_size=12, # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),  
+        num_train_epochs =3,                                    #  trial.suggest_categorical('num_epochs', [1,2,3]), # ,5]),
+        learning_rate= trial.suggest_categorical('learning_rate', [1e-5, 1e-4, 1e-3]),          # 1e-3, #  trial.suggest_float('learning_rate', 1e-5, 1e-3),             
+        per_device_train_batch_size=6,                          # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),       
+        per_device_eval_batch_size=6,                           # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),  
+        optim="adamw_torch",  
+        adam_epsilon= 1e-8,                             # trial.suggest_float("adam_epsilon", 1e-8, 3e-7),
         disable_tqdm=True, 
         predict_with_generate=True,
         gradient_accumulation_steps=4,
         # gradient_checkpointing=True,
-        data_seed=12,
+        weight_decay=0.1,
         seed = 12, 
-        optim="adafactor", 
-        adafactor = True, 
-        # optim args
-        warmup_steps=5, #steps for linear warmup from 0 to learning_rate, Overrides  warmup_ratio
-        # If the target learning rate is p and the warm-up period is n, 
-        # then the first batch iteration uses 1*p/n for its learning rate;
-        # the second uses 2*p/n, and so on: iteration i uses i*p/n, until we hit the nominal rate at iteration n.
+        # warmup_steps=5, 
         
         # evaluation and logging
         evaluation_strategy = "epoch",
-        save_strategy = "epoch",
+        # save_strategy = "epoch",
         save_total_limit=1,
         # logging_strategy="epoch",
         # logging_steps = 1, 
-        load_best_model_at_end=True,
+        # load_best_model_at_end=True,
         metric_for_best_model = "eval_loss",
         # use_cache=False,
         push_to_hub=False,
@@ -87,7 +83,7 @@ if __name__ == '__main__':
         'DependencyTreeDepthRatioFeature': {'target_ratio': 0.8}
         }
         
-        trainset_processed = get_train_data(WIKILARGE_PROCESSED, 0, 9999)  
+        trainset_processed = get_train_data(WIKILARGE_PROCESSED, 0, 6000)  
         print(trainset_processed)
         valset_processed = get_validation_data(WIKILARGE_PROCESSED, 0,992)
         print(valset_processed)

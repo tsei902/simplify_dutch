@@ -2,7 +2,12 @@ wandb
 transformers 
 torch
 optuna
-
+sklearn
+# statsmodels
+# TUPA
+#  torchtext 
+nltk
+wordnet
 numpy
 evaluate
 cuda-python 
@@ -18,7 +23,7 @@ utils
 pathlib
 sacrebleu
 jiwer
-unbabel-comet
+# unbabel-comet
 sacremoses
 spacy
 python_Levenshtein # ==0.12.0
@@ -26,11 +31,7 @@ python_Levenshtein # ==0.12.0
 # gensim
 git+https://github.com/feralvam/easse.git
 easse
-statsmodels
-# TUPA
-#  torchtext 
-nltk
-wordnet
+
 # huggingface_hub nltk rouge-score
 # dutch-word-embeddings@git+https://github.com:coosto/dutch-word-embeddings.git
 # dutch-word-embeddings

@@ -15,21 +15,21 @@ wandbc = WeightsAndBiasesCallback(wandb_kwargs=wandb_kwargs, as_multirun=True)
 def evaluate(params):
     features_kwargs = {
         'WordRatioFeature': {'target_ratio': params['WordRatio']},
-        # 'CharRatioFeature': {'target_ratio': params['CharRatio']},
-        # 'LevenshteinRatioFeature': {'target_ratio': params['LevenshteinRatio']},
-        # 'WordRankRatioFeature': {'target_ratio': params['WordRankRatio']},
-        # 'DependencyTreeDepthRatioFeature': {'target_ratio': params['DepthTreeRatio']}
+        'CharRatioFeature': {'target_ratio': params['CharRatio']},
+        'LevenshteinRatioFeature': {'target_ratio': params['LevenshteinRatio']},
+        'WordRankRatioFeature': {'target_ratio': params['WordRankRatio']},
+        'DependencyTreeDepthRatioFeature': {'target_ratio': params['DepthTreeRatio']}
     }
     return evaluate_on_dataset(features_kwargs, 'saved_model_adam', ASSET_DATASET) # takes test file automatically
     
 
 def objective(trial: optuna.trial.Trial) -> float:
     params = {
-        'WordRatio' : trial.suggest_float('WordRatio', 0.20, 1.0, step= 0.05),
-        # 'CharRatio' : trial.suggest_float('CharRatio', 0.20, 1.0, step=0.1), # 0.05),
-        # 'LevenshteinRatio' : trial.suggest_float('LevenshteinRatio', 0.20, 1.0, step= 0.1), #0.05),
-        # 'WordRankRatio' : trial.suggest_float('WordRankRatio', 0.20, 1.0, step=0.1), #0.05),
-        # 'DepthTreeRatio' : trial.suggest_float('DepthTreeRatio', 0.20, 1.0, step=0.1), # 0.05),
+        'WordRatio' : trial.suggest_float('WordRatio', 0.6, 0.8, step= 0.05),
+        'CharRatio' : trial.suggest_float('CharRatio', 0.60, 0.8, step=0.05), # 0.05),
+        'LevenshteinRatio' : trial.suggest_float('LevenshteinRatio', 0.60, 0.8, step= 0.05), #0.05),
+        'WordRankRatio' : trial.suggest_float('WordRankRatio', 0.6, 0.8, step=0.05), #0.05),
+        'DepthTreeRatio' : trial.suggest_float('DepthTreeRatio', 0.7, 1.0, step=0.05), # 0.05),
     }
     return evaluate(params)
 
