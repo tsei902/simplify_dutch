@@ -4,7 +4,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSe
 # import prepare
 from preprocessor import Preprocessor, yield_lines
 from paths import DATASETS_DIR, OUTPUT_DIR, RESOURCES_DIR, REPO_DIR, WIKILARGE_DATASET
-
+import wandb
 
 model_checkpoint = "yhavinga/t5-base-dutch" #"yhavinga/t5-v1.1-base-dutch-cased" #"flax-community/t5-base-dutch"#
 T5model = AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint,  use_cache=False) # gradient_checkpointing=True,
@@ -19,32 +19,35 @@ tokenizer = AutoTokenizer.from_pretrained(model_checkpoint , additional_special_
 training_args = Seq2SeqTrainingArguments(
         # f"-{model_name}",
         # report_to = 'wandb', 
-        learning_rate=0.001,
-        per_device_train_batch_size=8,
-        per_device_eval_batch_size=8,
-        predict_with_generate=True, # use model for eval
-        num_train_epochs=1,
-        max_steps=1,
+        # f"{wandb.run.name}", 
+        num_train_epochs =3,                                    #  trial.suggest_categorical('num_epochs', [1,2,3]), # ,5]),
+        learning_rate= 0.0001,  # trial.suggest_categorical('learning_rate', [1e-5, 1e-4, 1e-3]),          # 1e-3, #  trial.suggest_float('learning_rate', 1e-5, 1e-3),             
+        per_device_train_batch_size=6,                          # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),       
+        per_device_eval_batch_size=6,                           # trial.suggest_categorical('batch_size', [6, 8]), # , 12, 18]),  
+        optim="adamw_torch",  
+        adam_epsilon= 1e-8,                             # trial.suggest_float("adam_epsilon", 1e-8, 3e-7),
+        disable_tqdm=True, 
+        predict_with_generate=True,
         gradient_accumulation_steps=4,
         # gradient_checkpointing=True,
-        # weight_decay= False
-        adafactor = True,
+        weight_decay=0.1,
         seed = 12, 
-        warmup_steps=5,
+        warmup_steps=5, 
+        
         # evaluation and logging
-        evaluation_strategy = "epoch", # needs to remain epoch otherwise no tracking of training loss!
+        evaluation_strategy = "epoch",
         save_strategy = "epoch",
-        save_total_limit=3,
-        logging_strategy="epoch",
+        # save_total_limit=1,
+        # logging_strategy="epoch",
         # logging_steps = 1, 
         load_best_model_at_end=True,
         metric_for_best_model = "eval_loss",
         # use_cache=False,
         push_to_hub=False,
-        fp16=False, # True, # shorter bits, more efficient # tensorsneed to be a multiple of 8 # only savings with high batch size
+        fp16=False,
+        remove_unused_columns=True, 
         output_dir="./model_output/", 
-        remove_unused_columns=True
-    )
+        )
 
 class T5SimplificationModel():
     def __init__(self, **kwarg):
@@ -90,39 +93,33 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs, output_folder=N
         # tokenized_test_input = prepare.tokenize_test(data[i])
         # print("tokenized input sentence from test ", tokenized_test_input['input_ids'])
         output= pretrained_model.generate(inputs = input_ids,  
-                do_sample=False, # beam-search decoding by calling beam_search() if num_beams>1 and do_sample=False
-                max_length= 128,
-                # max_length=50, 
+                # do_sample=False, # beam-search decoding by calling beam_search() if num_beams>1 and do_sample=False
+                # max_length= 128,
+                max_length=60, 
                 min_length=5, 
-                num_return_sequences=1, # has no effect om the number of sentences 
-            
-                # length_penalty= 2.0, # read up again
-  
-                # Not useful! 
-                # num_beams=8,
-                # early_stopping=True,
                 
+                # length_penalty= 0.1, # read up again
                 
+                # repetition_penalty=1.3, # CRTL PAPER!
+                # num_return_sequences=1, # has no effect om the number of sentences 
                 # top_k=120, # either temperature or top_k
-                # temperature=0.7,  # more weight to powerful tokens
+                # # # temperature=0.7,  # more weight to powerful tokens
                 # top_p=0.98, # top p of probability distribution
-                # last generation, seems to have no effect. 
+                # # last generation, seems to have no effect.
 
-
-                repetition_penalty=1.3, # CRTL PAPER!
-
-
+                # # do_sample=True,
+                # # top_k=120, 
+                # # top_p=0.90, 
+                # # num_return_sequences=1,
+                # num_beams=3,
+                # early_stopping=True,  # stops the beam search when first-best solution found     
                 # Raus, wenn drin dann ist der Satz identisch 
-                # no_repeat_ngram_size= 4, # against repetition of identical sentences 3 and 4 are good values
-                # num_beams= 4,  #see cheng sheang
-                # early_stopping=True,  # stops the beam search when first-best solution found
+                # no_repeat_ngram_size=4, # against repetition of identical sentences 3 and 4 are good values
                 
-                suppress_tokens=[32003,32004,32005,32006,32007,32008,32009,32010,32011,32012,32013,32014,32015,32016,32017,32018,32019,32020,32021,32022,32023,32024,32025,32026,32027,32028,32029,32030,32031,32032,32033,32034,32035,32036,32037,32038,32039,32040,32041,32042,32043,32044,32045,32046,32047,32048,32049,32050,32051,32052,32053,32054,32055,32056,32057,32058,32059,32060,32061,32062,32063,32064,32065,32066,32067,32068,32069,32070,32071,32072,32073,32074,32075,32076,32077,32078,32079,32080,32081,32082,32083,32084,32085,32086,32087,32088,32089,32090,32091,32092,32093,32094,32095,32096,32097,32098,32099,32100,32101,32102], 
-                begin_suppress_tokens= [3,4,7],
+                # suppress_tokens=[32003,32004,32005,32006,32007,32008,32009,32010,32011,32012,32013,32014,32015,32016,32017,32018,32019,32020,32021,32022,32023,32024,32025,32026,32027,32028,32029,32030,32031,32032,32033,32034,32035,32036,32037,32038,32039,32040,32041,32042,32043,32044,32045,32046,32047,32048,32049,32050,32051,32052,32053,32054,32055,32056,32057,32058,32059,32060,32061,32062,32063,32064,32065,32066,32067,32068,32069,32070,32071,32072,32073,32074,32075,32076,32077,32078,32079,32080,32081,32082,32083,32084,32085,32086,32087,32088,32089,32090,32091,32092,32093,32094,32095,32096,32097,32098,32099,32100,32101,32102], 
+                # begin_suppress_tokens= [3,4,7],
+                # eos_token_id= 4,
                 # bad_words_ids = [[0,13,2530,17,4,77]],# works but is slow # List of token ids that are not allowed to be generated. In order to get the token ids of the words that should not appear in the generated text, use tokenizer(bad_words, add_prefix_space=True, add_special_tokens=False).input_ids.
-                
-                # forced_eos_token_id = 4, 
-                eos_token_id= 4,
                 )
         # print('This is the output of the generator', output) # output is tensor
         # print(type(output))

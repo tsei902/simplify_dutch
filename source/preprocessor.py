@@ -29,7 +29,7 @@ from utils import tokenize, yield_lines, load_dump, dump, write_lines, count_lin
     print_execution_time, save_preprocessor, yield_sentence_pair
 
 stopwords = set(stopwords.words('dutch'))
-from compound_split import doc_split
+# from compound_split import doc_split
 
 def round(val):
     return '%.2f' % val
@@ -248,28 +248,33 @@ class WordRankRatioFeature(RatioFeature):
     def get_word_rank_ratio(self, complex_sentence, simple_sentence):
         score = round(min(safe_division(self.get_lexical_complexity_score(simple_sentence),
                                        self.get_lexical_complexity_score(complex_sentence)), 2))
-        print('score', score)
+        # print('score', score)
         return score
 
     def get_lexical_complexity_score(self, sentence):
         # print('enter lexical loop')
         words = tokenize(remove_stopwords(remove_punctuation(sentence)))
         # print('sentence "tokenization" into individal words', words)
-        words = doc_split.maximal_split(words)
+        # time.sleep(20)
+        # words = doc_split.maximal_split(words)
         # print('result nach max split', words)
+
         words = [word for word in words if word in get_word2rank()]
         # print('words here is the check if the word exists?', words)
         # print('still in lexical loop')
         if len(words) == 0:
             return np.log(1 + len(get_word2rank()))
+        # time.sleep(10)
         score =  np.quantile([self.get_rank(word) for word in words], 0.75)
         # print('score for each word', score)
         # print('lexical compexity score', score)
+        # time.sleep(10)
         return score
 
     @lru_cache(maxsize=5000)
     def get_rank(self, word):
         rank = get_word2rank().get(word, len(get_word2rank()))
+        # time.sleep(10)
         # print('rank of word from word2rank - glove ', rank)
         ranker = np.log(1 + rank)
         # print('ranker: ', ranker)

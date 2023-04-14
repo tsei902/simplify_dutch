@@ -33,7 +33,7 @@ def tokenize(sentence):
 def write_lines(lines, filepath):
     filepath = Path(filepath)
     filepath.parent.mkdir(parents=True, exist_ok=True)
-    with filepath.open("w",encoding="utf-8") as fout:
+    with filepath.open("w",encoding="utf8") as fout:
         for line in lines:
             fout.write(line + '\n')
 

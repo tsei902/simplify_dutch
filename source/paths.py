@@ -25,7 +25,7 @@ WIKILARGE_PROCESSED = 'wikilarge_processed'
 ASSET_PROCESSED = 'asset_processed'
 
 # Word2VecSpecs
-WORD_EMBEDDINGS_NAME = "conllmodel"
+WORD_EMBEDDINGS_NAME =  "conllmodel" # "glove.42B.300d" # "combined_320" # "coosto_model" 
 
 
 # ENVIRONMENT
@@ -33,7 +33,7 @@ WORD_EMBEDDINGS_NAME = "conllmodel"
 # WANDB_WATCH=all
 # WANDB_DISABLED = True
 WANDB_MODE = "offline"
-WANDB_SILENT = True
+WANDB_SILENT = False
 TOKENIZERS_PARALLELISM=False
 
 # DEVICE 

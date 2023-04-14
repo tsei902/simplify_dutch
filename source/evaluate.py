@@ -15,8 +15,8 @@ from paths import ASSET_DATASET
 
 DEFAULT_METRICS = ['bleu', 'sari', 'fkgl', 'sent_bleu', 'f1_token', 'sari_by_operation']
 
-def evaluate_on_dataset(features_kwargs, model_dirname, eval_dataset): #, phase): # model_dirname=None):
-    wandb.init(project= "Tokens_tuning", job_type="evaluation_SARI")
+def evaluate_on_dataset(features_kwargs, model_dirname, eval_dataset, project_name): #, phase): # model_dirname=None):
+    wandb.init(project= project_name, job_type="evaluation_SARI")
     if eval_dataset== ASSET_DATASET: 
         dataset= "asset_test"
     model_dir = REPO_DIR /f"{model_dirname}"

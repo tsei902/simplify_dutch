@@ -18,3 +18,7 @@ saved_model_adam
 saved_model_adaf_2000
 saved_model_adaf_6000
 saved_model_adaf_10000
+saved_model_adam_2000
+saved_model_adam_6000
+saved_model_adam_10000
+resources/outputs/evaluate_on_dataset

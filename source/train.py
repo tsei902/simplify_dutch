@@ -78,9 +78,9 @@ if __name__ == '__main__':
     
     ## GET TRAIN AND VALIDATION DATASETS
     trainset_processed = prepare.get_train_data(WIKILARGE_PROCESSED, 0, 10)  
-    print('this is train 0', trainset_processed['train'][0])
+    # print('this is train 0', trainset_processed['train'][0])
     valset_processed = prepare.get_validation_data(WIKILARGE_PROCESSED, 0,10)
-    print('val 0', valset_processed['validation'][0])
+    # print('val 0', valset_processed['validation'][0])
     
     # ## TOKENIZE
     tokenized_train_dataset = trainset_processed.map((tokenize_train), batched=True, batch_size=1)

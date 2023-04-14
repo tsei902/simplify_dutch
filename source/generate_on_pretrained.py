@@ -27,12 +27,13 @@ DEFAULT_METRICS = ['bleu', 'sari', 'fkgl']
 trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model_adaf_10000')
 tokenizer = AutoTokenizer.from_pretrained('./saved_model_adaf_10000')
 
+
 features = {
 'WordRatioFeature': {'target_ratio': 0.8},
 'CharRatioFeature': {'target_ratio': 0.8},
-'LevenshteinRatioFeature': {'target_ratio': 0.8},
-'WordRankRatioFeature': {'target_ratio': 0.8},
-'DependencyTreeDepthRatioFeature': {'target_ratio': 0.8}
+'LevenshteinRatioFeature': {'target_ratio': 0.6},
+'WordRankRatioFeature': {'target_ratio': 0.35},
+'DependencyTreeDepthRatioFeature': {'target_ratio': 0.5}
 } 
 
 # # # simplify method assumes no preprocessed data! (preprocessing is done in simplify method)
