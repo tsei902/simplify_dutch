@@ -14,10 +14,18 @@ from model import  tokenize_train, training_args
 import os
 import glob
 
-# path = PROCESSED_DATA_DIR/f"{'wikilarge'}"
 
-# print(path) 
-files = glob.glob('\resources\processed_data\wikilarge')
-# files = glob.glob('/resources/processed_data/wikilarge')
-for f in files:
-    os.remove(f)
+if __name__=='__main__':
+    
+    # path = PROCESSED_DATA_DIR/f"{'wikilarge'}"
+
+    # print(path) 
+    # iles = glob.glob('\resources\processed_data\wikilarge')
+    # files = glob.glob('./resources/processed_data/wikilarge')
+    # for f in files:
+    #     os.remove(f)
+        
+        
+    
+
+    [f.unlink() for f in Path("./resources/processed_data/wikilarge").glob("*") if f.is_file()] 

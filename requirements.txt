@@ -31,6 +31,7 @@ python_Levenshtein # ==0.12.0
 # gensim
 git+https://github.com/feralvam/easse.git
 easse
+pingouin
 
 # huggingface_hub nltk rouge-score
 # dutch-word-embeddings@git+https://github.com:coosto/dutch-word-embeddings.git
