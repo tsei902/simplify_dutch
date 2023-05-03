@@ -215,7 +215,7 @@ class RatioFeature:
         if not name: name = class_name
         return name
 
-class WordRatioFeature(RatioFeature):
+class WordLengthRatioFeature(RatioFeature):
     def __init__(self, *args, **kwargs):
         super().__init__(self.get_word_length_ratio, *args, **kwargs)
 
@@ -223,7 +223,7 @@ class WordRatioFeature(RatioFeature):
         return round(safe_division(len(tokenize(simple_sentence)), len(tokenize(complex_sentence))))
 
 
-class CharRatioFeature(RatioFeature):
+class CharLengthRatioFeature(RatioFeature):
     def __init__(self, *args, **kwargs):
         super().__init__(self.get_char_length_ratio, *args, **kwargs)
 
@@ -447,8 +447,8 @@ class Preprocessor:
 if __name__ == '__main__':
 
     features_kwargs = {
-        'WordRatioFeature': {'target_ratio': 0.8},
-        'CharRatioFeature': {'target_ratio': 0.8},
+        'CharLengthRatioFeature': {'target_ratio': 0.8},
+        'WordLengthRatioFeature': {'target_ratio': 0.8},
         'LevenshteinRatioFeature': {'target_ratio': 0.8},
         'WordRankRatioFeature': {'target_ratio': 0.8},
         'DependencyTreeDepthRatioFeature': {'target_ratio': 0.8}

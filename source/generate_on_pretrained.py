@@ -24,17 +24,16 @@ from utils import read_lines, yield_lines, read_file
 
 DEFAULT_METRICS = ['bleu', 'sari', 'fkgl']
 
-trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model_adaf_10000')
-tokenizer = AutoTokenizer.from_pretrained('./saved_model_adaf_10000')
+trained_model =  AutoModelForSeq2SeqLM.from_pretrained('./saved_model')
+tokenizer = AutoTokenizer.from_pretrained('./saved_model')
 
 features = {
-'WordRatioFeature': {'target_ratio': 0.6},
-'CharRatioFeature': {'target_ratio': 0.8},
-'LevenshteinRatioFeature': {'target_ratio': 0.7},
-'WordRankRatioFeature': {'target_ratio': 0.4},
-'DependencyTreeDepthRatioFeature': {'target_ratio': 0.9}
+'CharLengthRatioFeature': {'target_ratio': 0.7},
+'WordLengthRatioFeature': {'target_ratio': 0.6},
+'LevenshteinRatioFeature': {'target_ratio': 0.6},
+'WordRankRatioFeature': {'target_ratio': 0.55},
+'DependencyTreeDepthRatioFeature': {'target_ratio': 0.75}
 } 
-
 
 # # # simplify method assumes no preprocessed data! (preprocessing is done in simplify method)
 pred_filepath = f'{OUTPUT_DIR}/evaluate_on_dataset/simplification.txt'

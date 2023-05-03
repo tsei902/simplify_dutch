@@ -33,10 +33,10 @@ def evaluate_on_dataset(features_kwargs, model_dirname, eval_dataset, project_na
     simplify(orig_pfad, pretrained_model, tokenizer, features_kwargs, output_folder=pred_filepath )
     for i in range(len(pred_filepath)):
         scores = evaluate_system_output(test_set="custom", orig_sents_path=orig_pfad, sys_sents_path=str(pred_filepath), refs_sents_paths= ref_filepaths,  lowercase=True,metrics = DEFAULT_METRICS)
-        if "WordRatioFeature" in features_kwargs:
-            print("W:", "%.2f" % features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
-        if "CharRatioFeature" in features_kwargs:
-            print("C:", "%.2f" % features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
+        if "CharLengthRatioFeature" in features_kwargs:
+            print("C:", "%.2f" % features_kwargs["CharLengthRatioFeature"]["target_ratio"], "\t", end="")
+        if "WordLengthRatioFeature" in features_kwargs:
+            print("W:", "%.2f" % features_kwargs["WordLengthRatioFeature"]["target_ratio"], "\t", end="")
         if "LevenshteinRatioFeature" in features_kwargs:
             print("L:", "%.2f" % features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
         if "WordRankRatioFeature" in features_kwargs:
@@ -71,10 +71,10 @@ def evaluate_on_asset(features_kwargs, model_dirname, eval_dataset): #, phase): 
         simplify(orig_pfad, pretrained_model, tokenizer, features_kwargs)
     for i in range(len(pred_filepath)):
         scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True,metrics = DEFAULT_METRICS)
-        if "WordRatioFeature" in features_kwargs:
-            print("W:", "%.2f" % features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
-        if "CharRatioFeature" in features_kwargs:
-            print("C:", "%.2f" % features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
+        if "CharLengthRatioFeature" in features_kwargs:
+            print("C:", "%.2f" % features_kwargs["CharLengthRatioFeature"]["target_ratio"], "\t", end="")
+        if "WordLengthRatioFeature" in features_kwargs:
+            print("W:", "%.2f" % features_kwargs["WordLengthRatioFeature"]["target_ratio"], "\t", end="")
         if "LevenshteinRatioFeature" in features_kwargs:
             print("L:", "%.2f" % features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
         if "WordRankRatioFeature" in features_kwargs:
@@ -92,10 +92,10 @@ def evaluate_corpus(features_kwargs):
     print('pred filepath', pred_filepath)
     for i in range(len(pred_filepath)): 
         scores = evaluate_system_output(test_set="asset_test", sys_sents_path=str(pred_filepath), lowercase=True, metrics = DEFAULT_METRICS) # VALID_METRICS)
-        if "WordRatioFeature" in features_kwargs:
-            print("W:", "%.2f" % features_kwargs["WordRatioFeature"]["target_ratio"], "\t", end="")
-        if "CharRatioFeature" in features_kwargs:
-            print("C:", "%.2f" % features_kwargs["CharRatioFeature"]["target_ratio"], "\t", end="")
+        if "CharLengthRatioFeature" in features_kwargs:
+            print("C:", "%.2f" % features_kwargs["CharLengthRatioFeature"]["target_ratio"], "\t", end="")
+        if "WordLengthRatioFeature" in features_kwargs:
+            print("W:", "%.2f" % features_kwargs["WordLengthRatioFeature"]["target_ratio"], "\t", end="")
         if "LevenshteinRatioFeature" in features_kwargs:
             print("L:", "%.2f" % features_kwargs["LevenshteinRatioFeature"]["target_ratio"], "\t", end="")
         if "WordRankRatioFeature" in features_kwargs:
@@ -164,11 +164,45 @@ def calculate_eval_sentence(dataset, test_dataset, predictions):
         f.write("\n")
     f.close()
     return sari_scores, stats
+    
+    
+if __name__ == '__main__':
+    orig_pfad = get_data_filepath(ASSET_DATASET, 'test', 'orig') 
+    # ref_pfad = get_data_filepath(dataset, phase, 'simple')
+    ref_filepaths = [get_data_filepath(ASSET_DATASET, 'test', 'simp', i) for i in range(10)]
+    pred_filepath = f'{OUTPUT_DIR}/evaluate_on_dataset/simplification.txt'   #  './resources/datasets/asset/asset.test.simp.3' # f'{OUTPUT_DIR}/evaluate_on_dataset/asset.test.simp.4'
+    
+    scores = evaluate_system_output(test_set="custom", orig_sents_path=orig_pfad, sys_sents_path=str(pred_filepath), refs_sents_paths= ref_filepaths,  lowercase=True,metrics = DEFAULT_METRICS)
+    print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} ".format(scores['sari'], scores['bleu'], scores['fkgl'])) # test
+    print(scores)
+    
+# simp beampk. 
+# SARI: 36.85      BLEU: 83.38     FKGL: 8.05 
+# {'bleu': 83.38051696425413, 'sent_bleu': 77.84182881473753, 'sari': 36.851028817290334, 'sari_add': 2.2677019741616298, 'sari_keep': 54.140992153963516, 'sari_del': 54.14439232374586, 'fkgl': 8.05050861634152, 'f1_token': 79.68003556227}
 
-    #######NOT NEEDED ATM!!
-    # PREPROCESS TEST DATA (ASSET and WIKILARGE) 
-    # preprocessor = Preprocessor(features)
-    # preprocessor.preprocess_dataset(ASSET_DATASET)
-    # # 2) prepare and tokenize 
-    # test_dataset = prepare.get_test_data(ASSET_PROCESSED, 0, 358) # doesnt take first row.
-    # print('test_dataset', test_dataset)
+# simp greedy
+# SARI: 19.79      BLEU: 90.11     FKGL: 10.75 
+# {'bleu': 90.11244498755592, 'sent_bleu': 89.058650453152, 'sari': 19.794138894201456, 'sari_add': 0.0, 'sari_keep': 59.382416682604365, 'sari_del': 0.0, 'fkgl': 10.751382398340006, 'f1_token': 91.29973470116627}
+
+# greedy 50 len
+# SARI: 36.12      BLEU: 83.35     FKGL: 8.36 
+# {'bleu': 83.35401982985516, 'sent_bleu': 76.99754245865779, 'sari': 36.119819113207484, 'sari_add': 2.05232971563062, 'sari_keep': 55.220297967737196, 'sari_del': 51.086829656254636, 'fkgl': 8.36109788781857, 'f1_token': 79.75758737436077}
+
+# top3pk98: 
+# SARI: 37.88      BLEU: 66.26     FKGL: 7.53 
+# {'bleu': 66.26095306789612, 'sent_bleu': 58.93274229474616, 'sari': 37.88302862965144, 'sari_add': 3.1950348992683764, 'sari_keep': 49.130450707673994, 'sari_del': 61.32360028201194, 'fkgl': 7.529030236574126, 'f1_token': 71.8028383853241}
+
+# top5pk98:
+# SARI: 37.85      BLEU: 65.73     FKGL: 7.74 
+# {'bleu': 65.72765337098929, 'sent_bleu': 59.01359520319995, 'sari': 37.85094906035159, 'sari_add': 3.2738941293037893, 'sari_keep': 49.40083759497595, 'sari_del': 60.87811545677504, 'fkgl': 7.738092602272808, 'f1_token': 70.63999632444539}
+
+
+
+# Asset test 4 
+# SARI: 53.20      BLEU: 100.00    FKGL: 7.28 'bleu': 100.00000000000004, 'sent_bleu': 100.00000000000001, 'sari': 53.20372185554857, 'sari_add': 24.716643929006167, 'sari_keep': 62.94411666953717, 'sari_del': 71.95040496810239, 'fkgl': 7.276940392951033, 'f1_token': 100.0  
+
+# Asset test 2
+# SARI: 52.86      BLEU: 100.00    FKGL: 7.34 'bleu': 100.00000000000004, 'sent_bleu': 100.00000000000001, 'sari': 52.85685196669839, 'sari_add': 25.529519203466734, 'sari_keep': 60.06554676955884, 'sari_del': 72.97548992706959, 'fkgl': 7.3386123092743425, 'f1_token': 100.0
+
+# Orig file: SARI: 19.79      BLEU: 90.11     FKGL: 10.75 'bleu': 90.11244498755592, 'sent_bleu': 89.058650453152, 'sari': 19.794138894201456, 'sari_add': 0.0, 'sari_keep': 59.382416682604365, 'sari_del': 0.0, 'fkgl': 10.751382398340006, 'f1_token': 91.29973470116627
+

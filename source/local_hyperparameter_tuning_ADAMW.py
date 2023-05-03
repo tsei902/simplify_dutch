@@ -72,12 +72,12 @@ if __name__ == '__main__':
     tokenizer = AutoTokenizer.from_pretrained("yhavinga/t5-base-dutch", additional_special_tokens=None)
     
     features = {
-    'WordRatioFeature': {'target_ratio': 0.8},
-    'CharRatioFeature': {'target_ratio': 0.8},
-    'LevenshteinRatioFeature': {'target_ratio': 0.8},
-    'WordRankRatioFeature': {'target_ratio': 0.8},
-    'DependencyTreeDepthRatioFeature': {'target_ratio': 0.8}
-    }
+        'CharLengthRatioFeature': {'target_ratio': 0.8},
+        'WordLengthRatioFeature': {'target_ratio': 0.8},
+        'LevenshteinRatioFeature': {'target_ratio': 0.8},
+        'WordRankRatioFeature': {'target_ratio': 0.8},
+        'DependencyTreeDepthRatioFeature': {'target_ratio': 0.8}
+        }
     
     trainset_processed = get_train_data(WIKILARGE_PROCESSED, 0, 10)  
     print(trainset_processed)

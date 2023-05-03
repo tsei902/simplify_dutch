@@ -29,8 +29,8 @@ DEFAULT_METRICS = ['bleu', 'sari', 'fkgl']
 
 
 features = {
-'WordRatioFeature': {'target_ratio': 0.8},
-'CharRatioFeature': {'target_ratio': 0.8},
+'CharLengthRatioFeature': {'target_ratio': 0.8},
+'WordLengthRatioFeature': {'target_ratio': 0.8},
 'LevenshteinRatioFeature': {'target_ratio': 0.8},
 'WordRankRatioFeature': {'target_ratio': 0.8},
 'DependencyTreeDepthRatioFeature': {'target_ratio': 0.8}

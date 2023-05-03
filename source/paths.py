@@ -32,7 +32,7 @@ WORD_EMBEDDINGS_NAME =  "conllmodel" # "glove.42B.300d" # "combined_320" # "coos
 # WANDB_LOG_MODEL=True
 # WANDB_WATCH=all
 # WANDB_DISABLED = True
-WANDB_MODE = "offline"
+# WANDB_MODE = "offline"
 WANDB_SILENT = False
 TOKENIZERS_PARALLELISM=False
 

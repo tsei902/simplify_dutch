@@ -26,11 +26,11 @@ wandbc = WeightsAndBiasesCallback(wandb_kwargs=wandb_kwargs, as_multirun=True)
 
 def evaluate(params):
     features_kwargs = {
-        'WordRatioFeature': {'target_ratio': params['WordRatio']},
-        'CharRatioFeature': {'target_ratio': params['CharRatio']},
+        'CharLengthRatioFeature': {'target_ratio': params['CharLengthRatio']},
+        'WordLengthRatioFeature': {'target_ratio': params['WordLengthRatio']},
         'LevenshteinRatioFeature': {'target_ratio': params['LevenshteinRatio']},
         'WordRankRatioFeature': {'target_ratio': params['WordRankRatio']},
-        'DependencyTreeDepthRatioFeature': {'target_ratio': params['DepthTreeRatio']}
+        'DependencyTreeDepthRatioFeature': {'target_ratio': params['DepthTreeDepthRatio']}
     }
     return evaluate_on_dataset(features_kwargs, 'saved_model_adaf_10000', ASSET_DATASET, "Tokens_tuning") # takes test file automatically
     
@@ -38,11 +38,11 @@ def evaluate(params):
 def evaluate_train(params):
     wandb.init(project="hyperparameter_adaf_10000")
     features_kwargs = {
-        'WordRatioFeature': {'target_ratio': params['WordRatio']},
-        'CharRatioFeature': {'target_ratio': params['CharRatio']},
-        #'LevenshteinRatioFeature': {'target_ratio': params['LevenshteinRatio']},
-        # 'WordRankRatioFeature': {'target_ratio': params['WordRankRatio']},
-        # 'DependencyTreeDepthRatioFeature': {'target_ratio': params['DepthTreeRatio']}
+        'CharLengthRatioFeature': {'target_ratio': params['CharLengthRatio']},
+        'WordLengthRatioFeature': {'target_ratio': params['WordLengthRatio']},
+        'LevenshteinRatioFeature': {'target_ratio': params['LevenshteinRatio']},
+        'WordRankRatioFeature': {'target_ratio': params['WordRankRatio']},
+        'DependencyTreeDepthRatioFeature': {'target_ratio': params['DepthTreeDepthRatio']}
     }
     preprocessor = Preprocessor(features_kwargs) 
     preprocessor.preprocess_dataset(WIKILARGE_DATASET) 
@@ -77,11 +77,11 @@ def evaluate_train(params):
 
 def objective(trial: optuna.trial.Trial) -> float:
     params = {
-        'WordRatio' : trial.suggest_float('WordRatio', 0.55, 0.95, step= 0.05),
-        'CharRatio' : trial.suggest_float('CharRatio', 0.55, 0.95, step=0.05),
-       # 'LevenshteinRatio' : trial.suggest_float('LevenshteinRatio', 0.55, 0.90, step= 0.05), 
-       #  'WordRankRatio' : trial.suggest_float('WordRankRatio', 0.60, 0.75, step=0.05), 
-       #  'DepthTreeRatio' : trial.suggest_float('DepthTreeRatio', 0.80, 0.95, step=0.05),
+       'CharLengthRatio' : trial.suggest_float('CharLengthRatio', 0.6, 0.6, step=0.05),
+       'WordLengthRatio' : trial.suggest_float('WordLengthRatio', 0.75, 0.75, step= 0.05),
+       'LevenshteinRatio' : trial.suggest_float('LevenshteinRatio', 0.6, 0.6, step= 0.05), 
+       'WordRankRatio' : trial.suggest_float('WordRankRatio', 0.75, 0.75, step=0.05), 
+       'DepthTreeDepthRatio' : trial.suggest_float('DepthTreeDepthRatio', 0.95, 0.95, step=0.05),
     }
     return evaluate_train(params)
     # return evaluate(params)
