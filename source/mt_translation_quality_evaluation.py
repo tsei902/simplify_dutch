@@ -92,7 +92,10 @@ if __name__ == '__main__':
    # print(bleu_scorer.get_signature())
    # print(bleu_scorer._aggregate_and_compute)
 
-  
+   # fgkl_scorer = FGKL() # lowercase=False, force=True,
+                     # smooth_method="exp", smooth_value=None, effective_order=False)
+   # print('scores', bleu_scorer.corpus_score(sys_sents, refs_sents))
+   # print('fgkl corpus score', bleu_scorer.corpus_score(sys_sents, refs_sents,).score)
    # bleu needs to be stripped from truecasing and tokenization!
    # https://bricksdont.github.io/posts/2020/12/computing-and-reporting-bleu-scores/
 

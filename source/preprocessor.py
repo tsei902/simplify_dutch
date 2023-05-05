@@ -239,7 +239,7 @@ class LevenshteinRatioFeature(RatioFeature):
         # old return round(Levenshtein.ratio(complex_sentence, simple_sentence))
         complex_sentence = tokenize(complex_sentence)
         simple_sentence = tokenize(simple_sentence)
-        return round(Levenshtein.seqratio(complex_sentence, simple_sentence))
+        return round(Levenshtein.ratio(complex_sentence, simple_sentence))
     
 class WordRankRatioFeature(RatioFeature):
     def __init__(self, *args, **kwargs):
@@ -447,12 +447,12 @@ class Preprocessor:
 if __name__ == '__main__':
 
     features_kwargs = {
-        'CharLengthRatioFeature': {'target_ratio': 0.8},
-        'WordLengthRatioFeature': {'target_ratio': 0.8},
-        'LevenshteinRatioFeature': {'target_ratio': 0.8},
-        'WordRankRatioFeature': {'target_ratio': 0.8},
-        'DependencyTreeDepthRatioFeature': {'target_ratio': 0.8}
-    }
+    'CharLengthRatioFeature': {'target_ratio': 0.7},
+    'WordLengthRatioFeature': {'target_ratio': 0.6},
+    'LevenshteinRatioFeature': {'target_ratio': 0.6},
+    'WordRankRatioFeature': {'target_ratio': 0.55},
+    'DependencyTreeDepthRatioFeature': {'target_ratio': 0.75}
+    } 
     # features_kwargs = {}
     preprocessor = Preprocessor(features_kwargs)
     # preprocessor.preprocess_dataset(ASSET_DATASET)
