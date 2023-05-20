@@ -17,9 +17,8 @@ of sentence simplification.
 The folder /saved model contains the final trained model on 10000 rows of data, as stated in the Thesis. 
 
 # Sequence: 
-1) TRAINING DATA needs preprocessing with preprocessor.py
-2) Generation can be done with generate_on_pretrained.py with a prior adjustment of 
-3) The generation parameters in model.simplify() where the decoding method needs to be chosen (Greedy decoding, Top-p & top-k, or Beam search with top-p and top-k)
+1) Training needs preprocessing with preprocessor.py
+2) Generation can be done with generate_on_pretrained.py with a prior adjustment of the generation parameters in model.simplify() where the decoding method needs to be chosen (Greedy decoding, Top-p & top-k, or Beam search with top-p and top-k)
 4) Manual scoring of a generated text is possible with evaluate.py
 
 # Further remarks: 
