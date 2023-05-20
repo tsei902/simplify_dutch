@@ -170,11 +170,29 @@ if __name__ == '__main__':
     orig_pfad = get_data_filepath(ASSET_DATASET, 'test', 'orig') 
     # ref_pfad = get_data_filepath(dataset, phase, 'simple')
     ref_filepaths = [get_data_filepath(ASSET_DATASET, 'test', 'simp', i) for i in range(10)]
-    pred_filepath = f'{OUTPUT_DIR}/evaluate_on_dataset/simplification.txt'   #  './resources/datasets/asset/asset.test.simp.3' # f'{OUTPUT_DIR}/evaluate_on_dataset/asset.test.simp.4'
+    pred_filepath = f'{OUTPUT_DIR}/final_decoder_outputs/beampk120099repearly_full.txt' # f'{OUTPUT_DIR}/evaluate_on_dataset/simplification.txt'   #  './resources/datasets/asset/asset.test.simp.3' # f'{OUTPUT_DIR}/evaluate_on_dataset/asset.test.simp.4'
     
     scores = evaluate_system_output(test_set="custom", orig_sents_path=orig_pfad, sys_sents_path=str(pred_filepath), refs_sents_paths= ref_filepaths,  lowercase=True,metrics = DEFAULT_METRICS)
     print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} ".format(scores['sari'], scores['bleu'], scores['fkgl'])) # test
     print(scores)
+    
+    
+    
+# greedy full
+# SARI: 36.26      BLEU: 83.37     FKGL: 8.30 
+# {'bleu': 83.36991192907412, 'sent_bleu': 76.91567444867039, 'sari': 36.25526154754177, 'sari_add': 2.049787249600881, 'sari_keep': 54.936704728635085, 'sari_del': 51.779292664389345, 'fkgl': 8.304279903497633, 'f1_token': 79.43104343824497}
+
+
+# topp topk 5 0.98: 
+# SARI: 38.04      BLEU: 66.16     FKGL: 7.84 
+# {'bleu': 66.16062722085984, 'sent_bleu': 58.00580130968169, 'sari': 38.03973399700609, 'sari_add': 3.260228525312191, 'sari_keep': 49.561308255719375, 'sari_del': 61.2976652099867, 'fkgl': 7.8367076773578574, 'f1_token': 70.67985114259491}
+    
+# beampk: 
+# SARI: 33.73      BLEU: 87.14     FKGL: 9.04 
+# {'bleu': 87.1403809517648, 'sent_bleu': 83.21604292774069, 'sari': 33.72609466874248, 'sari_add': 1.673646005633974, 'sari_keep': 56.71907118230784, 'sari_del': 42.78556681828563, 'fkgl': 9.04440306542308, 'f1_token': 84.04786499067309}
+    
+    
+    
     
 # simp beampk. 
 # SARI: 36.85      BLEU: 83.38     FKGL: 8.05 
