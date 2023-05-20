@@ -5,10 +5,10 @@ in the Masters of AI at KU Leuven.
 
 # Data
 The origin of the datasets in resources/datasets is: 
-1) Wikilarge, available under: 
+1) Wikilarge, available under: https://github.com/XingxingZhang/dress
 The wikilarge data is limited the first 10000 rows. 
 
-2) ASSET, available under: 
+2) ASSET, available under: https://github.com/facebookresearch
 Which both have been translated to Dutch. 
 
 # Model
