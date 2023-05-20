@@ -1,7 +1,7 @@
 model_output
 resources/outputs/evaluate_on_dataset
 resources/DUMPS/backup
-saved_model/pytorch_model.bin
+# saved_model/pytorch_model.bin
 saved_model_adam
 saved_model_adaf_2000
 saved_model_adaf_6000
