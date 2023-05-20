@@ -2,7 +2,7 @@ from pathlib import Path
 import sys
 sys.path.append(str(Path(__file__).resolve().parent.parent)) # fix path
 from source.evaluate import evaluate_on_dataset
-from paths import EXP_DIR
+# from paths import EXP_DIR
 import optuna
 import wandb
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainer, set_seed
@@ -17,9 +17,6 @@ import glob
 files = glob.glob('/resources\processed_data\wikilarge')
 for f in files:
     os.remove(f)
-
-
-# WANDB_MODE = "offline"
 
 wandb_kwargs = {"project": "Name_test"}
 wandbc = WeightsAndBiasesCallback(wandb_kwargs=wandb_kwargs, as_multirun=True)
@@ -46,8 +43,8 @@ def evaluate_train(params):
     }
     preprocessor = Preprocessor(features_kwargs) 
     preprocessor.preprocess_dataset(WIKILARGE_DATASET) 
-    trainset_processed = prepare.get_train_data(WIKILARGE_PROCESSED, 0, 9999)  
-    valset_processed = prepare.get_validation_data(WIKILARGE_PROCESSED, 0,991)
+    trainset_processed = prepare.get_train_data(WIKILARGE_PROCESSED, 0, 10000)  
+    valset_processed = prepare.get_validation_data(WIKILARGE_PROCESSED, 0,992)
     tokenized_train_dataset = trainset_processed.map((tokenize_train), batched=True, batch_size=1)
     tokenized_val_dataset =  valset_processed.map((tokenize_train), batched=True, batch_size=1)
 
@@ -69,10 +66,10 @@ def evaluate_train(params):
     set_seed(training_args.seed)
     trainer.train()
     trainer.save_model('./saved_model')    
-    # delete 
+    # delete preprocessed data after each run
     [f.unlink() for f in Path("./resources/processed_data/wikilarge").glob("*") if f.is_file()] 
     
-    return evaluate_on_dataset(features_kwargs,'source/saved_model', ASSET_DATASET, "Tokens_train_tune") # takes test file automatically
+    return evaluate_on_dataset(features_kwargs,'source/saved_model', ASSET_DATASET, "Tokens_train_tune") 
     
 
 def objective(trial: optuna.trial.Trial) -> float:
@@ -87,8 +84,6 @@ def objective(trial: optuna.trial.Trial) -> float:
     # return evaluate(params)
 
 if __name__=='__main__':
-
     study = optuna.create_study(direction="maximize", load_if_exists=True)  
     study.optimize(objective, n_trials=10, callbacks=[wandbc],  gc_after_trial=True)
-    
-    # 
+

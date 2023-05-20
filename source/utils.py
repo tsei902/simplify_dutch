@@ -1,3 +1,6 @@
+# utils adapted and ajusted from  https://github.com/KimChengSHEANG/TS_T5Controllable 
+# Authors: Sheang, Kim Cheng and Saggion, Horacio in the paper "Sentence Simplification with a Unified Text-to-Text Transfer Transformer"
+
 import sys
 from pathlib import Path
 # sys.path.append(str(Path(__file__).resolve().parent.parent))
@@ -13,7 +16,6 @@ from contextlib import contextmanager
 from functools import lru_cache, wraps
 from pathlib import Path
 import hashlib
-
 
 from paths import DUMPS_DIR, WIKILARGE_DATASET, get_temp_filepath, get_data_filepath
 import json
@@ -37,7 +39,6 @@ def write_lines(lines, filepath):
         for line in lines:
             fout.write(line + '\n')
 
-
 def read_lines(filepath):
     return [line.rstrip() for line in yield_lines(filepath)]
 
@@ -57,14 +58,12 @@ def read_file(folder_path):
             list.append(line)
     return list
 
-
 def yield_lines(filepath):
     filepath = Path(filepath)
     with filepath.open('r', encoding="utf-8") as f: # is required in generation encoding and works with utf8
         # makes an issue at ?? 
         for line in f:
             yield line.rstrip()
-
 
 def yield_sentence_pair_with_index(filepath1, filepath2):
     index = 0

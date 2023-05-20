@@ -4,28 +4,28 @@ from optuna.integration.wandb import WeightsAndBiasesCallback
 from pathlib import Path
 import sys
 sys.path.append(str(Path(__file__).resolve().parent.parent))
-import torch
-import time
 from model import tokenize_train
 from prepare import get_train_data, get_validation_data
-# from utils import get_max_seq_length, log_stdout
-from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer, set_seed
-# from preprocessor import Preprocessor, yield_lines
+from transformers import AutoTokenizer, AutoModelForSeq2SeqLM, DataCollatorForSeq2Seq, Seq2SeqTrainingArguments, Seq2SeqTrainer
 from paths import WIKILARGE_PROCESSED
-from transformers.optimization import Adafactor, AdafactorSchedule
 import os
 os.environ["TOKENIZERS_PARALLELISM"]="False"
 os.environ["WANDB_SILENT"]="False"
 import transformers
 transformers.logging.set_verbosity_error()
 
+# , set_seed
+# from preprocessor import Preprocessor, yield_lines
+# from utils import get_max_seq_length, log_stdout
+# import torch
+# import time
+# from transformers.optimization import Adafactor, AdafactorSchedule
 
 wandb_kwargs = {"project": "2000_adaf_hyperparameter_tuning"}
 wandbc = WeightsAndBiasesCallback(wandb_kwargs=wandb_kwargs, as_multirun=True)
 
 @wandbc.track_in_wandb()
 def objective(trial):
-        
         training_args = Seq2SeqTrainingArguments( 
         f"{wandb.run.name}", 
         num_train_epochs =3,                                    #  trial.suggest_categorical('num_epochs', [1,2,3]), # ,5]),
