@@ -19,13 +19,13 @@ The folder /saved model contains the final trained model on 10000 rows of data, 
 # Sequence: 
 1) TRAINING DATA needs preprocessing with preprocessor.py
 2) Generation can be done with generate_on_pretrained.py with a prior adjustment of 
-3) The generation parameters in model.simplify() where the decoding method needs to be chosen (Greedy decoding, Top-p & top-k, or Beam search with top-p and top-k)
+3) The generation parameters in model.simplify() where the decoding method needs to be chosen (Greedy decoding, Top-p & top-k, or Beam search)
 4) Manual scoring of a generated text is possible with evaluate.py
 
 # Further remarks: 
 1) The folder resources/processed data contains the training set with the prepended control tokens
 2) The folder resources/DUMPS contains the Word embeddings from Fares et al. (2017) have been used. The data is available under: http://vectors.nlpl.eu/repository. (ares, M., Kutuzov, A., Oepen, S., & Velldal, E. (2017). Word vectors, reuse, and replicability: Towards a community repository of large-text resources. Proceedings of the 21st Nordic Conference on Computational Linguistics, Gothenburg, Sweden.)
-3) The folder resources/outputs/final_decoder_outputs contains the final generated text per decoding strategy (Greedy decoding, Top-p & top-k, or Beam search with top-p and top-k) for both the full test set and the sample dataset
+3) The folder resources/outputs/final_decoder_outputs contains the final generated text per decoding strategy (Greedy decoding, Top-p & top-k, or Beam search) for both the full test set and the sample dataset
 4) The folder translations contains sampled text (106 and 84 rows) from the original English datasets (WIKILarge and ASSET), a machine-translated version as well as the human translated references. 
 
 # Credits

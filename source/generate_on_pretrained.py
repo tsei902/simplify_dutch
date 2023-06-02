@@ -23,12 +23,13 @@ features = {
 
 # EVALUATION OF A GENERATED DATASET
 # Note: the simplify method assumes no preprocessed data! (preprocessing is done in simplify method)
-pred_filepath = f'{OUTPUT_DIR}/final_decoder_outputs/greedy_test.txt'
-asset_pfad = get_data_filepath(ASSET_DATASET, 'test', 'orig') 
+pred_filepath = f'{OUTPUT_DIR}/final_decoder_outputs/example.txt'
+asset_pfad =  './translations/sample_asset_google_translate.txt' #  get_data_filepath(ASSET_DATASET, 'test', 'orig')  #
 print(asset_pfad)
 ref_filepaths = [get_data_filepath(ASSET_DATASET, 'test', 'simp', i) for i in range(10)]
 
 # the decoding method is to be specified in model.py
 simplify(asset_pfad, trained_model, tokenizer, features,output_folder=pred_filepath)
+    
     
     

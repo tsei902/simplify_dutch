@@ -152,7 +152,7 @@ if __name__ == '__main__':
     orig_pfad = get_data_filepath(ASSET_DATASET, 'test', 'orig') 
     # ref_pfad = get_data_filepath(dataset, phase, 'simple')
     ref_filepaths = [get_data_filepath(ASSET_DATASET, 'test', 'simp', i) for i in range(10)]
-    pred_filepath = f'{OUTPUT_DIR}/final_decoder_outputs/beampk120099repearly_full.txt' # f'{OUTPUT_DIR}/evaluate_on_dataset/simplification.txt'   #  './resources/datasets/asset/asset.test.simp.3' # f'{OUTPUT_DIR}/evaluate_on_dataset/asset.test.simp.4'
+    pred_filepath = f'{OUTPUT_DIR}/final_decoder_outputs/beamsearch_full.txt' # f'{OUTPUT_DIR}/evaluate_on_dataset/simplification.txt'   #  './resources/datasets/asset/asset.test.simp.3' # f'{OUTPUT_DIR}/evaluate_on_dataset/asset.test.simp.4'
     
     scores = evaluate_system_output(test_set="custom", orig_sents_path=orig_pfad, sys_sents_path=str(pred_filepath), refs_sents_paths= ref_filepaths,  lowercase=True,metrics = DEFAULT_METRICS)
     print("SARI: {:.2f} \t BLEU: {:.2f} \t FKGL: {:.2f} ".format(scores['sari'], scores['bleu'], scores['fkgl'])) # test

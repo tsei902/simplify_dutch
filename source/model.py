@@ -57,26 +57,23 @@ def simplify(data, pretrained_model, tokenizer, features_kwargs, output_folder=N
         input_ids = encoding.input_ids
         output= pretrained_model.generate(inputs = input_ids, 
                 # GREEDY DECODING
-                do_sample=False, 
+                # do_sample=False, 
                 max_length=50, 
                 min_length=3, 
                 
                 # TOP P, TOP K:
-                # num_beams=8,
                 # do_sample=True,
                 # top_k=5,
                 # top_p=0.98,
-                # # early_stopping=True,
-                # num_return_sequences=1,
-                
-                # BEAM TOP P TOPK:         
-                # do_sample=False,
                 # top_k=120, 
                 # top_p=0.99, 
-                # num_beams=8,
-                # num_return_sequences=1,
-                # early_stopping=True,
-                # repetition_penalty = 1.2, 
+                
+                # BEAM:         
+                do_sample=False,
+                num_beams=8,
+                num_return_sequences=1,
+                early_stopping=True,
+                repetition_penalty = 1.2, 
                 
                 # OTHER PARAMETERS:
                 # length_penalty= -0.9,
